@@ -1,19 +1,16 @@
 
 GLOBAL _cli
 GLOBAL _sti
+GLOBAL _hlt
+
 GLOBAL picMasterMask
 GLOBAL picSlaveMask
 GLOBAL haltcpu
-GLOBAL _hlt
 
 GLOBAL _irq00Handler
 GLOBAL _irq01Handler
-GLOBAL _irq02Handler
-GLOBAL _irq03Handler
-GLOBAL _irq04Handler
-GLOBAL _irq05Handler
 
-GLOBAL _exception0Handler
+GLOBAL _exceptionHandler00
 
 EXTERN irqDispatcher
 EXTERN exceptionDispatcher
@@ -59,7 +56,7 @@ SECTION .text
 %macro irqHandlerMaster 1
 	pushState
 
-	mov rdi, %1 ; pasaje de parametro
+	mov rdi, %1 ; pass argument to irqDispatcher
 	call irqDispatcher
 
 	; signal pic EOI (End of Interrupt)
@@ -70,18 +67,15 @@ SECTION .text
 	iretq
 %endmacro
 
-
-
 %macro exceptionHandler 1
 	pushState
 
-	mov rdi, %1 ; pasaje de parametro
+	mov rdi, %1 ; pass argument to exceptionDispatcher
 	call exceptionDispatcher
 
 	popState
 	iretq
 %endmacro
-
 
 _hlt:
 	sti
@@ -92,63 +86,45 @@ _cli:
 	cli
 	ret
 
-
 _sti:
 	sti
 	ret
 
 picMasterMask:
-	push rbp
-    mov rbp, rsp
-    mov ax, di
-    out	21h,al
-    pop rbp
-    retn
+	push rbp     ; Stack frame
+	mov rbp, rsp
+	mov rax, rdi
+
+	out 0x21, al ; https://wiki.osdev.org/8259_PIC#Masking
+
+	mov rsp, rbp
+	pop rbp
+	ret
 
 picSlaveMask:
-	push    rbp
-    mov     rbp, rsp
-    mov     ax, di  ; ax = mascara de 16 bits
-    out	0A1h,al
-    pop     rbp
-    retn
+	push rbp
+	mov rbp, rsp
+	mov rax, rdi
 
+	out 0xA1, al ; https://wiki.osdev.org/8259_PIC#Masking
 
-;8254 Timer (Timer Tick)
+	mov rsp, rbp
+	pop rbp
+	ret
+
+; 8254 Timer (Timer Tick)
 _irq00Handler:
 	irqHandlerMaster 0
 
-;Keyboard
+; Keyboard
 _irq01Handler:
 	irqHandlerMaster 1
 
-;Cascade pic never called
-_irq02Handler:
-	irqHandlerMaster 2
-
-;Serial Port 2 and 4
-_irq03Handler:
-	irqHandlerMaster 3
-
-;Serial Port 1 and 3
-_irq04Handler:
-	irqHandlerMaster 4
-
-;USB
-_irq05Handler:
-	irqHandlerMaster 5
-
-
-;Zero Division Exception
-_exception0Handler:
+; Zero Division Exception
+_exceptionHandler00:
 	exceptionHandler 0
 
 haltcpu:
 	cli
 	hlt
 	ret
-
-
-
-SECTION .bss
-	aux resq 1

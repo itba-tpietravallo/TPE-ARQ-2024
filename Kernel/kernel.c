@@ -4,6 +4,7 @@
 #include <moduleLoader.h>
 #include <naiveConsole.h>
 #include <videoDriver.h>
+#include <idtLoader.h>
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -83,6 +84,7 @@ void * initializeKernelBinary()
 
 int main()
 {	
+	load_idt();
 	ncPrint("[Kernel Main]");
 	ncNewline();
 	ncPrint("  Sample code module at 0x");
@@ -102,12 +104,14 @@ int main()
 
 	ncPrint("[Finished]");
 
-	// prints a red square
-	for(int x = 0; x < 100; x++) {
-		for(int y = 0; y < 100; y++) {
-			putPixel(0x00FF0000, x, y);
-		}
-	}
+	// // prints a red square
+	// for(int x = 0; x < 100; x++) {
+	// 	for(int y = 0; y < 100; y++) {
+	// 		putPixel(0x00FF0000, x, y);
+	// 	}
+	// }
+
+	while (1) { } // prevent halt Kernel/loader.asm#L11
 
 	return 0;
 }

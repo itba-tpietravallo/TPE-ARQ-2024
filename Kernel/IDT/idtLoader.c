@@ -1,46 +1,46 @@
-#include <stdint.h>
 #include <idtLoader.h>
-#include <defs.h>
-#include <interrupts.h>
 
-#pragma pack(push)		/* Push de la alineación actual */
-#pragma pack (1) 		/* Alinear las siguiente estructuras a 1 byte */
+#pragma pack(push) // save current alignment values into the compilers stack
+#pragma pack(1) // set alignment
 
-/* Descriptor de interrupcion */
+// https://wiki.osdev.org/Interrupt_Descriptor_Table - InterruptDescriptor64
 typedef struct {
-  uint16_t offset_l, selector;
-  uint8_t cero, access;
-  uint16_t offset_m;
-  uint32_t offset_h, other_cero;
+   uint16_t offset_l;    	// offset bits 0..15
+   uint16_t selector;    	// a code segment selector in GDT or LDT
+   uint8_t  zero;        	// bits 0..2 holds Interrupt Stack Table offset, rest of bits zero.
+   uint8_t  access;		 	// gate type, dpl, and p fields
+   uint16_t offset_m;    	// offset bits 16..31
+   uint32_t offset_h;    	// offset bits 32..63
+   uint32_t other_zero;  	// reserved
 } DESCR_INT;
 
-#pragma pack(pop)		/* Reestablece la alinceación actual */
+#pragma pack(pop) // restore previous alignment
 
+DESCR_INT * idt = (DESCR_INT *) 0;
 
-
-DESCR_INT * idt = (DESCR_INT *) 0;	// IDT de 255 entradas
-
-static void setup_IDT_entry (int index, uint64_t offset);
+static void setup_IDT_entry(int index, uint64_t offset);
 
 void load_idt() {
+	_cli();
+	// Load exception handlers
+	// setup_IDT_entry(0x00, (uint64_t)&_exceptionHandler00);
 
-  setup_IDT_entry (0x20, (uint64_t)&_irq00Handler);
-  setup_IDT_entry (0x00, (uint64_t)&_exception0Handler);
+	// Load ISRs
+	setup_IDT_entry(0x20, (uint64_t) &_irq00Handler); 
 
-
-	//Solo interrupcion timer tick habilitadas
-	picMasterMask(0xFE); 
+	// Enable IRQ0
+	picMasterMask(0xFE);
 	picSlaveMask(0xFF);
-        
+			
 	_sti();
 }
 
-static void setup_IDT_entry (int index, uint64_t offset) {
-  idt[index].selector = 0x08;
-  idt[index].offset_l = offset & 0xFFFF;
-  idt[index].offset_m = (offset >> 16) & 0xFFFF;
-  idt[index].offset_h = (offset >> 32) & 0xFFFFFFFF;
-  idt[index].access = ACS_INT;
-  idt[index].cero = 0;
-  idt[index].other_cero = (uint64_t) 0;
+static void setup_IDT_entry(int index, uint64_t offset) {
+	idt[index].offset_l = offset & 0xFFFF;
+	idt[index].selector = 0x08;
+	idt[index].zero = 0;
+	idt[index].access = ACS_INT;
+	idt[index].offset_m = (offset >> 16) & 0xFFFF;
+	idt[index].offset_h = (offset >> 32) & 0xFFFFFFFF;
+	idt[index].other_zero = 0;
 }
