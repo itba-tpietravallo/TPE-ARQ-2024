@@ -5,6 +5,7 @@
 #include <naiveConsole.h>
 #include <videoDriver.h>
 #include <idtLoader.h>
+#include <fonts.h>
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -104,12 +105,14 @@ int main()
 
 	ncPrint("[Finished]");
 
-	// // prints a red square
-	// for(int x = 0; x < 100; x++) {
-	// 	for(int y = 0; y < 100; y++) {
-	// 		putPixel(0x00FF0000, x, y);
-	// 	}
-	// }
+	// prints a red square
+	for(int x = 0; x < 100; x++) {
+		for(int y = 0; y < 100; y++) {
+			putPixel(0x00FF0000, x, y);
+		}
+	}
+
+	render('A');
 
 	while (1) { } // prevent halt Kernel/loader.asm#L11
 
