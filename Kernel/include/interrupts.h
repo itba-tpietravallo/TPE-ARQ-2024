@@ -8,7 +8,7 @@
 #ifndef INTERRUPS_H
 #define INTERRUPS_H
 
-extern uint64_t _irq00Handler;
+void _irq00Handler(void);
 extern uint64_t _exceptionHandler00;
 
 void _cli(void);
