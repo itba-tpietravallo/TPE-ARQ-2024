@@ -27,9 +27,12 @@ void load_idt() {
 
 	// Load ISRs
 	setup_IDT_entry(0x20, (uint64_t) &_irq00Handler); 
+  setup_IDT_entry(0x09, (uint64_t) &_irq01Handler); 
 
-	// Enable IRQ0
-	picMasterMask(0xFE);
+	// Enable:
+  // IRQ0 -> TimerTick
+  // IRQ1 -> Keyboard
+	picMasterMask(0xFC);
 	picSlaveMask(0xFF);
 			
 	_sti();

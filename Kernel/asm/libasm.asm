@@ -1,4 +1,5 @@
 GLOBAL cpuVendor
+GLOBAL getKey
 
 section .text
 	
@@ -24,4 +25,16 @@ cpuVendor:
 
 	mov rsp, rbp
 	pop rbp
+	ret
+
+
+getKey:
+	push rbp
+	mov rbp, rsp
+
+	in al, 60h
+
+	mov rsp, rbp
+	pop rbp
+
 	ret

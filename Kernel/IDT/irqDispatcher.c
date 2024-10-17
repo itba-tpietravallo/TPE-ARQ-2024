@@ -1,6 +1,7 @@
 #include <time.h>
 #include <stdint.h>
 #include <naiveConsole.h>
+#include <keyboard.h>
 
 static void int_20();
 
@@ -16,4 +17,8 @@ void irqDispatcher(uint64_t irq) {
 
 void int_20() {
 	timer_handler();
+}
+
+void int_09() {
+	keyboard_handler();
 }
