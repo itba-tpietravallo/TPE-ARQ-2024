@@ -21,6 +21,11 @@
 #define DEFAULT_GLYPH_SIZE_X 8
 #define DEFAULT_GLYPH_SIZE_Y 8
 
+#define NEW_LINE_CHAR '\n'
+#define TABULATOR_CHAR '\t'
+#define ESCAPE_CHAR '\e'
+#define TAB_SIZE 4
+
 #define MAX(a,b) ((a) > (b) ? (a) : (b))
 
 static uint16_t glyphSizeX = DEFAULT_GLYPH_SIZE_X;
@@ -34,6 +39,9 @@ static uint16_t yBufferPosition;
 
 static uint16_t maxGlyphSizeYOnLine = DEFAULT_GLYPH_SIZE_Y;
 
+static uint32_t text_color = 0x00FFFFFF;
+static uint32_t background_color = 0x00000000;
+
 static char buffer[64] = { '0' };
 
 static inline void renderFromBitmap(char * bitmap, uint64_t xBase, uint64_t yBase);
@@ -41,6 +49,9 @@ static inline void renderAscii(char ascii, uint64_t x, uint64_t y);
 
 static uint32_t uintToBase(uint64_t value, char * buffer, uint32_t base);
 static void printBase(uint64_t value, uint32_t base);
+
+static void setANSIProp(uint8_t prop);
+static void parseANSI(char * string, int * i);
 
 // * Uses inline to avoid stack frames on hot paths *
 static inline void renderFromBitmap(char * bitmap, uint64_t xBase, uint64_t yBase) {
@@ -50,7 +61,7 @@ static inline void renderFromBitmap(char * bitmap, uint64_t xBase, uint64_t yBas
         xo = x / fontSize;
         for (int y = 0; y < glyphSizeY * fontSize; y++) {
             // Read into char * slice and mask
-            putPixel(*(bitmap + (y / fontSize)) & (1 << xo) ? 0x00FFFFFF : 0x0, xs, yBase + y);
+            putPixel(*(bitmap + (y / fontSize)) & (1 << xo) ? text_color : background_color, xs, yBase + y);
         }
     }
 }
@@ -117,9 +128,25 @@ void putChar(char ascii) {
 
 // `string` Null terminated string
 void print(char * string) {
-    // Put char is technically writing arbitrary data (0-128) to memory... Should it be hardened, or is a null terminator check enough?
-    for (int i = 0; string[i] != 0; i++) {
-        putChar(string[i]);
+    char c;
+    for (int i = 0; (c = string[i]) != 0; i++) {
+        switch (c) {
+            case NEW_LINE_CHAR:
+                newLine();
+                break;
+            case TABULATOR_CHAR:
+                do {
+                    putChar(' ');
+                } while(xBufferPosition % (TAB_SIZE * glyphSizeX * fontSize) != 0);
+                break;
+            case ESCAPE_CHAR:
+                parseANSI(string, &i);
+                break;
+
+            default:
+                putChar(c);
+                break;
+        }
     }
 }
 
@@ -199,4 +226,92 @@ static uint32_t uintToBase(uint64_t value, char * buffer, uint32_t base) {
 	}
 
 	return digits;
+}
+
+static void setANSIProp(uint8_t prop) {
+    uint32_t * colorProp = &text_color;
+
+    if ((prop >= 40 && prop <= 47) || (prop >= 100 && prop <= 107)) {
+        prop -= 10;
+        colorProp = &background_color;
+    }
+
+    switch (prop) {
+        case 0:
+            text_color = 0x00FFFFFF;
+            background_color = 0x00000000;
+            break;
+        case 31:
+            *colorProp = 0x00DE382B;
+            break;
+        case 32:
+            *colorProp = 0x0039B54A;
+            break;
+        case 33:
+            *colorProp = 0x00FFC706;
+            break;
+        case 34:
+            *colorProp = 0x00006FB8;
+            break;
+        case 35:
+            *colorProp = 0x00762671;
+            break;
+        case 36:
+            *colorProp = 0x002CB5E9;
+            break;
+        case 37:
+            *colorProp = 0x00CCCCCC;
+            break;
+        case 90:
+            *colorProp = 0x00808080;
+        case 91:
+            *colorProp = 0x00FF0000;
+            break;
+        case 92:
+            *colorProp = 0x0000FF00;
+            break;
+        case 93:
+            *colorProp = 0x00FFFF00;
+            break;
+        case 94:
+            *colorProp = 0x000000FF;
+            break;
+        case 95:    
+            *colorProp = 0x00FF00FF;
+            break;
+        case 96:
+            *colorProp = 0x0000FFFF;
+            break;
+        case 97:
+            *colorProp = 0x00FFFFFF;
+            break;
+        default:
+            break;
+    }
+}
+
+static void parseANSI(char * string, int * i) {
+    // \e[0;31mExample\e[0m"
+    // \e[0;31m -> Set text_color to red
+    // \e[0m -> Reset text_color
+
+    if (string[(*i) + 1] != '[' || string[(*i) + 2] == 0) return;
+
+    (*i) += 2;
+
+    uint8_t props[3] = { 0 };
+    uint8_t prop_index = 0;
+
+    while (string[*i] != 'm' && prop_index < 3) {
+        if (string[*i] == ';') {
+            prop_index++;
+        } else {
+            props[prop_index] = props[prop_index] * 10 + (string[*i] - '0');
+        }
+        (*i)++;
+    }
+
+    for (uint8_t j = 0; j <= prop_index; j++) {
+        setANSIProp(props[j]);
+    }
 }
