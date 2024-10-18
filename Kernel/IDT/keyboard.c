@@ -38,6 +38,11 @@
 #define F11_KEY 0x57
 #define F12_KEY 0x58
 
+#define IS_ALPHA(c) ('a' <= (c) && (c) <= 'z') 
+#define TO_UPPER(c) (IS_ALPHA(c) ? ((c) - 'a' + 'A') : (c))
+
+static char SHIFT_KEY_PRESSED, CAPS_LOCK_KEY_PRESSED, CONTROL_KEY_PRESSED;
+
 // QEMU source https://github.com/qemu/qemu/blob/master/pc-bios/keymaps/en-us
 // http://flint.cs.yale.edu/feng/cos/resources/BIOS/Resources/assembly/makecodes.html
 // Array of scancodes to ASCII - Shift-Modified-ASCII
@@ -142,8 +147,44 @@ static uint8_t isPressed(uint8_t scancode) {
     return !(isReleased(scancode));
 }
 
-void keyboard_handler(){
+static uint8_t isShift(uint8_t scancode){
+    uint8_t aux = scancode & 0x7F;
+    return aux == SHIFT_KEY_L || aux == SHIFT_KEY_R;
+}
+
+static uint8_t isCapsLock(uint8_t scancode){
+    return (scancode & 0x7F) == CAPS_LOCK_KEY;
+}
+
+static uint8_t isControl(uint8_t scancode){
+    return (scancode & 0x7F) == CONTROL_KEY_L;
+}
+
+void keyboardHandler(){
     uint8_t scancode = getKeyboardBuffer();
-    if (isPressed(scancode))
-        putChar(scancodeMap[scancode][0]);
+    uint8_t is_pressed = isPressed(scancode);
+    // TODO: implement shift-capslock-control array
+    if (isShift(scancode)){
+        if (is_pressed){
+            SHIFT_KEY_PRESSED = 1;
+        } else{
+            SHIFT_KEY_PRESSED = 0;
+        }
+    } else if (isCapsLock(scancode)){
+        if (is_pressed){
+            CAPS_LOCK_KEY_PRESSED = !CAPS_LOCK_KEY_PRESSED;
+        }
+    } else if (isControl(scancode)){
+        if (is_pressed){
+            CONTROL_KEY_PRESSED = 1;
+        } else{
+            CONTROL_KEY_PRESSED = 0;
+        }
+    } else if (is_pressed){
+        char c = scancodeMap[scancode][SHIFT_KEY_PRESSED];
+        if(CAPS_LOCK_KEY_PRESSED == 1){
+            c = TO_UPPER(c);
+        }
+        putChar(c);
+    }
 }

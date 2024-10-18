@@ -24,5 +24,5 @@ static void int_20() {
 }
 
 static void int_21() {
-	keyboard_handler();
+	keyboardHandler();
 }
