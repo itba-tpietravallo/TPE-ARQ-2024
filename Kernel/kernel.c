@@ -126,21 +126,10 @@ int main()
 
 	increaseFontSize();
 
-	print("0x"); printHex(0x1234567890ABCDEF);
-
-	newLine();
-
-	increaseFontSize();
-
-	print("0x"); printHex(0x1234567890ABCDEF);
-
-	decreaseFontSize();
-
-	print("Hola esto es mas ");
-
-	decreaseFontSize();
-
-	print("chiquitoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo");
+	print("This is a small header\n");
+	print("\t+ Some text (padded)\n");
+	print("\t\t+More padding\n");
+	print("  \t\t+More padding, \e[32mspace aligned\e[0m\n");
 
 	while (1) { } // prevent halt Kernel/loader.asm#L11
 
