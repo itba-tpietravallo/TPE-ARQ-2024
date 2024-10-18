@@ -10,6 +10,9 @@ void newLine();
 void printDec(uint64_t value);
 void printHex(uint64_t value);
 void printBin(uint64_t value);
-void clear();
+void clear(void);
+
+void increaseFontSize(void);
+void decreaseFontSize(void);
 
 #endif

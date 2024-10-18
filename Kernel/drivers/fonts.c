@@ -20,6 +20,7 @@
 
 static uint16_t glyphSizeX = 8;
 static uint16_t glyphSizeY = 8;
+static uint16_t fontSize = 1;
 
 static char * bitmap = (char *) font8x8_basic;
 
@@ -36,12 +37,13 @@ static void printBase(uint64_t value, uint32_t base);
 
 // * Uses inline to avoid stack frames on hot paths *
 static inline void renderFromBitmap(char * bitmap, uint64_t xBase, uint64_t yBase) {
-    int xs;
-    for (int x = 0; x < glyphSizeX; x++) {
-        xs = xBase + x;
-        for (int y = 0; y < glyphSizeY; y++) {
+    int xs, xo;
+    for (int x = 0; x < glyphSizeX * fontSize; x++) {
+        xs = xBase + x; 
+        xo = x / fontSize;
+        for (int y = 0; y < glyphSizeY * fontSize; y++) {
             // Read into char * slice and mask
-            putPixel(*(bitmap + y) & (1 << x) ? 0x00FFFFFF : 0x0, xs, yBase + y);
+            putPixel(*(bitmap + (y / fontSize)) & (1 << xo) ? 0x00FFFFFF : 0x0, xs, yBase + y);
         }
     }
 }
@@ -57,14 +59,14 @@ static inline void renderAscii(char ascii, uint64_t x, uint64_t y) {
 
 // `ascii` ASCII character to print (0-127)
 void putChar(char ascii) {
-    if (xBufferPosition + glyphSizeX > getWindowWidth()) {
+    if (xBufferPosition + glyphSizeX * fontSize > getWindowWidth()) {
         // @todo: Text may overflow at the bottom of the screen
-        yBufferPosition += glyphSizeY;
+        yBufferPosition += glyphSizeY * fontSize;
         xBufferPosition = 0;
     }
 
     renderAscii(ascii, xBufferPosition, yBufferPosition);
-    xBufferPosition += glyphSizeX;
+    xBufferPosition += glyphSizeX * fontSize;
 }
 
 // `string` Null terminated string
@@ -77,7 +79,7 @@ void print(char * string) {
 
 // Jumps to the next line, does not print an empty line
 void newLine(void) {
-    yBufferPosition += glyphSizeY;
+    yBufferPosition += glyphSizeY * fontSize;
     xBufferPosition = 0;
 }
 
@@ -100,6 +102,15 @@ void clear(void) {
             putPixel(0x0, x, y);
         }
     }
+}
+
+void increaseFontSize(void) {
+    fontSize *= 2;
+}
+
+void decreaseFontSize(void) {
+    fontSize /= 2;
+    fontSize = fontSize < 1 ? 1 : fontSize;
 }
 
 static void printBase(uint64_t value, uint32_t base) {

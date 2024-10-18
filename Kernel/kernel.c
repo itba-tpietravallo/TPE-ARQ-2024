@@ -121,6 +121,18 @@ int main()
 	newLine();
 	print("0x"); printHex(0x1234567890ABCDEF);
 
+	newLine();
+
+	increaseFontSize();
+
+	print("0x"); printHex(0x1234567890ABCDEF);
+
+	newLine();
+
+	increaseFontSize();
+
+	print("0x"); printHex(0x1234567890ABCDEF);
+
 	while (1) { } // prevent halt Kernel/loader.asm#L11
 
 	return 0;
