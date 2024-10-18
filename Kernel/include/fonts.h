@@ -2,10 +2,14 @@
 #define FONTS_H
 
 #include <stdint.h>
+#include <videoDriver.h>
 
-#include <font_basic.h>
-// #include <videoDriver.h>
-
-void render(char ascii);
+void putChar(char ascii);
+void print(char * string);
+void newLine();
+void printDec(uint64_t value);
+void printHex(uint64_t value);
+void printBin(uint64_t value);
+void clear();
 
 #endif

@@ -111,8 +111,15 @@ int main()
 			putPixel(0x00FF0000, x, y);
 		}
 	}
+	
+	clear();
 
-	render('A');
+	print("Hello world. GRAPHICS MODE PRINT");
+	newLine();
+	print("This is a new line");
+	newLine();
+	newLine();
+	print("0x"); printHex(0x1234567890ABCDEF);
 
 	while (1) { } // prevent halt Kernel/loader.asm#L11
 
