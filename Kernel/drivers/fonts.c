@@ -39,7 +39,7 @@ static void printBase(uint64_t value, uint32_t base);
 static inline void renderFromBitmap(char * bitmap, uint64_t xBase, uint64_t yBase) {
     int xs, xo;
     for (int x = 0; x < glyphSizeX * fontSize; x++) {
-        xs = xBase + x; 
+        xs = xBase + x;
         xo = x / fontSize;
         for (int y = 0; y < glyphSizeY * fontSize; y++) {
             // Read into char * slice and mask

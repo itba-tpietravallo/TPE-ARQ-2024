@@ -104,14 +104,14 @@ int main()
 	ncPrint((char*)sampleDataModuleAddress);
 	ncNewline();
 
-	ncPrint("[Finished]");
+	ncPrint("Type: ");
 
-	// prints a red square
-	for(int x = 0; x < 100; x++) {
-		for(int y = 0; y < 100; y++) {
-			putPixel(0x00FF0000, x, y);
-		}
-	}
+	// // prints a red square
+	// for(int x = 0; x < 100; x++) {
+	// 	for(int y = 0; y < 100; y++) {
+	// 		putPixel(0x00FF0000, x, y);
+	// 	}
+	// }
 	
 	clear();
 

@@ -1,5 +1,6 @@
 #include <time.h>
-#include <naiveConsole.h>
+
+#include <fonts.h>
 
 static unsigned long ticks = 0;
 

@@ -1,5 +1,5 @@
 GLOBAL cpuVendor
-GLOBAL getKey
+GLOBAL getKeyboardBuffer
 
 section .text
 	
@@ -28,7 +28,7 @@ cpuVendor:
 	ret
 
 
-getKey:
+getKeyboardBuffer:
 	push rbp
 	mov rbp, rsp
 

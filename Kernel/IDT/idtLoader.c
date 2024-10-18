@@ -26,12 +26,13 @@ void load_idt() {
 	// setup_IDT_entry(0x00, (uint64_t)&_exceptionHandler00);
 
 	// Load ISRs
+	// https://wiki.osdev.org/Interrupts#General_IBM-PC_Compatible_Interrupt_Information
 	setup_IDT_entry(0x20, (uint64_t) &_irq00Handler); 
-  setup_IDT_entry(0x09, (uint64_t) &_irq01Handler); 
+	setup_IDT_entry(0x21, (uint64_t) &_irq01Handler);
 
 	// Enable:
-  // IRQ0 -> TimerTick
-  // IRQ1 -> Keyboard
+	// IRQ0 -> TimerTick
+	// IRQ1 -> Keyboard
 	picMasterMask(0xFC);
 	picSlaveMask(0xFF);
 			
