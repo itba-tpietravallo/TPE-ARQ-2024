@@ -18,14 +18,21 @@
 
 #include "../font_assets/font_basic.c"
 
-static uint16_t glyphSizeX = 8;
-static uint16_t glyphSizeY = 8;
+#define DEFAULT_GLYPH_SIZE_X 8
+#define DEFAULT_GLYPH_SIZE_Y 8
+
+#define MAX(a,b) ((a) > (b) ? (a) : (b))
+
+static uint16_t glyphSizeX = DEFAULT_GLYPH_SIZE_X;
+static uint16_t glyphSizeY = DEFAULT_GLYPH_SIZE_Y;
 static uint16_t fontSize = 1;
 
 static char * bitmap = (char *) font8x8_basic;
 
 static uint16_t xBufferPosition;
 static uint16_t yBufferPosition;
+
+static uint16_t maxGlyphSizeYOnLine = DEFAULT_GLYPH_SIZE_Y;
 
 static char buffer[64] = { '0' };
 
@@ -100,7 +107,7 @@ void __DEBUG__renderTicks(uint64_t ticks) {
 void putChar(char ascii) {
     if (xBufferPosition + glyphSizeX * fontSize > getWindowWidth()) {
         // @todo: Text may overflow at the bottom of the screen
-        yBufferPosition += glyphSizeY * fontSize;
+        yBufferPosition += maxGlyphSizeYOnLine;
         xBufferPosition = 0;
     }
 
@@ -118,8 +125,9 @@ void print(char * string) {
 
 // Jumps to the next line, does not print an empty line
 void newLine(void) {
-    yBufferPosition += glyphSizeY * fontSize;
+    yBufferPosition += maxGlyphSizeYOnLine;
     xBufferPosition = 0;
+    maxGlyphSizeYOnLine = fontSize * glyphSizeY;
 }
 
 void printDec(uint64_t value) {
@@ -141,10 +149,13 @@ void clear(void) {
             putPixel(0x0, x, y);
         }
     }
+    xBufferPosition = 0;
+    yBufferPosition = 0;
 }
 
 void increaseFontSize(void) {
     fontSize *= 2;
+    maxGlyphSizeYOnLine = MAX(maxGlyphSizeYOnLine, glyphSizeY * fontSize);
 }
 
 void decreaseFontSize(void) {
