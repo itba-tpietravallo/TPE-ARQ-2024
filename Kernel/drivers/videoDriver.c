@@ -49,3 +49,11 @@ void putPixel(uint32_t hexColor, uint64_t x, uint64_t y) {
     framebuffer[offset+1]   =  (hexColor >> 8) & 0xFF; 
     framebuffer[offset+2]   =  (hexColor >> 16) & 0xFF;
 }
+
+uint16_t getWindowHeight() {
+	return VBE_mode_info->height;
+}
+
+uint16_t getWindowWidth() {
+	return VBE_mode_info->width;
+}

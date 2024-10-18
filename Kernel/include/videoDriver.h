@@ -5,4 +5,7 @@
 
 void putPixel(uint32_t hexColor, uint64_t x, uint64_t y);
 
+uint16_t getWindowWidth(void);
+uint16_t getWindowHeight(void);
+
 #endif
