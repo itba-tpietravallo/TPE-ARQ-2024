@@ -6,6 +6,7 @@
 #include <videoDriver.h>
 #include <idtLoader.h>
 #include <fonts.h>
+#include <time.h>
 
 extern uint8_t text;
 extern uint8_t rodata;

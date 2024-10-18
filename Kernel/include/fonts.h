@@ -15,4 +15,6 @@ void clear(void);
 void increaseFontSize(void);
 void decreaseFontSize(void);
 
+void __DEBUG__renderTicks(uint64_t ticks);
+
 #endif

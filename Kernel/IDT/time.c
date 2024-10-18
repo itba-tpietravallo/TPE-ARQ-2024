@@ -5,7 +5,9 @@ static unsigned long ticks = 0;
 
 void timer_handler() {
 	ticks++;
-	// ncPrintChar(ticks % 2 ? '.' : ' ');
+
+	// note: this should always be at the end of the timer handler
+	__DEBUG__renderTicks(ticks);
 }
 
 int ticks_elapsed() {
