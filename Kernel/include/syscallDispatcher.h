@@ -21,6 +21,6 @@ typedef struct {
 	int64_t rax;
 } Registers;
 
-void syscallDispatcher(Registers * registers);
+int64_t syscallDispatcher(Registers * registers);
 
 #endif

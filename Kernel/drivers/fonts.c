@@ -18,6 +18,9 @@
 
 #include "../font_assets/font_basic.c"
 
+#define FD_STDOUT 1
+#define FD_STDERR 2
+
 #define DEFAULT_GLYPH_SIZE_X 8
 #define DEFAULT_GLYPH_SIZE_Y 8
 
@@ -49,6 +52,7 @@ static inline void renderAscii(char ascii, uint64_t x, uint64_t y);
 
 static uint32_t uintToBase(uint64_t value, char * buffer, uint32_t base);
 static void printBase(uint64_t value, uint32_t base);
+static inline int64_t strlen(const char * str);
 
 static void setANSIProp(uint8_t prop);
 static void parseANSI(const char * string, int * i);
@@ -138,20 +142,39 @@ void putChar(char ascii) {
     }
 }
 
-// `string` Null terminated string
-void print(const char * string) {
-    char c;
-    for (int i = 0; (c = string[i]) != 0; i++) {
-        switch (c){
+int32_t printToFd(int32_t fd, const char * string, int32_t count) {
+    switch (fd) {
+        case FD_STDOUT:
+            text_color = 0x00FFFFFF;
+            background_color = 0x00000000;
+            break;
+        case FD_STDERR:
+            text_color = 0x00DE382B;
+            background_color = 0x00000000;
+            break;
+        default:
+            // return 0;
+    }
+
+    int i = 0;
+    for ( ; i < count; i++ ) {
+        switch (string[i]){
             case ESCAPE_CHAR:
                 parseANSI(string, &i);
                 break;
 
             default:
-                putChar(c);
+                putChar(string[i]);
                 break;
         }
     }
+
+    return i;
+}
+
+// Prints `string` Null terminated string to `STDOUT`
+void print(const char * string) {
+    printToFd(FD_STDOUT, string, strlen(string));
 }
 
 // Jumps to the next line, does not print an empty line
@@ -230,6 +253,14 @@ static uint32_t uintToBase(uint64_t value, char * buffer, uint32_t base) {
 	}
 
 	return digits;
+}
+
+static inline int64_t strlen(const char * str) {
+    int64_t length = 0;
+    while (str[length] != 0) {
+        length++;
+    }
+    return length;
 }
 
 static void setANSIProp(uint8_t prop) {

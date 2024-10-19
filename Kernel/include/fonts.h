@@ -6,6 +6,7 @@
 
 void putChar(char ascii);
 void print(const char * string);
+int32_t printToFd(int32_t fd, const char * string, int32_t count);
 void newLine();
 void printDec(uint64_t value);
 void printHex(uint64_t value);
