@@ -2,7 +2,10 @@ include Makefile.inc
 
 SAMPLE_DATA=0001-sampleDataModule.bin
 
-all: sampleCodeModule sampleDataModule
+all: libc sampleCodeModule sampleDataModule
+
+libc:
+	cd libc; make all
 
 sampleCodeModule:
 	cd SampleCodeModule; make
@@ -12,7 +15,8 @@ sampleDataModule:
 
 clean:
 	cd SampleCodeModule; make clean
+	cd libc; make clean
 	rm -rf *.bin
 
 
-.PHONY: sampleCodeModule all clean
+.PHONY: libc sampleCodeModule all clean

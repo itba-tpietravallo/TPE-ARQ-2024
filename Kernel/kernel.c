@@ -87,49 +87,11 @@ void * initializeKernelBinary()
 int main()
 {	
 	load_idt();
-	ncPrint("[Kernel Main]");
-	ncNewline();
-	ncPrint("  Sample code module at 0x");
-	ncPrintHex((uint64_t)sampleCodeModuleAddress);
-	ncNewline();
-	ncPrint("  Calling the sample code module returned: ");
-	ncPrintHex(((EntryPoint)sampleCodeModuleAddress)());
-	ncNewline();
-	ncNewline();
-
-	ncPrint("  Sample data module at 0x");
-	ncPrintHex((uint64_t)sampleDataModuleAddress);
-	ncNewline();
-	ncPrint("  Sample data module contents: ");
-	ncPrint((char*)sampleDataModuleAddress);
-	ncNewline();
-
-	ncPrint("Type: ");
-
-	// // prints a red square
-	// for(int x = 0; x < 100; x++) {
-	// 	for(int y = 0; y < 100; y++) {
-	// 		putPixel(0x00FF0000, x, y);
-	// 	}
-	// }
-	
-	clear();
-
-	print("Hello world. GRAPHICS MODE PRINT");
+	print("[Kernel Main]\n");
+	print("Executing USERLAND code:\n");
+	int returnValue = ((EntryPoint)sampleCodeModuleAddress)();
 	newLine();
-	print("This is a new line");
-	newLine();
-	newLine();
-	print("0x"); printHex(0x1234567890ABCDEF);
-
-	newLine();
-
-	increaseFontSize();
-
-	print("This is a small header\n");
-	print("\t+ Some text (padded)\n");
-	print("\t\t+More padding\n");
-	print("  \t\t+More padding, \e[32mspace aligned\e[0m\n");
+	print("Return value: 0x"); printHex(returnValue);
 
 	while (1) { } // prevent halt Kernel/loader.asm#L11
 
