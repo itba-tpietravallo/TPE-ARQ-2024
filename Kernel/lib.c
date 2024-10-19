@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <lib.h>
 
 void * memset(void * destination, int32_t c, uint64_t length)
 {
@@ -48,3 +49,24 @@ void * memcpy(void * destination, const void * source, uint64_t length)
 
 	return destination;
 }
+
+void printf(const char * string){
+	print(string);
+}
+
+// int64_t strcmp(const char * s1, const char * s2){
+// 	int64_t to_return = 0;
+// 	if(s1 != NULL || s2 != NULL){
+// 		while(s1 != NULL && s2 != NULL && to_return == 0){
+// 			to_return = *s1 - *s2;
+// 		}
+// 		if(to_return == 0){
+// 			if(s1 != NULL && s2 == NULL){
+// 				to_return = *s1;
+// 			} else if(s1 == NULL && s2 != NULL){
+// 				to_return = *s2;
+// 			}
+// 		}
+// 	}
+// 	return to_return;
+// }

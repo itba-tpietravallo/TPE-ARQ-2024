@@ -38,10 +38,16 @@
 #define F11_KEY 0x57
 #define F12_KEY 0x58
 
+#define BUFFER_SIZE 1024
+
 #define IS_ALPHA(c) ('a' <= (c) && (c) <= 'z') 
 #define TO_UPPER(c) (IS_ALPHA(c) ? ((c) - 'a' + 'A') : (c))
+#define IS_PRINTABLE(c) (32 <= (c) && (c) <= 254)
 
-static char SHIFT_KEY_PRESSED, CAPS_LOCK_KEY_PRESSED, CONTROL_KEY_PRESSED;
+static uint8_t SHIFT_KEY_PRESSED, CAPS_LOCK_KEY_PRESSED, CONTROL_KEY_PRESSED;
+static uint8_t buffer[BUFFER_SIZE];
+static uint8_t * to_write = buffer, * to_read = buffer;
+static uint8_t characters_to_read = 0;
 
 // QEMU source https://github.com/qemu/qemu/blob/master/pc-bios/keymaps/en-us
 // http://flint.cs.yale.edu/feng/cos/resources/BIOS/Resources/assembly/makecodes.html
@@ -160,31 +166,77 @@ static uint8_t isControl(uint8_t scancode){
     return (scancode & 0x7F) == CONTROL_KEY_L;
 }
 
+static void updateToWrite(){
+    if(to_write == buffer + BUFFER_SIZE){
+        to_write = buffer;
+    } else{
+        to_write++;
+    }
+}
+
+static void updateToRead(){
+    characters_to_read--;
+    if(to_read == buffer){
+        to_read = buffer + BUFFER_SIZE;
+    } else{
+        to_read--;
+    }
+}
+
+// TODO: check wheter the r and w pointers are managed correctly
+int8_t getChar(){
+    while(characters_to_read == 0);
+    int8_t to_return = *to_read;
+    // int8_t * p;
+    // if(to_write == buffer){
+    //     p = buffer + BUFFER_SIZE;
+    // } else{
+    //     p = to_write - 1;
+    // }
+    // while(*(p - 2) != '\n');
+    updateToRead();
+    // putChar(to_return);
+    return to_return;
+}
+
 void keyboardHandler(){
-    uint8_t scancode = getKeyboardBuffer();
-    uint8_t is_pressed = isPressed(scancode);
-    // TODO: implement shift-capslock-control array
-    if (isShift(scancode)){
-        if (is_pressed){
-            SHIFT_KEY_PRESSED = 1;
-        } else{
-            SHIFT_KEY_PRESSED = 0;
+    // TODO: implement function to check this
+    if(characters_to_read == BUFFER_SIZE - 1){
+        print("Kernel buffer overflow");
+    } else{
+        uint8_t scancode = getKeyboardBuffer();
+        uint8_t is_pressed = isPressed(scancode);
+        // TODO: implement shift-capslock-control array
+        if(isShift(scancode)){
+            if(is_pressed){
+                SHIFT_KEY_PRESSED = 1;
+            } else{
+                SHIFT_KEY_PRESSED = 0;
+            }
+        } else if(isCapsLock(scancode)){
+            if(is_pressed){
+                CAPS_LOCK_KEY_PRESSED = !CAPS_LOCK_KEY_PRESSED;
+            }
+        } else if(isControl(scancode)){
+            if(is_pressed){
+                CONTROL_KEY_PRESSED = 1;
+            } else{
+                CONTROL_KEY_PRESSED = 0;
+            }
+        } else if(is_pressed){
+            uint8_t c = scancodeMap[scancode][SHIFT_KEY_PRESSED];
+            if(CAPS_LOCK_KEY_PRESSED == 1){
+                c = TO_UPPER(c);
+            }
+            if(IS_PRINTABLE(c)){
+                *to_write = c;
+                characters_to_read++;
+                updateToWrite();
+                *to_write = EOF;
+                updateToWrite();
+                putChar(c);
+                // putChar(buffer[characters_to_read - 1]);
+            }
         }
-    } else if (isCapsLock(scancode)){
-        if (is_pressed){
-            CAPS_LOCK_KEY_PRESSED = !CAPS_LOCK_KEY_PRESSED;
-        }
-    } else if (isControl(scancode)){
-        if (is_pressed){
-            CONTROL_KEY_PRESSED = 1;
-        } else{
-            CONTROL_KEY_PRESSED = 0;
-        }
-    } else if (is_pressed){
-        char c = scancodeMap[scancode][SHIFT_KEY_PRESSED];
-        if(CAPS_LOCK_KEY_PRESSED == 1){
-            c = TO_UPPER(c);
-        }
-        putChar(c);
     }
 }
