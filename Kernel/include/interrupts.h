@@ -10,6 +10,7 @@
 
 extern uint64_t _irq00Handler;
 extern uint64_t _irq01Handler;
+extern uint64_t _irq80Handler;
 extern uint64_t _exceptionHandler00;
 
 void _cli(void);
