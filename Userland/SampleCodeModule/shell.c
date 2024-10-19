@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys.h>
 
 #define BUFFER_SIZE 1024
 
@@ -10,6 +11,7 @@ int main() {
 	// puts("Hello, World!\n"); // compiles! (does not print yet)
 	
 	printf("shell \e[0;32m$\e[0m ");
+    beep();
 
     char c, buffer_has_space = 1;
 

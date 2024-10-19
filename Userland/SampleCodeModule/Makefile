@@ -6,7 +6,7 @@ SOURCES=$(wildcard [^_]*.c)
 all: $(MODULE)
 
 $(MODULE): $(SOURCES)
-	$(GCC) -I../include $(GCCFLAGS) -T sampleCodeModule.ld _loader.c -L../ $(SOURCES) -l:libc.a -o ../$(MODULE)
+	$(GCC) -I../include $(GCCFLAGS) -T sampleCodeModule.ld _loader.c -L../ $(SOURCES) -l:libc.a -l:libsys.a -o ../$(MODULE)
 
 clean:
 	rm -rf *.o

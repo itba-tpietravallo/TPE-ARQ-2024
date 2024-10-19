@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <string.h>
-#include <sys.h>
+#include <syscalls.h>
 
 void puts(const char * str) {
     printf(str);
