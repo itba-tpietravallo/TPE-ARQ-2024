@@ -1,5 +1,6 @@
 GLOBAL sys_write
 GLOBAL sys_read
+GLOBAL sys_time
 
 section .text
 
@@ -16,6 +17,15 @@ sys_read:
     push rbp
     mov rbp, rsp
     mov rax, 0x03
+    int 0x80
+    mov rsp, rbp
+    pop rbp
+    ret
+
+sys_time:
+    push rbp
+    mov rbp, rsp
+    mov rax, 0x0D
     int 0x80
     mov rsp, rbp
     pop rbp

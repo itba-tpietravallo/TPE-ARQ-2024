@@ -27,3 +27,7 @@ int main() {
 
 	return one();
 }
+
+void date(){
+	
+}
