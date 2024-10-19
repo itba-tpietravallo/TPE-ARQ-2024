@@ -29,6 +29,7 @@ void load_idt() {
 	// https://wiki.osdev.org/Interrupts#General_IBM-PC_Compatible_Interrupt_Information
 	setup_IDT_entry(0x20, (uint64_t) &_irq00Handler); 
 	setup_IDT_entry(0x21, (uint64_t) &_irq01Handler);
+	setup_IDT_entry(0x80, (uint64_t) &_irq80Handler);
 
 	// Enable:
 	// IRQ0 -> TimerTick

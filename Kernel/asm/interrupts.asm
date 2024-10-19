@@ -9,10 +9,12 @@ GLOBAL haltcpu
 
 GLOBAL _irq00Handler
 GLOBAL _irq01Handler
+GLOBAL _irq80Handler
 
 GLOBAL _exceptionHandler00
 
 EXTERN irqDispatcher
+EXTERN syscallDispatcher
 EXTERN exceptionDispatcher
 
 SECTION .text
@@ -119,6 +121,21 @@ _irq00Handler:
 ; Keyboard
 _irq01Handler:
 	irqHandlerMaster 1
+
+; System Call
+; Not using the %irqHandlerMaster macro because it needs to pass the stack pointer to the syscall
+_irq80Handler:
+	pushState
+
+	mov rdi, rsp ; pass REGISTERS (stack) to irqDispatcher, see: `pushState` two lines above
+	call syscallDispatcher
+
+	; signal pic EOI (End of Interrupt)
+	mov al, 20h
+	out 20h, al
+
+	popState
+	iretq
 
 ; Zero Division Exception
 _exceptionHandler00:
