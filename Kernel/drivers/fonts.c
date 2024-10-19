@@ -116,21 +116,7 @@ void __DEBUG__renderTicks(uint64_t ticks) {
 
 // `ascii` ASCII character to print (0-127)
 void putChar(char ascii) {
-    if (xBufferPosition + glyphSizeX * fontSize > getWindowWidth()) {
-        // @todo: Text may overflow at the bottom of the screen
-        yBufferPosition += maxGlyphSizeYOnLine;
-        xBufferPosition = 0;
-    }
-
-    renderAscii(ascii, xBufferPosition, yBufferPosition);
-    xBufferPosition += glyphSizeX * fontSize;
-}
-
-// `string` Null terminated string
-void print(char * string) {
-    char c;
-    for (int i = 0; (c = string[i]) != 0; i++) {
-        switch (c) {
+    switch (ascii){
             case NEW_LINE_CHAR:
                 newLine();
                 break;
@@ -139,6 +125,24 @@ void print(char * string) {
                     putChar(' ');
                 } while(xBufferPosition % (TAB_SIZE * glyphSizeX * fontSize) != 0);
                 break;
+            default:
+                if (xBufferPosition + glyphSizeX * fontSize > getWindowWidth()) {
+                    // @todo: Text may overflow at the bottom of the screen
+                    yBufferPosition += maxGlyphSizeYOnLine;
+                    xBufferPosition = 0;
+                }
+
+                renderAscii(ascii, xBufferPosition, yBufferPosition);
+                xBufferPosition += glyphSizeX * fontSize;
+                break;
+    }
+}
+
+// `string` Null terminated string
+void print(char * string) {
+    char c;
+    for (int i = 0; (c = string[i]) != 0; i++) {
+        switch (c){
             case ESCAPE_CHAR:
                 parseANSI(string, &i);
                 break;
