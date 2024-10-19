@@ -86,6 +86,7 @@ int main(){
 	load_idt();
 
 	shell();
+	printf("OUT OF SHELL");
 
 	while (1) { } // prevent halt Kernel/loader.asm#L11
 
