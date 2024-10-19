@@ -16,7 +16,7 @@ sampleDataModule:
 clean:
 	cd SampleCodeModule; make clean
 	cd libc; make clean
-	rm -rf *.bin
+	rm -rf *.bin *.o *.so
 
 
 .PHONY: libc sampleCodeModule all clean

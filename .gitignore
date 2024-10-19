@@ -9,6 +9,8 @@
 
 # Object files
 *.o
+*.a
+*.so
 
 # Bash
 .bash_history
