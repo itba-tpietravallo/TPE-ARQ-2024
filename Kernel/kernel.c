@@ -7,6 +7,7 @@
 #include <idtLoader.h>
 #include <fonts.h>
 #include <time.h>
+#include <sound.h>
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -83,6 +84,8 @@ void * initializeKernelBinary(){
 
 int main(){	
 	load_idt();
+
+	// beep();
 
 	((EntryPoint)sampleCodeModuleAddress)();
 

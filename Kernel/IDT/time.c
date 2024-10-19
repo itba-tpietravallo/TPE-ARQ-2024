@@ -1,6 +1,9 @@
 #include <time.h>
+#include <interrupts.h>
 
 #include <fonts.h>
+
+#define SECONDS_TO_TICKS 18
 
 static unsigned long ticks = 0;
 
@@ -16,5 +19,16 @@ int ticks_elapsed() {
 }
 
 int seconds_elapsed() {
-	return ticks / 18;
+	return ticks / SECONDS_TO_TICKS;
+}
+
+void sleepTicks(uint64_t sleep_t) {
+	unsigned long start = ticks;
+	while (ticks < start + sleep_t) _hlt();
+	return;
+}
+
+void sleep(int seconds) {
+	sleepTicks(seconds * SECONDS_TO_TICKS);
+	return;
 }
