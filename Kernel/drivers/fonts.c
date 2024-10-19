@@ -51,7 +51,7 @@ static uint32_t uintToBase(uint64_t value, char * buffer, uint32_t base);
 static void printBase(uint64_t value, uint32_t base);
 
 static void setANSIProp(uint8_t prop);
-static void parseANSI(char * string, int * i);
+static void parseANSI(const char * string, int * i);
 
 // * Uses inline to avoid stack frames on hot paths *
 static inline void renderFromBitmap(char * bitmap, uint64_t xBase, uint64_t yBase) {
@@ -139,7 +139,7 @@ void putChar(char ascii) {
 }
 
 // `string` Null terminated string
-void print(char * string) {
+void print(const char * string) {
     char c;
     for (int i = 0; (c = string[i]) != 0; i++) {
         switch (c){
@@ -294,7 +294,7 @@ static void setANSIProp(uint8_t prop) {
     }
 }
 
-static void parseANSI(char * string, int * i) {
+static void parseANSI(const char * string, int * i) {
     // \e[0;31mExample\e[0m"
     // \e[0;31m -> Set text_color to red
     // \e[0m -> Reset text_color

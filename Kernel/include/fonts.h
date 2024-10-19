@@ -5,7 +5,7 @@
 #include <videoDriver.h>
 
 void putChar(char ascii);
-void print(char * string);
+void print(const char * string);
 void newLine();
 void printDec(uint64_t value);
 void printHex(uint64_t value);

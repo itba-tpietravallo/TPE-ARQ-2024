@@ -20,5 +20,5 @@ void shell(){
     }
 
     buffer[buffer_dim] = 0;
-    printf(buffer);
+    printf((char *)buffer);
 }

@@ -4,7 +4,6 @@
 #include <stdint.h>
 #include <fonts.h>
 
-#define NULL 0
 #define EOF -1
 
 void * memset(void * destination, int32_t character, uint64_t length);
