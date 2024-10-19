@@ -3,7 +3,7 @@
 
 #include <lib.h>
 
-int8_t getChar();
+int8_t getKeyboardCharacter();
 void keyboardHandler();
 
 #endif

@@ -3,6 +3,8 @@
 
 #include <string.h>
 
-void puts(char * str);
+void puts(const char * str);
+void printf(const char * str);
+char getchar();
 
 #endif

@@ -7,7 +7,6 @@
 #include <idtLoader.h>
 #include <fonts.h>
 #include <time.h>
-#include <shell.h>
 
 extern uint8_t text;
 extern uint8_t rodata;

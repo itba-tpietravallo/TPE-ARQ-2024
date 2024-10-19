@@ -1,6 +1,7 @@
 #include <naiveConsole.h>
 #include <keyboard.h>
 #include <fonts.h>
+#include <interrupts.h>
 
 #define ESCAPE_KEY 0x01
 #define BACKSPACE_KEY 0x0E
@@ -188,8 +189,8 @@ static void updateToRead(){
 }
 
 // returns until EOF
-int8_t getChar(){
-    while(characters_to_read == 0);
+int8_t getKeyboardCharacter(){
+    while(characters_to_read == 0) _hlt();
 
     int8_t last_written_character, read_character;
 
