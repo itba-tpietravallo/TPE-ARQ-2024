@@ -1,12 +1,22 @@
 include ../Makefile.inc
 
-MODULE=libc.o
-SOURCES=$(wildcard [^_]*.c)
+MODULE=libc.a
+SOURCES_C=$(wildcard *.c)
+SOURCES_ASM=$(wildcard asm/*.asm)
+
+OBJECTS_C=$(SOURCES_C:.c=.o)
+OBJECTS_ASM=$(SOURCES_ASM:.asm=.o)
 
 all: $(MODULE)
 
-$(MODULE): $(SOURCES)
-	$(GCC) -c -I../include $(GCCFLAGS) $(SOURCES) -o ../$(MODULE)
+$(MODULE): $(OBJECTS_C) $(OBJECTS_ASM)
+	$(AR) rcs ../$@ $^
+
+%.o : %.c
+	$(GCC) -c -fno-pie -I../include $(GCCFLAGS) $<
+
+%.o : %.asm
+	$(ASM) $(ASMFLAGS) $< -o $@
 
 clean:
 	rm -f ../$(MODULE)
