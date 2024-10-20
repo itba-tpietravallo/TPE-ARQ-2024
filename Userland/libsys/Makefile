@@ -13,12 +13,13 @@ $(MODULE): $(OBJECTS_C) $(OBJECTS_ASM)
 	$(AR) rcs ../$@ $^
 
 %.o : %.c
-	$(GCC) -c -fno-pie -I../include $(GCCFLAGS) $<
+	$(GCC) -c $(GCCFLAGS) $<
 
 %.o : %.asm
 	$(ASM) $(ASMFLAGS) $< -o $@
 
 clean:
+	rm -f *.o
 	rm -f ../$(MODULE)
 
 .PHONY: all clean print
