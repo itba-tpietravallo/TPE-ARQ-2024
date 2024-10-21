@@ -11,7 +11,7 @@ int main() {
 	// puts("Hello, World!\n"); // compiles! (does not print yet)
 	
 	printf("shell \e[0;32m$\e[0m ");
-    beep();
+    // beep();
 
     char c, buffer_has_space = 1;
 

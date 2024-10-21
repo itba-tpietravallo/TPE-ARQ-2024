@@ -22,6 +22,9 @@ void decreaseFontSize(void);
 void setTextColor(uint32_t color);
 void setBackgroundColor(uint32_t color);
 
+void increaseFontSizeP2(void);
+void resetFontSize(void);
+
 void __DEBUG__renderTicks(uint64_t ticks);
 
 #endif

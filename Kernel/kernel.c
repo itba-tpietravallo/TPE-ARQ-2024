@@ -87,6 +87,32 @@ int main(){
 
 	// beep();
 
+	print("This is an aliasing test. ABCD-1234\n\n");
+	increaseFontSize();
+	print("This is an aliasing test. ABCD-1234\n\n");
+	increaseFontSize();
+	print("This is an aliasing test. ABCD-1234\n\n");
+	increaseFontSize();
+	print("This is an aliasing test. ABCD-1234\n\n");
+	increaseFontSize();
+	print("This is an aliasing test. ABCD-1234\n\n");
+	increaseFontSize();
+	print("This is an aliasing test. ABCD-1234\n\n");
+
+	resetFontSize();
+
+	newLine();
+	newLine();
+
+	print("This is an aliasing test. ABCD-1234\n\n");
+	increaseFontSizeP2();
+	print("This is an aliasing test. ABCD-1234\n\n");
+	increaseFontSizeP2();
+	print("This is an aliasing test. ABCD-1234\n\n");
+	increaseFontSizeP2();
+
+	resetFontSize();
+
 	((EntryPoint)sampleCodeModuleAddress)();
 
 	while (1) { } // prevent halt Kernel/loader.asm#L11

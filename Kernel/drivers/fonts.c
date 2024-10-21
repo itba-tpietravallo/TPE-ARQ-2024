@@ -33,7 +33,7 @@
 
 static uint16_t glyphSizeX = DEFAULT_GLYPH_SIZE_X;
 static uint16_t glyphSizeY = DEFAULT_GLYPH_SIZE_Y;
-static uint16_t fontSize = 1;
+static double fontSize = 1;
 
 static char * bitmap = (char *) font8x8_basic;
 
@@ -66,12 +66,12 @@ static inline int64_t strlen(const char * str);
 // * Uses inline to avoid stack frames on hot paths *
 static inline void renderFromBitmap(char * bitmap, uint64_t xBase, uint64_t yBase) {
     int xs, xo;
-    for (int x = 0; x < glyphSizeX * fontSize; x++) {
+    for (int x = 0; x < (int)glyphSizeX * fontSize; x++) {
         xs = xBase + x;
         xo = x / fontSize;
-        for (int y = 0; y < glyphSizeY * fontSize; y++) {
+        for (int y = 0; y < (int)glyphSizeY * fontSize; y++) {
             // Read into char * slice and mask
-            putPixel(*(bitmap + (y / fontSize)) & (1 << xo) ? text_color : background_color, xs, yBase + y);
+            putPixel(*(bitmap + (int)(y / fontSize)) & (1 << xo) ? text_color : background_color, xs, yBase + y);
         }
     }
 }
@@ -133,17 +133,17 @@ void putChar(char ascii) {
         case TABULATOR_CHAR:
             do {
                 putChar(' ');
-            } while(xBufferPosition % (TAB_SIZE * glyphSizeX * fontSize) != 0);
+            } while(xBufferPosition % (int)(TAB_SIZE * glyphSizeX * fontSize) != 0);
             break;
         default:
-            if (xBufferPosition + glyphSizeX * fontSize > getWindowWidth()) {
+            if (xBufferPosition + (int)(glyphSizeX * fontSize) > getWindowWidth()) {
                 // @todo: Text may overflow at the bottom of the screen
                 yBufferPosition += maxGlyphSizeYOnLine;
                 xBufferPosition = 0;
             }
 
             renderAscii(ascii, xBufferPosition, yBufferPosition);
-            xBufferPosition += glyphSizeX * fontSize;
+            xBufferPosition += (int)glyphSizeX * fontSize;
             break;
     }
 }
@@ -208,8 +208,18 @@ void clear(void) {
     yBufferPosition = 0;
 }
 
+void resetFontSize(void) {
+    fontSize = 1;
+    maxGlyphSizeYOnLine = glyphSizeY;
+}
+
+void increaseFontSizeP2(void) {
+    fontSize += 1;
+    maxGlyphSizeYOnLine = MAX(maxGlyphSizeYOnLine, glyphSizeY * fontSize);
+}
+
 void increaseFontSize(void) {
-    fontSize *= 2;
+    fontSize *= 1.2;
     maxGlyphSizeYOnLine = MAX(maxGlyphSizeYOnLine, glyphSizeY * fontSize);
 }
 
