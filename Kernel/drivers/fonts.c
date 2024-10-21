@@ -209,12 +209,12 @@ void clear(void) {
 }
 
 void increaseFontSize(void) {
-    fontSize *= 2;
+    fontSize++;
     maxGlyphSizeYOnLine = MAX(maxGlyphSizeYOnLine, glyphSizeY * fontSize);
 }
 
 void decreaseFontSize(void) {
-    fontSize /= 2;
+    fontSize--;
     fontSize = fontSize < 1 ? 1 : fontSize;
 }
 

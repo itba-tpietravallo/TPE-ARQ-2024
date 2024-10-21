@@ -1,5 +1,10 @@
 GLOBAL cpuVendor
 GLOBAL getKeyboardBuffer
+
+GLOBAL getSecond
+GLOBAL getMinute
+GLOBAL getHour
+
 GLOBAL setPITMode
 GLOBAL setPITFrequency
 GLOBAL setSpeaker
@@ -42,6 +47,49 @@ getKeyboardBuffer:
 
 	ret
 
+
+getSecond:
+	push rbp
+	mov rbp, rsp
+
+	mov al, 0
+	out 70h, al
+	in al, 71h
+
+	mov rsp, rbp
+	pop rbp
+
+	ret
+
+
+getMinute:
+	push rbp
+	mov rbp, rsp
+
+	mov al, 2
+	out 70h, al
+	in al, 71h
+
+	mov rsp, rbp
+	pop rbp
+
+	ret
+
+
+getHour:
+	push rbp
+	mov rbp, rsp
+
+	mov al, 4
+	out 70h, al
+	in al, 71h
+
+	mov rsp, rbp
+	pop rbp
+
+	ret
+
+
 setPITMode:
 	push rbp
 	mov rbp, rsp
@@ -53,6 +101,7 @@ setPITMode:
 	pop rbp
 
 	ret
+
 
 setPITFrequency:
 	push rbp
@@ -66,6 +115,7 @@ setPITFrequency:
 	mov rsp, rbp
 	pop rbp
 	ret
+
 
 setSpeaker:
 	push rbp
