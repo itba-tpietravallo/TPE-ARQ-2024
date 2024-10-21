@@ -8,5 +8,6 @@ void setTextColor(uint32_t color);
 void setBackgroundColor(uint32_t color);
 void increaseFontSize(void);
 void decreaseFontSize(void);
+void getDate(int * hour, int * minute, int * second);
 
 #endif
