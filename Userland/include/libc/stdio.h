@@ -5,6 +5,7 @@
 
 void puts(const char * str);
 void printf(const char * str);
-char getchar();
+int getchar();
+void putchar(const char c);
 
 #endif

@@ -11,7 +11,7 @@ void puts(const char * str) {
     sys_write(FD_STDOUT, "\n", 1);
 }
 
-void printf(const char * str){
+void printf(const char * str) {
     #ifndef ANSI_8_BIT_COLOR_SUPPORT
         int len = strlen(str);
         sys_write(FD_STDOUT, str, len);
@@ -28,8 +28,16 @@ void printf(const char * str){
     #endif
 }
 
-char getchar(){
+void perror(const char * s1) {
+    sys_write(FD_STDERR, s1, strlen(s1));
+}
+
+int getchar(void) {
     char c[1];
     while(sys_read(FD_STDIN, c, 1) == -1);
     return c[0];
 }
+
+void putchar(const char c) {
+    sys_write(FD_STDOUT, &c, 1);
+};

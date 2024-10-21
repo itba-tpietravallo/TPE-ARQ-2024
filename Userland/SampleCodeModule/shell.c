@@ -1,32 +1,43 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+
 #include <sys.h>
 #include <exceptions.h>
 
-#define BUFFER_SIZE 1024
+#define MAX_BUFFER_SIZE 1024
 
-static char buffer[BUFFER_SIZE];
-static int buffer_dim;
+static char buffer[MAX_BUFFER_SIZE];
+static int buffer_dim = 0;
 
 int main() {
-	// puts("Hello, World!\n"); // compiles! (does not print yet)
-	
-	printf("shell \e[0;32m$\e[0m ");
-    beep();
+	while (1) {
+        printf("shell \e[0;32m$\e[0m ");
 
-    char c, buffer_has_space = 1;
+        char c;
 
-    while(buffer_has_space && (c = getchar()) != '\n'){
-        if(buffer_dim == BUFFER_SIZE - 1){
-            printf("Shell buffer overflow");
-            buffer_has_space = 0;
-        } else{
+        while(buffer_dim < MAX_BUFFER_SIZE && (c = getchar()) != '\n'){
             buffer[buffer_dim++] = c;
         }
-    }
 
-    buffer[buffer_dim] = 0;
-    puts((char *)buffer);
+        if(buffer_dim == 1024){
+            printf("\n\e[0;31mShell buffer overflow\e[0m\n");
+            return 1;
+        };
+
+        buffer[buffer_dim] = 0;
+        
+        char * command = strtok(buffer, " ");
+
+        if (strcmp(command, "echo") == 0) {
+            printf(buffer + strlen(command) + 1);
+        } else {
+            printf("Command not found\n");
+        }
+
+        printf("\n");
+        buffer[0] = buffer_dim = 0;
+    }
 
 	return one();
 }

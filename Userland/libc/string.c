@@ -1,6 +1,7 @@
 #include <string.h>
+#include <stdlib.h>
 
-int strlen(char * str) {
+int strlen(const char * str) {
     int i = 0;
     while (str[i] != 0) {
         i++;
@@ -26,4 +27,32 @@ void strcpy(char * dest, char * src) {
         i++;
     }
     dest[i] = 0;
+}
+
+char * strtok(char * s1, const char * s2) {
+    static char * last;
+
+    if (s1 != NULL) {
+        last = s1;
+    } else {
+        if (*last == 0) {
+            return NULL;
+        }
+        s1 = last;
+    }
+
+    while (*last != 0) {
+        int i = 0;
+        while (s2[i] != 0) {
+            if (*last == s2[i]) {
+                *last = 0;
+                last++;
+                return s1;
+            }
+            i++;
+        }
+        last++;
+    }
+
+    return s1;
 }
