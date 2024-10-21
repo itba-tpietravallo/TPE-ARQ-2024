@@ -23,7 +23,7 @@ static void setup_IDT_entry(int index, uint64_t offset);
 void load_idt() {
 	_cli();
 	// Load exception handlers
-	// setup_IDT_entry(0x00, (uint64_t)&_exceptionHandler00);
+	setup_IDT_entry(0x00, (uint64_t)&_exceptionHandler00);
 
 	// Load ISRs
 	// https://wiki.osdev.org/Interrupts#General_IBM-PC_Compatible_Interrupt_Information

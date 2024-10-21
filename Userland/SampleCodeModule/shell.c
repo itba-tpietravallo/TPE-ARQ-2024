@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys.h>
+#include <exceptions.h>
 
 #define BUFFER_SIZE 1024
 
