@@ -5,11 +5,13 @@ _divzero:
 
     push rbp
     mov rbp, rsp
+    push rbx
 
-    mov eax, 10
-    xor ebx, ebx
-    div ebx
+    mov rax, 10
+    xor rbx, rbx
+    div rbx
 
+    pop rbx
     mov rsp, rbp
     pop rbp
     ret

@@ -72,6 +72,7 @@ SECTION .text
 	pushState
 
 	mov rdi, %1 ; pass argument to exceptionDispatcher
+	mov rsi, rbp ;pass current register values to exceptionDispatcher
 	call exceptionDispatcher
 
 	popState
