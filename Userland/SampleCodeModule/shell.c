@@ -7,6 +7,8 @@
 static char buffer[BUFFER_SIZE];
 static int buffer_dim;
 
+void date(void);
+
 int main() {
 	// puts("Hello, World!\n"); // compiles! (does not print yet)
 	
@@ -30,6 +32,8 @@ int main() {
 	return one();
 }
 
-void date(){
-	
+void date(void){
+	int hour, minute, second;
+    getDate(&hour, &minute, &second);
+    // call to printf()
 }

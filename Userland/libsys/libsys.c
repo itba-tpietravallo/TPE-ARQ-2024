@@ -20,3 +20,9 @@ void increaseFontSize(void) {
 void decreaseFontSize(void) {
     sys_fonts_decrease_size();
 }
+
+void getDate(int * hour, int * minute, int * second) {
+    sys_hour(hour);
+    sys_minute(minute);
+    sys_second(second);
+}

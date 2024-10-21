@@ -23,4 +23,12 @@ int64_t sys_fonts_decrease_size(void);
 /* 0x80000008 */
 int64_t sys_fonts_increase_size(void);
 
+// Date syscall prototypes
+/* 0x80000010 */
+uint8_t sys_hour(int * hour);
+/* 0x80000011 */
+uint8_t sys_minute(int * minute);
+/* 0x80000012 */
+uint8_t sys_second(int * second);
+
 #endif

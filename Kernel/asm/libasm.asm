@@ -1,8 +1,10 @@
 GLOBAL cpuVendor
 GLOBAL getKeyboardBuffer
+
 GLOBAL getSecond
 GLOBAL getMinute
 GLOBAL getHour
+
 GLOBAL setPITMode
 GLOBAL setPITFrequency
 GLOBAL setSpeaker
