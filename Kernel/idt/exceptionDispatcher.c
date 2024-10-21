@@ -1,9 +1,9 @@
 #include <fonts.h>
 #include <interrupts.h>
 #include<syscallDispatcher.h>
+#include<keyboard.h>
 
 static void * const sampleCodeModuleAddress = (void*)0x400000;
-static void * const sampleDataModuleAddress = (void*)0x500000;
 
 typedef int (*EntryPoint)();
 
@@ -27,11 +27,11 @@ void exceptionDispatcher(int exception, Registers * registers) {
 static void zero_division(Registers * registers, int errorCode) {
 
 
-	// TODO beautify this
+	// TODO beautify (and enchance) this
 	clear();
 	setTextColor(0x00FF0000);
 	print("Zero Dividing Exception Ocurred \n");
-	print("Current registers values are");
+	print("Current registers values are\n");
 	print("rax = ");	printDec(registers-> rax); print("\n");
 	print("rbx = ");	printDec(registers-> rbx); print("\n");
 	print("rcx = ");	printDec(registers-> rcx); print("\n");
@@ -47,6 +47,15 @@ static void zero_division(Registers * registers, int errorCode) {
 	print("r13 = ");	printDec(registers-> r13); print("\n");
 	print("r14 = ");	printDec(registers-> r14); print("\n");
 	print("r15 = ");	printDec(registers-> r15); print("\n");
+	setTextColor(0x00FFFFFF);
+
+
+	
+
+	print("Press r to go back to Shell");
+
+	char a;
+	while ((a = getKeyboardCharacter()) != 'r'){}
 
 	((EntryPoint)sampleCodeModuleAddress)();
 	// while(1) {} _hlt();

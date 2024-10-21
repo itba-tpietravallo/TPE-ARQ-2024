@@ -31,9 +31,12 @@ int main() {
 
         if (strcmp(command, "echo") == 0) {
             printf(buffer + strlen(command) + 1);
+        } else if (strcmp(command, "divzero") == 0) {
+            _divzero();
         } else {
             printf("Command not found\n");
-        }
+        } 
+    
 
         printf("\n");
         buffer[0] = buffer_dim = 0;
