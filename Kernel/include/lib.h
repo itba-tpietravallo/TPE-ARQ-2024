@@ -16,4 +16,8 @@ char *cpuVendor(char *result);
 uint8_t getKeyboardBuffer(void);
 uint8_t getKeyboardStatus(void);
 
+uint8_t getSecond(void);
+uint8_t getMinute(void);
+uint8_t getHour(void);
+
 #endif

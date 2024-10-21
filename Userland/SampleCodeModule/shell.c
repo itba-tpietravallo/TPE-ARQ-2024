@@ -10,6 +10,8 @@
 static char buffer[MAX_BUFFER_SIZE];
 static int buffer_dim = 0;
 
+void date(void);
+
 int main() {
 	while (1) {
         printf("shell \e[0;32m$\e[0m ");
@@ -40,4 +42,10 @@ int main() {
     }
 
 	return one();
+}
+
+void date(void){
+	int hour, minute, second;
+    getDate(&hour, &minute, &second);
+    // call to printf()
 }
