@@ -5,7 +5,6 @@ GLOBAL _hlt
 
 GLOBAL picMasterMask
 GLOBAL picSlaveMask
-GLOBAL haltcpu
 
 GLOBAL _irq00Handler
 GLOBAL _irq01Handler
@@ -140,8 +139,3 @@ _irq80Handler:
 ; Zero Division Exception
 _exceptionHandler00:
 	exceptionHandler 0
-
-haltcpu:
-	cli
-	hlt
-	ret

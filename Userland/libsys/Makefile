@@ -1,6 +1,6 @@
 include ../Makefile.inc
 
-MODULE=libc.a
+MODULE=libsys.a
 SOURCES_C=$(wildcard *.c)
 SOURCES_ASM=$(wildcard asm/*.asm)
 
