@@ -45,11 +45,12 @@
 #define TO_UPPER(c) (IS_ALPHA(c) ? ((c) - 'a' + 'A') : (c))
 #define IS_PRINTABLE(c) ((c) == RETURN_KEY || (c) == TABULATOR_KEY || (32 <= (c) && (c) <= 254))
 
-#define INC_MOD(x, m) ((x) = (x) + 1 % (m))
+#define INC_MOD(x, m) ((x) = ((x) + 1) % (m))
+#define DEC_MOD(x, m) ((x) = ((x) == 0 ? (m) - 1 : (x) - 1))
 
 static uint8_t SHIFT_KEY_PRESSED, CAPS_LOCK_KEY_PRESSED, CONTROL_KEY_PRESSED;
 static uint8_t buffer[BUFFER_SIZE];
-static uint8_t * to_write = buffer, * to_read = buffer;
+static uint16_t to_write = 0, to_read = 0;
 
 // QEMU source https://github.com/qemu/qemu/blob/master/pc-bios/keymaps/en-us
 // http://flint.cs.yale.edu/feng/cos/resources/BIOS/Resources/assembly/makecodes.html
@@ -170,8 +171,8 @@ static uint8_t isControl(uint8_t scancode){
 
 // halts until EOF
 int8_t getKeyboardCharacter(){
-    while(to_write == to_read || *(to_write - 1) != '\n') _hlt();
-    int8_t aux = *to_read;
+    while(to_write == to_read || buffer[to_write - 1] != '\n') _hlt();
+    int8_t aux = buffer[to_read];
     INC_MOD(to_read, BUFFER_SIZE);
     return aux;
 }
@@ -179,7 +180,7 @@ int8_t getKeyboardCharacter(){
 void keyboardHandler(){
     if(to_write != to_read && (to_write - to_read) % BUFFER_SIZE == 0){
         print("\n\nKernel buffer overflow\n\n");
-        to_read = to_write = buffer;
+        to_read = to_write = 0;
         return ;
     } else{
         uint8_t scancode = getKeyboardBuffer();
@@ -221,10 +222,14 @@ void keyboardHandler(){
                     c = '\t';
                 }
 
-                *(to_write) = c;
+                buffer[to_write] = c;
                 INC_MOD(to_write, BUFFER_SIZE);
-                *(to_write) = EOF;
+                buffer[to_write] = EOF;
                 putChar(c);
+            } else if(c == BACKSPACE_KEY && to_write != to_read){
+                DEC_MOD(to_write, BUFFER_SIZE);
+                buffer[to_write] = EOF;
+                clearPreviousPixel();
             }
         }
     }
