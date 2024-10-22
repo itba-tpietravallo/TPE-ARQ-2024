@@ -17,7 +17,7 @@ void printHex(uint64_t value);
 void printBin(uint64_t value);
 void clear(void);
 
-void clearPreviousPixel(void);
+void clearPreviousCharacter(void);
 
 void increaseFontSize(void);
 void decreaseFontSize(void);

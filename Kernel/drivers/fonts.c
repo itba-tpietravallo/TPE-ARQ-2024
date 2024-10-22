@@ -59,7 +59,7 @@ static char buffer[64] = { '0' };
 static inline void renderFromBitmap(char * bitmap, uint64_t xBase, uint64_t yBase);
 static inline void renderAscii(char ascii, uint64_t x, uint64_t y);
 
-void clearPreviousPixel(void);
+void clearPreviousCharacter(void);
 
 static uint32_t uintToBase(uint64_t value, char * buffer, uint32_t base);
 static void printBase(uint64_t value, uint32_t base);
@@ -210,7 +210,7 @@ void clear(void) {
     yBufferPosition = 0;
 }
 
-void clearPreviousPixel(void){
+void clearPreviousCharacter(void){
     uint16_t prev_x, prev_y = yBufferPosition;
     if(xBufferPosition == 0){
         prev_x = getWindowWidth();

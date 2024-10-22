@@ -234,7 +234,7 @@ void keyboardHandler(){
             } else if(c == BACKSPACE_KEY && to_write != to_read){
                 DEC_MOD(to_write, BUFFER_SIZE);
                 buffer[to_write] = EOF;
-                clearPreviousPixel();
+                clearPreviousCharacter();
             }
         }
     }
