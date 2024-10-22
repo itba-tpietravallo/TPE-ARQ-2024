@@ -26,3 +26,7 @@ void getDate(int * hour, int * minute, int * second) {
     sys_minute(minute);
     sys_second(second);
 }
+
+void clearScreen(void) {
+    sys_clear_screen();
+}

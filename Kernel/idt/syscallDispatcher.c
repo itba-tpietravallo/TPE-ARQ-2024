@@ -15,6 +15,7 @@ static int32_t sys_fonts_text_color(uint32_t color);
 static int32_t sys_fonts_background_color(uint32_t color);
 static int32_t sys_fonts_decrease_size(void);
 static int32_t sys_fonts_increase_size(void);
+static int32_t sys_clear_screen(void);
 
 // Date syscall prototypes
 static uint8_t sys_hour(int * hour);
@@ -38,6 +39,8 @@ int64_t syscallDispatcher(Registers * registers) {
 			return -1;
 		case 0x80000007: return sys_fonts_decrease_size();
 		case 0x80000008: return sys_fonts_increase_size();
+		case 0x80000009: /* Reserved for sys_fonts_set_size */
+		case 0x8000000A: return sys_clear_screen();
 
 		case 0x80000010: return sys_hour((int *) registers->rdi);
 		case 0x80000011: return sys_minute((int *) registers->rdi);
@@ -94,6 +97,11 @@ static int32_t sys_fonts_decrease_size(void) {
 
 static int32_t sys_fonts_increase_size(void) {
 	increaseFontSize();
+	return 0;
+}
+
+static int32_t sys_clear_screen(void) {
+	clear();
 	return 0;
 }
 

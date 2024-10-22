@@ -192,16 +192,19 @@ void keyboardHandler(){
             } else{
                 SHIFT_KEY_PRESSED = 0;
             }
+            return ;
         } else if(isCapsLock(scancode)){
             if(is_pressed){
                 CAPS_LOCK_KEY_PRESSED = !CAPS_LOCK_KEY_PRESSED;
             }
+            return ;
         } else if(isControl(scancode)){
             if(is_pressed){
                 CONTROL_KEY_PRESSED = 1;
             } else{
                 CONTROL_KEY_PRESSED = 0;
             }
+            return ;
         }
         
         if (is_pressed) {

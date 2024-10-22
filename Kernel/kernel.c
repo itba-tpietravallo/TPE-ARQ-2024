@@ -85,6 +85,7 @@ int main(){
 
 	// beep();
 
+	increaseFontSize();
 	((EntryPoint)shellModuleAddress)();
 
 	while (1) { } // prevent halt Kernel/loader.asm#L11

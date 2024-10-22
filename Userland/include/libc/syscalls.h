@@ -22,6 +22,8 @@ int64_t sys_fonts_background_color(uint32_t color);
 int64_t sys_fonts_decrease_size(void);
 /* 0x80000008 */
 int64_t sys_fonts_increase_size(void);
+/* 0x8000000A */
+int64_t sys_clear_screen(void);
 
 // Date syscall prototypes
 /* 0x80000010 */

@@ -9,5 +9,6 @@ void setBackgroundColor(uint32_t color);
 void increaseFontSize(void);
 void decreaseFontSize(void);
 void getDate(int * hour, int * minute, int * second);
+void clearScreen(void);
 
 #endif
