@@ -5,7 +5,7 @@ static void setANSIProp(uint8_t prop);
 void parseANSI(const char * string, int * i);
 
 static void setANSIProp(uint8_t prop) {
-    int64_t (*set_fn)(uint32_t) = sys_fonts_text_color;
+    int32_t (*set_fn)(uint32_t) = sys_fonts_text_color;
 
     if ((prop >= 40 && prop <= 47) || (prop >= 100 && prop <= 107)) {
         prop -= 10;

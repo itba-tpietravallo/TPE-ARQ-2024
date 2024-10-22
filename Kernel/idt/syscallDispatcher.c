@@ -19,15 +19,15 @@ static int32_t sys_fonts_increase_size(void);
 static int32_t sys_clear_screen(void);
 
 // Date syscall prototypes
-static uint8_t sys_hour(int * hour);
-static uint8_t sys_minute(int * minute);
-static uint8_t sys_second(int * second);
+static int32_t sys_hour(int * hour);
+static int32_t sys_minute(int * minute);
+static int32_t sys_second(int * second);
 
 // Draw rectangle syscall prototype
-static uint32_t sys_rectangle(uint32_t color, uint64_t width_pixels, uint64_t height_pixels);
+static int32_t sys_rectangle(uint32_t color, uint64_t width_pixels, uint64_t height_pixels);
 
 // @todo Note: Technically.. registers on the stack are modifiable (since its a struct pointer, not struct). 
-int64_t syscallDispatcher(Registers * registers) {
+int32_t syscallDispatcher(Registers * registers) {
 	switch(registers->rax){
 		case 3: return sys_read(registers->rdi, (char *) registers->rsi, registers->rdx);
 		// Note: Register parameters are 64-bit
@@ -115,29 +115,29 @@ static int32_t sys_clear_screen(void) {
 // Date system calls
 // ==================================================================
 
-static uint8_t sys_hour(int * hour) {
+static int32_t sys_hour(int * hour) {
 	*hour = getHour();
 	printHex(*hour);
 	return 0;
 }
 
-static uint8_t sys_minute(int * minute) {
+static int32_t sys_minute(int * minute) {
 	*minute = getMinute();
 	printHex(*minute);
 	return 0;
 }
 
-static uint8_t sys_second(int * second) {
+static int32_t sys_second(int * second) {
 	*second = getSecond();
 	printHex(*second);
 	return 0;
 }
 
 // ==================================================================
-// Date system calls
+// Draw system calls
 // ==================================================================
 
-static uint32_t sys_rectangle(uint32_t color, uint64_t width_pixels, uint64_t height_pixels){
+static int32_t sys_rectangle(uint32_t color, uint64_t width_pixels, uint64_t height_pixels){
 	// print("Hello from sys_dispatcher    ");
 	drawRectangle(color, width_pixels, height_pixels);
 	return 0;
