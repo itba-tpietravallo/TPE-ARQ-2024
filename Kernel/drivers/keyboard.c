@@ -44,6 +44,7 @@
 #define IS_ALPHA(c) ('a' <= (c) && (c) <= 'z') 
 #define TO_UPPER(c) (IS_ALPHA(c) ? ((c) - 'a' + 'A') : (c))
 #define IS_PRINTABLE(c) ((c) == RETURN_KEY || (c) == TABULATOR_KEY || (32 <= (c) && (c) <= 254))
+#define IS_ARROW(s) ((s) == KP_UP_KEY || (s) == KP_LEFT_KEY || (s) == KP_RIGHT_KEY || (s) == KP_DOWN_KEY)
 
 #define INC_MOD(x, m) ((x) = ((x) + 1) % (m))
 #define SUB_MOD(x, m) ((x) == 0 ? (m) - 1 : (x) - 1)
@@ -212,7 +213,7 @@ void keyboardHandler(){
             return ;
         }
         
-        if (is_pressed) {
+        if (!(IS_ARROW(scancode) && !SHIFT_KEY_PRESSED) && scancode != ALT_KEY_L && is_pressed) {
             uint8_t c = scancodeMap[scancode][SHIFT_KEY_PRESSED];
 
             if(CAPS_LOCK_KEY_PRESSED == 1){
