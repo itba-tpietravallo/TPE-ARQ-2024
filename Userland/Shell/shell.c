@@ -24,6 +24,7 @@ typedef struct {
 Command commands[] = {
     { .name = "echo",       .function = (int (*)(void))(unsigned long long) echo,       .description = "Prints the input string" },
     { .name = "divzero",    .function = (int (*)(void))(unsigned long long) _divzero,   .description = "Generates a division by zero exception" },
+    { .name = "invalidopcode",    .function = (int (*)(void))(unsigned long long) _invalidopcode,   .description = "Generates an invalid Opcode exception" },
     { .name = "date",       .function = (int (*)(void))(unsigned long long)date,        .description = "Prints the current date" },
     { .name = "clear",      .function = (int (*)(void))(unsigned long long)clear,       .description = "Clears the screen" },
     { .name = "help",       .function = (int (*)(void))(unsigned long long)help,        .description = "Prints the available commands" }
@@ -41,7 +42,7 @@ int main() {
             buffer[buffer_dim++] = c;
         }
 
-        if(buffer_dim == 1024){
+        if(buffer_dim == MAX_BUFFER_SIZE){
             printf("\n\e[0;31mShell buffer overflow\e[0m\n");
             return 1;
         };

@@ -3,7 +3,7 @@
 #include<syscallDispatcher.h>
 #include<keyboard.h>
 
-static void * const sampleCodeModuleAddress = (void*)0x400000;
+static void * const shellModuleAddress = (void*)0x400000;
 
 typedef int (*EntryPoint)();
 
@@ -37,7 +37,7 @@ static void zero_division(Registers * registers, int errorCode) {
 
 	clear();
 	setTextColor(0x00FF0000);
-	print("Zero Dividing Exception number "); 
+	print("Zero Dividing exception number "); 
 	printExceptionData(registers, errorCode);
 }
 
@@ -45,14 +45,14 @@ static void invalid_opcode(Registers * registers, int errorCode) {
 
 	clear();
 	setTextColor(0x00FF6600);
-	print("Invalid Opcode Exception number  "); 
+	print("Invalid Opcode exception number "); 
 	printExceptionData(registers, errorCode);
 }
 
 
 void printExceptionData(Registers * registers, int errorCode) {
 
-	printDec(errorCode); print("Ocurred \n");
+	printDec(errorCode); print(" ocurred\n");
 	print("Current registers values are\n");
 	print("rax = ");	printDec(registers-> rax); print("\n");
 	print("rbx = ");	printDec(registers-> rbx); print("\n");
@@ -76,7 +76,7 @@ void printExceptionData(Registers * registers, int errorCode) {
 	char a;
 	while ((a = getKeyboardCharacter()) != 'r'){}
 
-	((EntryPoint)sampleCodeModuleAddress)();
+	((EntryPoint)shellModuleAddress)();
 	// while(1) {} _hlt();
 	
 }
