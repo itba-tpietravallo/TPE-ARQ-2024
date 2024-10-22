@@ -61,7 +61,8 @@ int main() {
             }
         }
 
-        if (i == sizeof(commands) / sizeof(Command)) {
+        // If the command is not found, ignore \n
+        if (i == sizeof(commands) / sizeof(Command) && command != NULL && *command != '\0' ) {
             printf("\e[0;33mCommand not found\e[0m\n");
         }
     
