@@ -221,7 +221,6 @@ void keyboardHandler(){
                 *(to_write) = c;
                 INC_MOD(to_write, BUFFER_SIZE);
                 *(to_write) = EOF;
-                putChar(c);
             }
         }
     }

@@ -64,6 +64,7 @@ static int32_t sys_read(int32_t fd, char * __user_buf, int32_t count) {
 	int8_t c;
 	for(i = 0; i < count && (c = getKeyboardCharacter()) != EOF; i++){
 		*(__user_buf + i) = c;
+		putChar(c);
 	}
     return i;
 }
