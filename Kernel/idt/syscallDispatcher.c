@@ -65,7 +65,7 @@ static int32_t sys_write(int32_t fd, char * __user_buf, int32_t count) {
 static int32_t sys_read(int32_t fd, char * __user_buf, int32_t count) {
 	int32_t i;
 	int8_t c;
-	for(i = 0; i < count && (c = getKeyboardCharacter()) != EOF; i++){
+	for(i = 0; i < count && (c = getKeyboardCharacter(AWAIT_RETURN_KEY | SHOW_BUFFER_WHILE_TYPING)) != EOF; i++){
 		*(__user_buf + i) = c;
 	}
     return i;

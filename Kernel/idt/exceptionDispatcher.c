@@ -74,7 +74,7 @@ void printExceptionData(Registers * registers, int errorCode) {
 	print("Press r to go back to Shell");
 
 	char a;
-	while ((a = getKeyboardCharacter()) != 'r'){}
+	while ((a = getKeyboardCharacter(AWAIT_RETURN_KEY)) != 'r') {}
 
 	((EntryPoint)shellModuleAddress)();
 	// while(1) {} _hlt();

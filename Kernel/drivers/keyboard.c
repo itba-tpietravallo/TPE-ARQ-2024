@@ -46,11 +46,13 @@
 #define IS_PRINTABLE(c) ((c) == RETURN_KEY || (c) == TABULATOR_KEY || (32 <= (c) && (c) <= 254))
 
 #define INC_MOD(x, m) ((x) = ((x) + 1) % (m))
-#define DEC_MOD(x, m) ((x) = ((x) == 0 ? (m) - 1 : (x) - 1))
+#define SUB_MOD(x, m) ((x) == 0 ? (m) - 1 : (x) - 1)
+#define DEC_MOD(x, m) ((x) = SUB_MOD(x, m))
 
 static uint8_t SHIFT_KEY_PRESSED, CAPS_LOCK_KEY_PRESSED, CONTROL_KEY_PRESSED;
 static uint8_t buffer[BUFFER_SIZE];
 static uint16_t to_write = 0, to_read = 0;
+static uint8_t write_output_while_typing = 0;
 
 // QEMU source https://github.com/qemu/qemu/blob/master/pc-bios/keymaps/en-us
 // http://flint.cs.yale.edu/feng/cos/resources/BIOS/Resources/assembly/makecodes.html
@@ -170,8 +172,10 @@ static uint8_t isControl(uint8_t scancode){
 }
 
 // halts until EOF
-int8_t getKeyboardCharacter(){
-    while(to_write == to_read || buffer[to_write - 1] != '\n') _hlt();
+int8_t getKeyboardCharacter(enum KEYBOARD_OPTIONS options) {
+    write_output_while_typing = options & SHOW_BUFFER_WHILE_TYPING;
+    while(to_write == to_read || ( (options & AWAIT_RETURN_KEY) && buffer[SUB_MOD(to_write, BUFFER_SIZE)] != '\n')) _hlt();
+    write_output_while_typing = 0;
     int8_t aux = buffer[to_read];
     INC_MOD(to_read, BUFFER_SIZE);
     return aux;
@@ -225,7 +229,8 @@ void keyboardHandler(){
                 buffer[to_write] = c;
                 INC_MOD(to_write, BUFFER_SIZE);
                 buffer[to_write] = EOF;
-                putChar(c);
+                if (write_output_while_typing)
+                    putChar(c);
             } else if(c == BACKSPACE_KEY && to_write != to_read){
                 DEC_MOD(to_write, BUFFER_SIZE);
                 buffer[to_write] = EOF;
