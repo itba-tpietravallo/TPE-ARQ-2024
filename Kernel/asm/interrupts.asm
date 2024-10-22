@@ -11,6 +11,7 @@ GLOBAL _irq01Handler
 GLOBAL _irq80Handler
 
 GLOBAL _exceptionHandler00
+GLOBAL _exceptionHandler06
 
 EXTERN irqDispatcher
 EXTERN syscallDispatcher
@@ -69,10 +70,12 @@ SECTION .text
 %endmacro
 
 %macro exceptionHandler 1
+	mov rcx, 3
 	pushState
 
 	mov rdi, %1 ; pass argument to exceptionDispatcher
 	mov rsi, rbp ;pass current register values to exceptionDispatcher
+	
 	call exceptionDispatcher
 
 	popState
@@ -140,3 +143,7 @@ _irq80Handler:
 ; Zero Division Exception
 _exceptionHandler00:
 	exceptionHandler 0
+
+; Invalid Opcode Exception
+_exceptionHandler06:
+	exceptionHandler 6

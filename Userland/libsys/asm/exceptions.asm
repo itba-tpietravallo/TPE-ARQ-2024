@@ -21,6 +21,8 @@ _invalidopcode:
     push rbp
     mov rbp, rsp
 
+    ud2
+
     mov rsp, rbp
     pop rbp
     ret

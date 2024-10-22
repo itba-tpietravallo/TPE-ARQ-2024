@@ -3,34 +3,56 @@
 #include<syscallDispatcher.h>
 #include<keyboard.h>
 
-static void * const shellModuleAddress = (void*)0x400000;
+static void * const sampleCodeModuleAddress = (void*)0x400000;
 
 typedef int (*EntryPoint)();
 
 
 #define ZERO_EXCEPTION_ID 0
+#define INVALID_OPCODE_ID 6
 
-static void zero_division();
+static void zero_division(Registers * registers, int errorCode);
+static void invalid_opcode(Registers * registers, int errorCode);
+
+void printExceptionData(Registers * registers, int errorCode);
 
 void exceptionDispatcher(int exception, Registers * registers) {
 	switch(exception) {
 		case ZERO_EXCEPTION_ID:
 			return zero_division(registers, exception);
 			break;
-
+		case INVALID_OPCODE_ID:
+			return invalid_opcode(registers, exception);
+			break;
 		default:
 			print("Triggered exception dispatcher, but no syscall found");
-
 	}
 }
 
+// TODO beautify (and enchance) this
+
+
+
 static void zero_division(Registers * registers, int errorCode) {
 
-
-	// TODO beautify (and enchance) this
 	clear();
 	setTextColor(0x00FF0000);
-	print("Zero Dividing Exception Ocurred \n");
+	print("Zero Dividing Exception number "); 
+	printExceptionData(registers, errorCode);
+}
+
+static void invalid_opcode(Registers * registers, int errorCode) {
+
+	clear();
+	setTextColor(0x00FF6600);
+	print("Invalid Opcode Exception number  "); 
+	printExceptionData(registers, errorCode);
+}
+
+
+void printExceptionData(Registers * registers, int errorCode) {
+
+	printDec(errorCode); print("Ocurred \n");
 	print("Current registers values are\n");
 	print("rax = ");	printDec(registers-> rax); print("\n");
 	print("rbx = ");	printDec(registers-> rbx); print("\n");
@@ -49,14 +71,12 @@ static void zero_division(Registers * registers, int errorCode) {
 	print("r15 = ");	printDec(registers-> r15); print("\n");
 	setTextColor(0x00FFFFFF);
 
-
-	
-
 	print("Press r to go back to Shell");
 
 	char a;
 	while ((a = getKeyboardCharacter()) != 'r'){}
 
-	((EntryPoint)shellModuleAddress)();
+	((EntryPoint)sampleCodeModuleAddress)();
 	// while(1) {} _hlt();
+	
 }

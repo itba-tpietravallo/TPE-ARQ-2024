@@ -35,6 +35,8 @@ int main() {
             printf(buffer + strlen(command) + 1);
         } else if (strcmp(command, "divzero") == 0) {
             _divzero();
+        } else if (strcmp(command, "invalidopcode") == 0) {
+            _invalidopcode();
         } else {
             printf("Command not found");
         } 
