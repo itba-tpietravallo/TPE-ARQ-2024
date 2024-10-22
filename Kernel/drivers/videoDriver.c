@@ -1,4 +1,5 @@
 #include <videoDriver.h>
+#include <interrupts.h>
 
 struct vbe_mode_info_structure {
 	uint16_t attributes;		// deprecated, only bit 7 should be of interest to you, and it indicates the mode supports a linear frame buffer.
@@ -45,9 +46,11 @@ VBEInfoPtr VBE_mode_info = (VBEInfoPtr) 0x0000000000005C00;
 void putPixel(uint32_t hexColor, uint64_t x, uint64_t y) {
     uint8_t * framebuffer = (uint8_t * )(unsigned long long)(VBE_mode_info->framebuffer);
     uint64_t offset = (x * ((VBE_mode_info->bpp)/8)) + (y * VBE_mode_info->pitch);
-    framebuffer[offset]     =  (hexColor) & 0xFF;
-    framebuffer[offset+1]   =  (hexColor >> 8) & 0xFF; 
-    framebuffer[offset+2]   =  (hexColor >> 16) & 0xFF;
+	uint8_t b = (hexColor) & 0xFF, g = (hexColor >> 8) & 0xFF, r = (hexColor >> 16) & 0xFF;
+
+    framebuffer[offset]     =  b;
+    framebuffer[offset+1]   =  g;
+    framebuffer[offset+2]   =  r;
 }
 
 void drawRectangle(uint32_t hexColor, uint64_t width, uint64_t height){
@@ -64,4 +67,33 @@ uint16_t getWindowHeight() {
 
 uint16_t getWindowWidth() {
 	return VBE_mode_info->width;
+}
+
+void scrollVideoMemoryUp(uint16_t scroll, uint32_t fillColor) {
+	_cli();
+	uint8_t * framebuffer = (uint8_t * )(unsigned long long)(VBE_mode_info->framebuffer);
+	uint16_t width = getWindowWidth();
+	uint16_t height = getWindowHeight();
+	
+	uint8_t b = (fillColor) & 0xFF, g = (fillColor >> 8) & 0xFF, r = (fillColor >> 16) & 0xFF;
+
+	for (uint16_t x = 0; x < width; x++) {
+		// x * bytes_per_pixel
+		uint16_t xoffset = (x * ((VBE_mode_info->bpp)/8));
+		for (uint16_t y = 0; y < height - scroll; y++) {
+			// xoffset + (y * bytes_per_horizontal_line)
+			uint64_t offset = xoffset + (y * VBE_mode_info->pitch);
+			uint64_t new_offset = xoffset + ((y + scroll) * VBE_mode_info->pitch);
+			framebuffer[offset] = framebuffer[new_offset];
+			framebuffer[offset + 1] = framebuffer[new_offset + 1];
+			framebuffer[offset + 2] = framebuffer[new_offset + 2];
+		}
+		for (uint16_t y = height - scroll; y < height; y++) {
+			uint64_t offset = xoffset + (y * VBE_mode_info->pitch);
+			framebuffer[offset] = b;
+			framebuffer[offset + 1] = g;
+			framebuffer[offset + 2] = r;
+		}
+	}
+	_sti();
 }
