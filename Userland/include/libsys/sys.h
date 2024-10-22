@@ -10,5 +10,6 @@ void increaseFontSize(void);
 void decreaseFontSize(void);
 void getDate(int * hour, int * minute, int * second);
 void clearScreen(void);
+void drawRectangle(int color, long long int width_pixels, long long int height_pixels);
 
 #endif

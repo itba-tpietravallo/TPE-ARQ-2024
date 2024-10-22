@@ -30,3 +30,7 @@ void getDate(int * hour, int * minute, int * second) {
 void clearScreen(void) {
     sys_clear_screen();
 }
+
+void drawRectangle(int color, long long int width_pixels, long long int height_pixels){
+    sys_rectangle(color, width_pixels, height_pixels);
+}

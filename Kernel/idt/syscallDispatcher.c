@@ -4,6 +4,7 @@
 #include <keyboard.h>
 #include <fonts.h>
 #include <lib.h>
+#include <videoDriver.h>
 
 // Linux syscall prototypes
 static int32_t sys_write(int32_t fd, char * __user_buf, int32_t count);
@@ -21,6 +22,9 @@ static int32_t sys_clear_screen(void);
 static uint8_t sys_hour(int * hour);
 static uint8_t sys_minute(int * minute);
 static uint8_t sys_second(int * second);
+
+// Draw rectangle syscall prototype
+static uint32_t sys_rectangle(uint32_t color, uint64_t width_pixels, uint64_t height_pixels);
 
 // @todo Note: Technically.. registers on the stack are modifiable (since its a struct pointer, not struct). 
 int64_t syscallDispatcher(Registers * registers) {
@@ -45,6 +49,8 @@ int64_t syscallDispatcher(Registers * registers) {
 		case 0x80000010: return sys_hour((int *) registers->rdi);
 		case 0x80000011: return sys_minute((int *) registers->rdi);
 		case 0x80000012: return sys_second((int *) registers->rdi);
+
+		case 0x80000020: return sys_rectangle(registers->rdi, registers->rsi, registers->rdx);
 
 		default:
 			setBackgroundColor(0x00FF0000); setTextColor(0x00FFFFFF);
@@ -124,5 +130,15 @@ static uint8_t sys_minute(int * minute) {
 static uint8_t sys_second(int * second) {
 	*second = getSecond();
 	printHex(*second);
+	return 0;
+}
+
+// ==================================================================
+// Date system calls
+// ==================================================================
+
+static uint32_t sys_rectangle(uint32_t color, uint64_t width_pixels, uint64_t height_pixels){
+	// print("Hello from sys_dispatcher    ");
+	drawRectangle(color, width_pixels, height_pixels);
 	return 0;
 }

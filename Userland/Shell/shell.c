@@ -14,6 +14,7 @@ int date(void);
 int echo(void);
 int clear(void);
 int help(void);
+int rectangle(void);
 
 typedef struct {
     char * name;
@@ -27,7 +28,8 @@ Command commands[] = {
     { .name = "invalidopcode",    .function = (int (*)(void))(unsigned long long) _invalidopcode,   .description = "Generates an invalid Opcode exception" },
     { .name = "date",       .function = (int (*)(void))(unsigned long long)date,        .description = "Prints the current date" },
     { .name = "clear",      .function = (int (*)(void))(unsigned long long)clear,       .description = "Clears the screen" },
-    { .name = "help",       .function = (int (*)(void))(unsigned long long)help,        .description = "Prints the available commands" }
+    { .name = "help",       .function = (int (*)(void))(unsigned long long)help,        .description = "Prints the available commands" },
+    { .name = "rectangle",       .function = (int (*)(void))(unsigned long long)rectangle,        .description = "Prints a blue rectangle" }
 };
 
 static uint64_t last_command_output = 0;
@@ -116,5 +118,10 @@ int help(void){
 
 int clear(void) {
     clearScreen();
+    return 0;
+}
+
+int rectangle(void){
+    drawRectangle(0xFF, 16, 16);
     return 0;
 }

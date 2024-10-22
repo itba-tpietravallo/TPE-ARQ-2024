@@ -50,6 +50,14 @@ void putPixel(uint32_t hexColor, uint64_t x, uint64_t y) {
     framebuffer[offset+2]   =  (hexColor >> 16) & 0xFF;
 }
 
+void drawRectangle(uint32_t hexColor, uint64_t width, uint64_t height){
+	for(uint64_t y = 0; y < height; y++){
+		for(uint64_t x = 0; x < width; x++){
+			putPixel(hexColor, x, y);
+		}
+	}
+}
+
 uint16_t getWindowHeight() {
 	return VBE_mode_info->height;
 }

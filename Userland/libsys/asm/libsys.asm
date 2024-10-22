@@ -10,6 +10,8 @@ GLOBAL sys_hour
 GLOBAL sys_minute
 GLOBAL sys_second
 
+GLOBAL sys_rectangle
+
 section .text
 
 %macro sys_int80 1
@@ -38,3 +40,5 @@ sys_clear_screen: sys_int80 0x8000000A
 sys_hour: sys_int80 0x80000010
 sys_minute: sys_int80 0x80000011
 sys_second: sys_int80 0x80000012
+
+sys_rectangle: sys_int80 0x80000020

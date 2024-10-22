@@ -33,4 +33,6 @@ uint8_t sys_minute(int * minute);
 /* 0x80000012 */
 uint8_t sys_second(int * second);
 
+uint32_t sys_rectangle(int color, long long int width_pixels, long long int height_pixels);
+
 #endif
