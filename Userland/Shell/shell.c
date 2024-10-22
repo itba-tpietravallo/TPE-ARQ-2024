@@ -33,6 +33,8 @@ Command commands[] = {
 static uint64_t last_command_output = 0;
 
 int main() {
+
+    clear();
 	while (1) {
         printf("\e[0mshell \e[0;32m$\e[0m ");
 

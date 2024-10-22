@@ -21,7 +21,7 @@ _invalidopcode:
     push rbp
     mov rbp, rsp
 
-    ud2
+    ud2  ;https://shorturl.at/Plmjv
 
     mov rsp, rbp
     pop rbp
