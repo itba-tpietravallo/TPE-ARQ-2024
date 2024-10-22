@@ -1,8 +1,6 @@
 include Makefile.inc
 
-SAMPLE_DATA=0001-sampleDataModule.bin
-
-all: libc libsys sampleCodeModule sampleDataModule
+all: libc libsys shell
 
 libc:
 	cd libc; make all
@@ -10,16 +8,13 @@ libc:
 libsys:
 	cd libsys; make all
 
-sampleCodeModule:
-	cd SampleCodeModule; make
-
-sampleDataModule:
-	printf "This is sample data." >> $(SAMPLE_DATA) && dd if=/dev/zero bs=1 count=1 >> $(SAMPLE_DATA)
+shell:
+	cd Shell; make
 
 clean:
-	cd SampleCodeModule; make clean
+	cd Shell; make clean
 	cd libc; make clean
 	cd libsys; make clean
 	rm -rf *.bin *.o *.so *.a
 
-.PHONY: libc libsys sampleCodeModule all clean
+.PHONY: libc libsys shell all clean

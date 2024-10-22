@@ -3,7 +3,7 @@
 #include<syscallDispatcher.h>
 #include<keyboard.h>
 
-static void * const sampleCodeModuleAddress = (void*)0x400000;
+static void * const shellModuleAddress = (void*)0x400000;
 
 typedef int (*EntryPoint)();
 
@@ -57,6 +57,6 @@ static void zero_division(Registers * registers, int errorCode) {
 	char a;
 	while ((a = getKeyboardCharacter()) != 'r'){}
 
-	((EntryPoint)sampleCodeModuleAddress)();
+	((EntryPoint)shellModuleAddress)();
 	// while(1) {} _hlt();
 }

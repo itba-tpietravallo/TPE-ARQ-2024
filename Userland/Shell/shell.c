@@ -36,10 +36,9 @@ int main() {
         } else if (strcmp(command, "divzero") == 0) {
             _divzero();
         } else {
-            printf("Command not found\n");
+            printf("Command not found");
         } 
     
-
         printf("\n");
         buffer[0] = buffer_dim = 0;
     }
