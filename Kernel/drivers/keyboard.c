@@ -191,7 +191,7 @@ uint16_t clearBuffer() {
 // Halts until any key is pressed or \n is entered, depending on options (AWAIT_RETURN_KEY)
 int8_t getKeyboardCharacter(enum KEYBOARD_OPTIONS options) {
     write_output_while_typing = options & SHOW_BUFFER_WHILE_TYPING;
-    while(to_write == to_read || ( (options & AWAIT_RETURN_KEY) && buffer[SUB_MOD(to_write, 1, BUFFER_SIZE)] != '\n')) _hlt();
+    while(to_write == SUB_MOD(to_read, 1, BUFFER_SIZE) || ( (options & AWAIT_RETURN_KEY) && buffer[SUB_MOD(to_write, 1, BUFFER_SIZE)] != '\n')) _hlt();
     write_output_while_typing = 0;
     int8_t aux = buffer[to_read];
     INC_MOD(to_read, BUFFER_SIZE);
