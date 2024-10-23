@@ -33,7 +33,12 @@ static uint8_t buffer[BUFFER_SIZE];
 static uint16_t to_write = 0, to_read = 0;
 static uint8_t write_output_while_typing = 0;
 
-static SpecialKeyHandler KeyFnMap[ F12_KEY - ESCAPE_KEY + 1 ] = {0};
+typedef struct {
+    uint8_t registered_from_kernel;
+    SpecialKeyHandler fn;
+} RegisteredKeys;
+
+static RegisteredKeys KeyFnMap[ F12_KEY - ESCAPE_KEY + 1 ] = {0};
 
 // QEMU source https://github.com/qemu/qemu/blob/master/pc-bios/keymaps/en-us
 // http://flint.cs.yale.edu/feng/cos/resources/BIOS/Resources/assembly/makecodes.html
@@ -133,13 +138,16 @@ static const uint8_t scancodeMap[][2] = {
 
 void clearKeyFnMap() {
     for(uint8_t i = ESCAPE_KEY; i < F12_KEY; i++){
-        KeyFnMap[i] = 0;
+        if (KeyFnMap[i].registered_from_kernel != 1) 
+            KeyFnMap[i].fn = 0;
     }
 }
 
-void registerSpecialKey(enum SPECIAL_KEYS scancode, SpecialKeyHandler fn) {
-    if (IS_SPECIAL_KEY(scancode) && scancode != TABULATOR_KEY && scancode != RETURN_KEY)
-        KeyFnMap[scancode] = fn;
+void registerSpecialKey(enum SPECIAL_KEYS scancode, SpecialKeyHandler fn, uint8_t registeredFromKernel) {
+    if (IS_SPECIAL_KEY(scancode) && scancode != TABULATOR_KEY && scancode != RETURN_KEY) {
+        KeyFnMap[scancode].fn = fn;
+        KeyFnMap[scancode].registered_from_kernel = registeredFromKernel;
+    }
 }
 
 static uint8_t isReleased(uint8_t scancode) {
@@ -244,8 +252,8 @@ void keyboardHandler(){
                 }
 
                 // Special keys except for TAB & RETURN
-                if (KeyFnMap[scancode]) {
-                    KeyFnMap[scancode](scancode);
+                if (KeyFnMap[scancode].fn != 0) {
+                    KeyFnMap[scancode].fn(scancode);
                 }
             }
         }

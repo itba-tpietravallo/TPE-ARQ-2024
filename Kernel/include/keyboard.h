@@ -55,7 +55,7 @@ void keyboardHandler();
 
 // All special keys *EXCEPT* for TAB and RETURN can be registered
 // Printable keys, including tab (`\t`) and return (`\n`) can be obtained via `getKeyboardCharacter` (`getchar`/`sys_read`)
-void registerSpecialKey(enum SPECIAL_KEYS scancode, SpecialKeyHandler fn);
+void registerSpecialKey(enum SPECIAL_KEYS scancode, SpecialKeyHandler fn, uint8_t registeredFromKernel);
 void clearKeyFnMap();
 
 #endif

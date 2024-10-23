@@ -2,6 +2,7 @@
 #define _LIBC_SYSCALLS_H_
 
 #include <stdint.h>
+#include <sys.h>
 
 // Linux syscall prototypes
 int32_t sys_write(int64_t fd, const void * buf, int64_t count);
@@ -33,8 +34,8 @@ int32_t sys_second(int * second);
 
 int32_t sys_rectangle(int color, long long int width_pixels, long long int height_pixels);
 
-int32_t sys_exec(void (*fnPtr)(void));
+int32_t sys_exec(int32_t (*fnPtr)(void));
 
-int32_t sys_register_key(uint8_t scancode, void (*fn)(void));
+int32_t sys_register_key(uint8_t scancode, void (*fn)(enum REGISTERABLE_KEYS scancode));
 
 #endif

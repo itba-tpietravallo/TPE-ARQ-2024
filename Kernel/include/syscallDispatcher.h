@@ -2,6 +2,7 @@
 #define _SYSCALL_DISPATCHER_H_
 
 #include <stdint.h>
+#include <keyboard.h>
 
 typedef struct {
     int64_t r15;
@@ -22,5 +23,32 @@ typedef struct {
 } Registers;
 
 int32_t syscallDispatcher(Registers * registers);
+
+// Linux syscall prototypes
+int32_t sys_write(int32_t fd, char * __user_buf, int32_t count);
+int32_t sys_read(int32_t fd, char * __user_buf, int32_t count);
+
+// Custom syscall prototypes
+int32_t sys_beep(void);
+int32_t sys_fonts_text_color(uint32_t color);
+int32_t sys_fonts_background_color(uint32_t color);
+int32_t sys_fonts_decrease_size(void);
+int32_t sys_fonts_increase_size(void);
+int32_t sys_clear_screen(void);
+int32_t sys_clear_input_buffer(void);
+
+// Date syscall prototypes
+int32_t sys_hour(int * hour);
+int32_t sys_minute(int * minute);
+int32_t sys_second(int * second);
+
+// Draw rectangle syscall prototype
+int32_t sys_rectangle(uint32_t color, uint64_t width_pixels, uint64_t height_pixels);
+
+// Custom exec syscall prototype
+int32_t sys_exec(int32_t (*fnPtr)(void));
+
+// Custom keyboard syscall prototypes
+int32_t sys_register_key(uint8_t scancode, SpecialKeyHandler fn);
 
 #endif

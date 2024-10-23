@@ -1,12 +1,9 @@
 #include <fonts.h>
 #include <interrupts.h>
-#include<syscallDispatcher.h>
-#include<keyboard.h>
+#include <syscallDispatcher.h>
+#include <keyboard.h>
 
-static void * const shellModuleAddress = (void*)0x400000;
-
-typedef int (*EntryPoint)();
-
+static int (*const shellModuleAddress)(void) = (int(*)(void)) 0x400000;
 
 #define ZERO_EXCEPTION_ID 0
 #define INVALID_OPCODE_ID 6
@@ -34,7 +31,6 @@ void exceptionDispatcher(int exception, Registers * registers) {
 
 
 static void zero_division(Registers * registers, int errorCode) {
-
 	clear();
 	setTextColor(0x00FF0000);
 	print("Zero Dividing exception number "); 
@@ -42,7 +38,6 @@ static void zero_division(Registers * registers, int errorCode) {
 }
 
 static void invalid_opcode(Registers * registers, int errorCode) {
-
 	clear();
 	setTextColor(0x00FF6600);
 	print("Invalid Opcode exception number "); 
@@ -51,7 +46,6 @@ static void invalid_opcode(Registers * registers, int errorCode) {
 
 
 void printExceptionData(Registers * registers, int errorCode) {
-
 	printDec(errorCode); print(" ocurred\n");
 	print("Current registers values are\n");
 	print("rax = ");	printDec(registers-> rax); print("\n");
@@ -76,7 +70,7 @@ void printExceptionData(Registers * registers, int errorCode) {
 	char a;
 	while ((a = getKeyboardCharacter(0)) != 'r') {}
 
-	((EntryPoint)shellModuleAddress)();
-	// while(1) {} _hlt();
-	
+	sys_exec(shellModuleAddress);
+
+	__builtin_unreachable();	
 }

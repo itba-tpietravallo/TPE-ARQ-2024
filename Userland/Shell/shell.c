@@ -19,6 +19,7 @@ static int buffer_dim = 0;
 int clear(void);
 int date(void);
 int echo(void);
+int exit(void);
 int help(void);
 int history(void);
 int rectangle(void);
@@ -39,7 +40,8 @@ Command commands[] = {
     { .name = "clear",          .function = (int (*)(void))(unsigned long long)clear,           .description = "Clears the screen" },
     { .name = "date",           .function = (int (*)(void))(unsigned long long)date,            .description = "Prints the current date" },
     { .name = "divzero",        .function = (int (*)(void))(unsigned long long)_divzero,        .description = "Generates a division by zero exception" },
-    { .name = "echo",           .function = (int (*)(void))(unsigned long long) echo,           .description = "Prints the input string" },
+    { .name = "echo",           .function = (int (*)(void))(unsigned long long)echo ,           .description = "Prints the input string" },
+    { .name = "exit",           .function = (int (*)(void))(unsigned long long)exit,            .description = "Exist with the provided exit code or zero (default)" },
     { .name = "help",           .function = (int (*)(void))(unsigned long long)help,            .description = "Prints the available commands" },
     { .name = "history",        .function = (int (*)(void))(unsigned long long)history,         .description = "Prints the command history" },
     { .name = "invalidopcode",  .function = (int (*)(void))(unsigned long long)_invalidopcode,  .description = "Generates an invalid Opcode exception" },
@@ -55,10 +57,10 @@ static uint64_t last_command_output = 0;
 int main() {
     clear();
 
-    registerKey(KP_UP_KEY, printPreviousCommand);
-    registerKey(KP_DOWN_KEY, printNextCommand);
-
 	while (1) {
+        registerKey(KP_UP_KEY, printPreviousCommand);
+        registerKey(KP_DOWN_KEY, printNextCommand);
+
         printf("\e[0mshell \e[0;32m$\e[0m ");
 
         char c;
@@ -80,7 +82,7 @@ int main() {
 
         for (; i < sizeof(commands) / sizeof(Command); i++) {
             if (strcmp(commands[i].name, command) == 0) {
-                last_command_output = commands[i].function();
+                last_command_output = exec(commands[i].function);
                 strncpy(command_history[command_history_last], command_history_buffer, 255);
                 INC_MOD(command_history_last, HISTORY_SIZE);
                 last_command_arrowed = command_history_last;
@@ -100,7 +102,7 @@ int main() {
     return 0;
 }
 
-static void printPreviousCommand() {
+static void printPreviousCommand(enum REGISTERABLE_KEYS scancode) {
     clearInputBuffer();
     last_command_arrowed = SUB_MOD(last_command_arrowed, 1, HISTORY_SIZE);
     if (command_history[last_command_arrowed][0] != 0) {
@@ -108,7 +110,7 @@ static void printPreviousCommand() {
     }
 }
 
-static void printNextCommand() {
+static void printNextCommand(enum REGISTERABLE_KEYS scancode) {
     clearInputBuffer();
     last_command_arrowed = (last_command_arrowed + 1) % HISTORY_SIZE;
     if (command_history[last_command_arrowed][0] != 0) {
@@ -179,4 +181,14 @@ int clear(void) {
 int rectangle(void){
     drawRectangle(0xFF, 16, 16);
     return 0;
+}
+
+// Only exit codes 0-9 are valid
+int exit(void) {
+    char * exit_code = strtok(NULL, " ");
+    if (exit_code == NULL || *exit_code == '\0') {
+        return 0;
+    } else {
+        return *exit_code - '0';
+    }
 }

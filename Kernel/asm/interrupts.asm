@@ -37,7 +37,7 @@ SECTION .text
 	push r15
 %endmacro
 
-%macro popState 0
+%macro popStateButRAX 0
 	pop r15
 	pop r14
 	pop r13
@@ -52,6 +52,10 @@ SECTION .text
 	pop rdx
 	pop rcx
 	pop rbx
+%endmacro
+
+%macro popState 0
+	popStateButRAX
 	pop rax
 %endmacro
 
@@ -133,11 +137,16 @@ _irq80Handler:
 	mov rdi, rsp ; pass REGISTERS (stack) to irqDispatcher, see: `pushState` two lines above
 	call syscallDispatcher
 
+	mov rbx, rax
+
 	; signal pic EOI (End of Interrupt)
 	mov al, 20h
 	out 20h, al
 
-	popState
+	mov rax, rbx
+
+	popStateButRAX
+	add rsp, 8 ; skip the error code pushed by irqDispatcher
 	iretq
 
 ; Zero Division Exception
