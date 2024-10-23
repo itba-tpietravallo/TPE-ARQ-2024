@@ -1,3 +1,10 @@
+/**
+ * Note: Certain functions within this file are HOT PATHS.
+ * They have been optimized as best as possible.
+ * 
+ * This file is excluded from the main compilation rules, and is always compiled with -O3 (regardless of the main compilation rules).
+ */
+
 #include <fonts.h>
 #include <keyboard.h>
 
@@ -61,7 +68,7 @@ static char buffer[64] = { '0' };
 static inline void renderFromBitmap(char * bitmap, uint64_t xBase, uint64_t yBase);
 static inline void renderAscii(char ascii, uint64_t x, uint64_t y);
 
-static void scrollBufferPosition(void);
+static void scrollBufferPositionIfNeeded(void);
 void clearPreviousCharacter(void);
 
 static uint32_t uintToBase(uint64_t value, char * buffer, uint32_t base);
@@ -129,7 +136,7 @@ void __DEBUG__renderTicks(uint64_t ticks) {
     }
 }
 
-static void scrollBufferPosition(void) {
+static void scrollBufferPositionIfNeeded(void) {
     if (yBufferPosition + glyphSizeY * fontSize > getWindowHeight()) {
         scrollVideoMemoryUp(glyphSizeY * fontSize, DEFAULT_BACKGROUND_COLOR);
         yBufferPosition -= glyphSizeY * fontSize;
@@ -140,8 +147,8 @@ static void scrollBufferPosition(void) {
 void putChar(char ascii) {
     switch (ascii){
         case NEW_LINE_CHAR:
+            scrollBufferPositionIfNeeded();
             newLine();
-            scrollBufferPosition();
             break;
         case TABULATOR_CHAR:
             do {
@@ -149,13 +156,11 @@ void putChar(char ascii) {
             } while(xBufferPosition % (TAB_SIZE * glyphSizeX * fontSize) != 0);
             break;
         default:
+            scrollBufferPositionIfNeeded();
+            
             if (xBufferPosition + glyphSizeX * fontSize > getWindowWidth()) {
-                // @todo: Text may overflow at the bottom of the screen
-                yBufferPosition += maxGlyphSizeYOnLine;
-                xBufferPosition = 0;
+                newLine();
             }
-
-            scrollBufferPosition();
 
             renderAscii(ascii, xBufferPosition, yBufferPosition);
             xBufferPosition += glyphSizeX * fontSize;

@@ -33,7 +33,7 @@ static uint8_t buffer[BUFFER_SIZE];
 static uint16_t to_write = 0, to_read = 0;
 static uint8_t write_output_while_typing = 0;
 
-static SpecialKeyHandler KeyFnMap[ F12_KEY - ESCAPE_KEY ] = {0};
+static SpecialKeyHandler KeyFnMap[ F12_KEY - ESCAPE_KEY + 1 ] = {0};
 
 // QEMU source https://github.com/qemu/qemu/blob/master/pc-bios/keymaps/en-us
 // http://flint.cs.yale.edu/feng/cos/resources/BIOS/Resources/assembly/makecodes.html
@@ -132,7 +132,7 @@ static const uint8_t scancodeMap[][2] = {
 };
 
 void clearKeyFnMap() {
-    for(int i = ESCAPE_KEY; i < F12_KEY; i++){
+    for(uint8_t i = ESCAPE_KEY; i < F12_KEY; i++){
         KeyFnMap[i] = 0;
     }
 }
@@ -180,7 +180,7 @@ uint16_t clearBuffer() {
     return aux;
 }
 
-// halts until EOF
+// Halts until any key is pressed or \n is entered, depending on options (AWAIT_RETURN_KEY)
 int8_t getKeyboardCharacter(enum KEYBOARD_OPTIONS options) {
     write_output_while_typing = options & SHOW_BUFFER_WHILE_TYPING;
     while(to_write == to_read || ( (options & AWAIT_RETURN_KEY) && buffer[SUB_MOD(to_write, 1, BUFFER_SIZE)] != '\n')) _hlt();

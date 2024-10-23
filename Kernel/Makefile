@@ -3,6 +3,7 @@ include Makefile.inc
 KERNEL=kernel.bin
 SOURCES=$(wildcard *.c ./drivers/*.c ./idt/*.c)
 SOURCES_ASM=$(wildcard asm/*.asm)
+HOT_OBJECTS=./drivers/videoDriver.o ./drivers/fonts.o # Compiled with -O3
 OBJECTS=$(SOURCES:.c=.o)
 OBJECTS_ASM=$(SOURCES_ASM:.asm=.o)
 LOADERSRC=loader.asm
@@ -15,7 +16,10 @@ all: $(KERNEL)
 $(KERNEL): $(LOADEROBJECT) $(OBJECTS) $(STATICLIBS) $(OBJECTS_ASM)
 	$(LD) $(LDFLAGS) -T kernel.ld -o $(KERNEL) $(LOADEROBJECT) $(OBJECTS) $(OBJECTS_ASM) $(STATICLIBS)
 
-%.o: %.c
+$(HOT_OBJECTS) : %.o: %.c
+	$(GCC) -O3 $(GCCFLAGS) -I./include -c $< -o $@
+
+$(filter-out $(HOT_OBJECTS),$(OBJECTS)) : %.o: %.c
 	$(GCC) $(GCCFLAGS) -I./include -I./font_assets -c $< -o $@
 
 %.o : %.asm

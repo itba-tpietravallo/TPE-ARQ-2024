@@ -46,7 +46,8 @@ Command commands[] = {
     { .name = "rectangle",      .function = (int (*)(void))(unsigned long long)rectangle,       .description = "Prints a blue rectangle" },
 };
 
-char command_history[HISTORY_SIZE][255] = {0};
+char command_history[HISTORY_SIZE][MAX_BUFFER_SIZE] = {0};
+char command_history_buffer[MAX_BUFFER_SIZE] = {0};
 uint8_t command_history_last = 0;
 
 static uint64_t last_command_output = 0;
@@ -63,6 +64,7 @@ int main() {
         char c;
 
         while(buffer_dim < MAX_BUFFER_SIZE && (c = getchar()) != '\n'){
+            command_history_buffer[buffer_dim] = c;
             buffer[buffer_dim++] = c;
         }
 
@@ -79,7 +81,7 @@ int main() {
         for (; i < sizeof(commands) / sizeof(Command); i++) {
             if (strcmp(commands[i].name, command) == 0) {
                 last_command_output = commands[i].function();
-                strncpy(command_history[command_history_last], buffer, 255);
+                strncpy(command_history[command_history_last], command_history_buffer, 255);
                 INC_MOD(command_history_last, HISTORY_SIZE);
                 last_command_arrowed = command_history_last;
                 break;

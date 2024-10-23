@@ -1,3 +1,10 @@
+/**
+ * Note: Certain functions within this file are HOT PATHS.
+ * They have been optimized as best as possible.
+ * 
+ * This file is excluded from the main compilation rules, and is always compiled with -O3 (regardless of the main compilation rules).
+ */
+
 #include <videoDriver.h>
 #include <interrupts.h>
 
@@ -79,10 +86,14 @@ void scrollVideoMemoryUp(uint16_t scroll, uint32_t fillColor) {
 
 	// Iterating over Y, then X
 	// -> Memory is contiguous in the framebuffer, increased cached hits, reduced tearing
+	uint64_t yoffset, ynoffset, offset, new_offset, xo;
 	for (uint16_t y = 0; y < height - scroll; y++) {
+		yoffset = (y * VBE_mode_info->pitch);
+		ynoffset = ((y + scroll) * VBE_mode_info->pitch);
 		for (uint16_t x = 0; x < width; x++) {
-			uint64_t offset = (x * ((VBE_mode_info->bpp)/8)) + (y * VBE_mode_info->pitch);
-			uint64_t new_offset = (x * ((VBE_mode_info->bpp)/8)) + ((y + scroll) * VBE_mode_info->pitch);
+			xo = (x * ((VBE_mode_info->bpp) >> 3));
+			offset = xo + yoffset;
+			new_offset = xo + ynoffset;
 			framebuffer[offset] = framebuffer[new_offset];
 			framebuffer[offset + 1] = framebuffer[new_offset + 1];
 			framebuffer[offset + 2] = framebuffer[new_offset + 2];
@@ -90,8 +101,9 @@ void scrollVideoMemoryUp(uint16_t scroll, uint32_t fillColor) {
 	}
 
 	for (uint16_t y = height - scroll; y < height; y++) {
+		yoffset = (y * VBE_mode_info->pitch);
 		for (uint16_t x = 0; x < width; x++) {
-			uint64_t offset = (x * ((VBE_mode_info->bpp)/8)) + (y * VBE_mode_info->pitch);
+			offset = (x * ((VBE_mode_info->bpp) >> 3)) + yoffset;
 			framebuffer[offset] = b;
 			framebuffer[offset + 1] = g;
 			framebuffer[offset + 2] = r;
