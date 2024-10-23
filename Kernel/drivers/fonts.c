@@ -59,6 +59,7 @@ static char buffer[64] = { '0' };
 static inline void renderFromBitmap(char * bitmap, uint64_t xBase, uint64_t yBase);
 static inline void renderAscii(char ascii, uint64_t x, uint64_t y);
 
+static void scrollBufferPosition(void);
 void clearPreviousCharacter(void);
 
 static uint32_t uintToBase(uint64_t value, char * buffer, uint32_t base);
@@ -126,7 +127,7 @@ void __DEBUG__renderTicks(uint64_t ticks) {
     }
 }
 
-static scrollBufferPosition(void) {
+static void scrollBufferPosition(void) {
     if (yBufferPosition + glyphSizeY * fontSize > getWindowHeight()) {
         scrollVideoMemoryUp(glyphSizeY * fontSize, DEFAULT_BACKGROUND_COLOR);
         yBufferPosition -= glyphSizeY * fontSize;
