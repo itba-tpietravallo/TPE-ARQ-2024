@@ -2,6 +2,7 @@
 #include <keyboard.h>
 #include <fonts.h>
 #include <interrupts.h>
+#include <cursor.h>
 
 #define BUFFER_SIZE 1024
 

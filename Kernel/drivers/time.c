@@ -2,6 +2,7 @@
 #include <interrupts.h>
 
 #include <fonts.h>
+#include<cursor.h>
 
 #define SECONDS_TO_TICKS 18
 
@@ -10,6 +11,8 @@ static unsigned long ticks = 0;
 void timer_handler() {
 	ticks++;
 
+	toggleCursor();
+	
 	// note: this should always be at the end of the timer handler
 	__DEBUG__renderTicks(ticks);
 }
