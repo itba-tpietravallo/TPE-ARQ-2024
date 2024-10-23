@@ -17,6 +17,7 @@ static int32_t sys_fonts_background_color(uint32_t color);
 static int32_t sys_fonts_decrease_size(void);
 static int32_t sys_fonts_increase_size(void);
 static int32_t sys_clear_screen(void);
+static int32_t sys_clear_input_buffer(void);
 
 // Date syscall prototypes
 static int32_t sys_hour(int * hour);
@@ -25,6 +26,12 @@ static int32_t sys_second(int * second);
 
 // Draw rectangle syscall prototype
 static int32_t sys_rectangle(uint32_t color, uint64_t width_pixels, uint64_t height_pixels);
+
+// Custom exec syscall prototype
+static int32_t sys_exec(void (*fnPtr)(void));
+
+// Custom keyboard syscall prototypes
+static int32_t sys_register_key(uint8_t scancode, SpecialKeyHandler fn);
 
 // @todo Note: Technically.. registers on the stack are modifiable (since its a struct pointer, not struct). 
 int32_t syscallDispatcher(Registers * registers) {
@@ -45,12 +52,16 @@ int32_t syscallDispatcher(Registers * registers) {
 		case 0x80000008: return sys_fonts_increase_size();
 		case 0x80000009: /* Reserved for sys_fonts_set_size */
 		case 0x8000000A: return sys_clear_screen();
+		case 0x8000000B: return sys_clear_input_buffer();
 
 		case 0x80000010: return sys_hour((int *) registers->rdi);
 		case 0x80000011: return sys_minute((int *) registers->rdi);
 		case 0x80000012: return sys_second((int *) registers->rdi);
 
 		case 0x80000020: return sys_rectangle(registers->rdi, registers->rsi, registers->rdx);
+
+		case 0x800000A0: return sys_exec((void (*)(void)) registers->rdi);
+		case 0x800000B0: return sys_register_key((uint8_t) registers->rdi, (SpecialKeyHandler) registers->rsi);
 
 		default:
 			setBackgroundColor(0x00FF0000); setTextColor(0x00FFFFFF);
@@ -111,6 +122,11 @@ static int32_t sys_clear_screen(void) {
 	return 0;
 }
 
+static int32_t sys_clear_input_buffer(void) {
+	while(clearBuffer() != 0);
+	return 0;
+}
+
 // ==================================================================
 // Date system calls
 // ==================================================================
@@ -140,5 +156,24 @@ static int32_t sys_second(int * second) {
 static int32_t sys_rectangle(uint32_t color, uint64_t width_pixels, uint64_t height_pixels){
 	// print("Hello from sys_dispatcher    ");
 	drawRectangle(color, width_pixels, height_pixels);
+	return 0;
+}
+
+// ==================================================================
+// Custom exec system call
+// ==================================================================
+
+static int32_t sys_exec(void (*fnPtr)(void)) {
+	clearKeyFnMap(); // avoid """processes/threads/apps""" registering keys across each other over time. reset the map every time
+	fnPtr();
+	return 0;
+}
+
+// ==================================================================
+// Custom keyboard system calls
+// ==================================================================
+
+static int32_t sys_register_key(uint8_t scancode, SpecialKeyHandler fn){
+	registerSpecialKey(scancode, fn);
 	return 0;
 }

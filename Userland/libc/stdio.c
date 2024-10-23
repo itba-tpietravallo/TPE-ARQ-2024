@@ -1,5 +1,4 @@
 #include <stdio.h>
-//! shouldnt these includes be in stdio.h?
 #include <string.h>
 #include <syscalls.h>
 
@@ -27,6 +26,10 @@ void printf(const char * str) {
             }
         }
     #endif
+}
+
+void fprintf(int fd, const char * str) {
+    sys_write(fd, str, strlen(str));
 }
 
 void perror(const char * s1) {

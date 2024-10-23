@@ -3,57 +3,37 @@
 #include <fonts.h>
 #include <interrupts.h>
 
-#define ESCAPE_KEY 0x01
-#define BACKSPACE_KEY 0x0E
-#define TABULATOR_KEY 0x0F
-#define RETURN_KEY 0x1C
-#define CONTROL_KEY_L 0x1D
-#define SHIFT_KEY_L 0x2A
-#define SHIFT_KEY_R 0x36
-#define ALT_KEY_L 0x38
-#define META_L_KEY (ALT_KEY_L | 0x80)
-#define CAPS_LOCK_KEY 0x3A
-#define F1_KEY 0x3B
-#define F2_KEY 0x3C
-#define F3_KEY 0x3D
-#define F4_KEY 0x3E
-#define F5_KEY 0x3F
-#define F6_KEY 0x40
-#define F7_KEY 0x41
-#define F8_KEY 0x42
-#define F9_KEY 0x43
-#define F10_KEY 0x44
-#define NUM_LOCK_KEY 0x45
-#define SCROLL_LOCK_KEY 0x46
-#define KP_HOME_KEY 0x47
-#define KP_UP_KEY 0x48
-#define KP_PAGE_UP_KEY 0x49
-#define KP_LEFT_KEY 0x4B
-#define KP_BEGIN_KEY 0x4C
-#define KP_RIGHT_KEY 0x4D
-#define KP_END_KEY 0x4F
-#define KP_DOWN_KEY 0x50
-#define KP_PAGE_DOWN_KEY 0x51
-#define KP_INSERT_KEY 0x52
-#define KP_DELETE_KEY 0x53
-#define F11_KEY 0x57
-#define F12_KEY 0x58
-
 #define BUFFER_SIZE 1024
 
 #define IS_ALPHA(c) ('a' <= (c) && (c) <= 'z') 
 #define TO_UPPER(c) (IS_ALPHA(c) ? ((c) - 'a' + 'A') : (c))
-#define IS_PRINTABLE(c) ((c) == RETURN_KEY || (c) == TABULATOR_KEY || (32 <= (c) && (c) <= 254))
-#define IS_ARROW(s) ((s) == KP_UP_KEY || (s) == KP_LEFT_KEY || (s) == KP_RIGHT_KEY || (s) == KP_DOWN_KEY)
+
+#define IS_KEYCODE(c) (c >= ESCAPE_KEY && c <= F12_KEY)
+#define IS_PRINTABLE(c) (\
+    IS_KEYCODE((c)) && (\
+    ((c) >= 0x02 && (c) <= 0x0D) || /* 1,2,3,4,5,6,7,8,9,0,-,= */ \
+    ((c) >= 0x0F && (c) <= 0x1C) || /* TAB,q,w,e,r,t,y,u,i,o,p,[,],RET */ \
+    ((c) >= 0x1E && (c) <= 0x29) || /* a,s,d,f,g,h,j,k,l,;,',` */ \
+    ((c) >= 0x2B && (c) <= 0x35) || /* \,z,x,c,v,b,n,m,,,.,/ */ \
+    ((c) == 0x37) || /* * */ \
+    ((c) == 0x39) || /* space */ \
+    ((SHIFT_KEY_PRESSED) && (c) >= 0x47 && (c) <= 0x53) || /* home,up,pageup,-,left,5,right,+,end,down,pagedown,insert,delete */ \
+    ((c) == 0x4A || (c) == 0x4E) || /* -,+ */ \
+    ((c)) == 0x56 \
+    ))
+
+#define IS_SPECIAL_KEY(c) (IS_KEYCODE(c) && !IS_PRINTABLE(c))
 
 #define INC_MOD(x, m) ((x) = ((x) + 1) % (m))
-#define SUB_MOD(x, m) ((x) == 0 ? (m) - 1 : (x) - 1)
-#define DEC_MOD(x, m) ((x) = SUB_MOD(x, m))
+#define SUB_MOD(a, b, m) ((a) - (b) < 0 ? (m) - (b) + (a) : (a) - (b))
+#define DEC_MOD(x, m) ((x) = SUB_MOD(x, 1, m))
 
 static uint8_t SHIFT_KEY_PRESSED, CAPS_LOCK_KEY_PRESSED, CONTROL_KEY_PRESSED;
 static uint8_t buffer[BUFFER_SIZE];
 static uint16_t to_write = 0, to_read = 0;
 static uint8_t write_output_while_typing = 0;
+
+static SpecialKeyHandler KeyFnMap[ F12_KEY - ESCAPE_KEY ] = {0};
 
 // QEMU source https://github.com/qemu/qemu/blob/master/pc-bios/keymaps/en-us
 // http://flint.cs.yale.edu/feng/cos/resources/BIOS/Resources/assembly/makecodes.html
@@ -75,7 +55,7 @@ static const uint8_t scancodeMap[][2] = {
     /* 0x0C */ { '-', '_' },
     /* 0x0D */ { '=', '+' },
     /* 0x0E */ { BACKSPACE_KEY, BACKSPACE_KEY },
-    /* 0x1F */ { TABULATOR_KEY, TABULATOR_KEY },
+    /* 0x0F */ { TABULATOR_KEY, TABULATOR_KEY },
     /* 0x10 */ { 'q', 'Q' },
     /* 0x11 */ { 'w', 'W' },
     /* 0x12 */ { 'e', 'E' },
@@ -151,6 +131,17 @@ static const uint8_t scancodeMap[][2] = {
     /* 0x58 */ { F12_KEY, F12_KEY },
 };
 
+void clearKeyFnMap() {
+    for(int i = ESCAPE_KEY; i < F12_KEY; i++){
+        KeyFnMap[i] = 0;
+    }
+}
+
+void registerSpecialKey(enum SPECIAL_KEYS scancode, SpecialKeyHandler fn) {
+    if (IS_SPECIAL_KEY(scancode) && scancode != TABULATOR_KEY && scancode != RETURN_KEY)
+        KeyFnMap[scancode] = fn;
+}
+
 static uint8_t isReleased(uint8_t scancode) {
     return scancode & 0x80;
 }
@@ -172,10 +163,27 @@ static uint8_t isControl(uint8_t scancode){
     return (scancode & 0x7F) == CONTROL_KEY_L;
 }
 
+void addCharToBuffer(uint8_t ascii, uint8_t showOutput) {
+    buffer[to_write] = ascii;
+    INC_MOD(to_write, BUFFER_SIZE);
+    buffer[to_write] = EOF;
+    if (showOutput)
+        putChar(ascii);
+}
+
+uint16_t clearBuffer() {
+    uint16_t aux = SUB_MOD(to_write, to_read, BUFFER_SIZE);
+    if (aux == 0) return 0;
+    DEC_MOD(to_write, BUFFER_SIZE);
+    buffer[to_write] = EOF;
+    clearPreviousCharacter();
+    return aux;
+}
+
 // halts until EOF
 int8_t getKeyboardCharacter(enum KEYBOARD_OPTIONS options) {
     write_output_while_typing = options & SHOW_BUFFER_WHILE_TYPING;
-    while(to_write == to_read || ( (options & AWAIT_RETURN_KEY) && buffer[SUB_MOD(to_write, BUFFER_SIZE)] != '\n')) _hlt();
+    while(to_write == to_read || ( (options & AWAIT_RETURN_KEY) && buffer[SUB_MOD(to_write, 1, BUFFER_SIZE)] != '\n')) _hlt();
     write_output_while_typing = 0;
     int8_t aux = buffer[to_read];
     INC_MOD(to_read, BUFFER_SIZE);
@@ -187,7 +195,7 @@ void keyboardHandler(){
         print("\n\nKernel buffer overflow\n\n");
         to_read = to_write = 0;
         return ;
-    } else{
+    } else {
         uint8_t scancode = getKeyboardBuffer();
         uint8_t is_pressed = isPressed(scancode);
 
@@ -213,29 +221,32 @@ void keyboardHandler(){
             return ;
         }
         
-        if (!(IS_ARROW(scancode) && !SHIFT_KEY_PRESSED) && scancode != ALT_KEY_L && is_pressed) {
+        if (is_pressed && IS_KEYCODE(scancode)) {
             uint8_t c = scancodeMap[scancode][SHIFT_KEY_PRESSED];
 
-            if(CAPS_LOCK_KEY_PRESSED == 1){
+            if (CAPS_LOCK_KEY_PRESSED == 1) {
                 c = TO_UPPER(c);
             }
 
-            if(IS_PRINTABLE(c)){
+            if (IS_PRINTABLE(scancode)) {
                 if(c == RETURN_KEY){
                     c = '\n';
                 } else if(c == TABULATOR_KEY){
                     c = '\t';
                 }
 
-                buffer[to_write] = c;
-                INC_MOD(to_write, BUFFER_SIZE);
-                buffer[to_write] = EOF;
-                if (write_output_while_typing)
-                    putChar(c);
-            } else if(c == BACKSPACE_KEY && to_write != to_read){
-                DEC_MOD(to_write, BUFFER_SIZE);
-                buffer[to_write] = EOF;
-                clearPreviousCharacter();
+                addCharToBuffer(c, write_output_while_typing);
+            } else {
+                if (c == BACKSPACE_KEY && to_write != to_read) {
+                    DEC_MOD(to_write, BUFFER_SIZE);
+                    buffer[to_write] = EOF;
+                    clearPreviousCharacter();
+                }
+
+                // Special keys except for TAB & RETURN
+                if (KeyFnMap[scancode]) {
+                    KeyFnMap[scancode](scancode);
+                }
             }
         }
     }

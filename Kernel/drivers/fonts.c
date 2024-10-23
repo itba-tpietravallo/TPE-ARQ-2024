@@ -1,4 +1,5 @@
 #include <fonts.h>
+#include <keyboard.h>
 
 /* 
     Note: An attempt was made to use the Linux kernel's Solarize.12x29.psf (https://wiki.osdev.org/PC_Screen_Font). Now only the pain remains.
@@ -18,6 +19,7 @@
 
 #include "../font_assets/font_basic.c"
 
+#define FD_STDIN  0
 #define FD_STDOUT 1
 #define FD_STDERR 2
 
@@ -164,6 +166,12 @@ void putChar(char ascii) {
 int32_t printToFd(int32_t fd, const char * string, int32_t count) {
     if (fd != file_descriptor) {
         switch (fd) {
+            case FD_STDIN:
+                int i = 0;
+                for ( ; i < count; i++ ) {
+                    addCharToBuffer(string[i], 1);
+                }
+                return i;
             case FD_STDOUT:
                 text_color = DEFAULT_TEXT_COLOR;
                 background_color = DEFAULT_BACKGROUND_COLOR;

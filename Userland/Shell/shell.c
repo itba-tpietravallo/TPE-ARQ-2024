@@ -23,12 +23,16 @@ int help(void);
 int history(void);
 int rectangle(void);
 
+static void printPreviousCommand();
+static void printNextCommand();
+
+static uint8_t last_command_arrowed = 0;
+
 typedef struct {
     char * name;
     int (*function)(void);
     char * description;
 } Command;
-
 
 /* All available commands. Sorted alphabetically by their name */
 Command commands[] = {
@@ -49,6 +53,9 @@ static uint64_t last_command_output = 0;
 
 int main() {
     clear();
+
+    registerKey(KP_UP_KEY, printPreviousCommand);
+    registerKey(KP_DOWN_KEY, printNextCommand);
 
 	while (1) {
         printf("\e[0mshell \e[0;32m$\e[0m ");
@@ -74,6 +81,7 @@ int main() {
                 last_command_output = commands[i].function();
                 strncpy(command_history[command_history_last], buffer, 255);
                 INC_MOD(command_history_last, HISTORY_SIZE);
+                last_command_arrowed = command_history_last;
                 break;
             }
         }
@@ -88,6 +96,22 @@ int main() {
 
     __builtin_unreachable();
     return 0;
+}
+
+static void printPreviousCommand() {
+    clearInputBuffer();
+    last_command_arrowed = SUB_MOD(last_command_arrowed, 1, HISTORY_SIZE);
+    if (command_history[last_command_arrowed][0] != 0) {
+        fprintf(FD_STDIN, command_history[last_command_arrowed]);
+    }
+}
+
+static void printNextCommand() {
+    clearInputBuffer();
+    last_command_arrowed = (last_command_arrowed + 1) % HISTORY_SIZE;
+    if (command_history[last_command_arrowed][0] != 0) {
+        fprintf(FD_STDIN, command_history[last_command_arrowed]);
+    }
 }
 
 int history(void) {

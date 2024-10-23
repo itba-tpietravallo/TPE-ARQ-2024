@@ -1,10 +1,6 @@
 #ifndef _LIBC_SYSCALLS_H_
 #define _LIBC_SYSCALLS_H_
 
-#define FD_STDIN 0
-#define FD_STDOUT 1
-#define FD_STDERR 2
-
 #include <stdint.h>
 
 // Linux syscall prototypes
@@ -24,6 +20,8 @@ int32_t sys_fonts_decrease_size(void);
 int32_t sys_fonts_increase_size(void);
 /* 0x8000000A */
 int32_t sys_clear_screen(void);
+/* 0x8000000B */
+int32_t sys_clear_input_buffer(void);
 
 // Date syscall prototypes
 /* 0x80000010 */
@@ -34,5 +32,9 @@ int32_t sys_minute(int * minute);
 int32_t sys_second(int * second);
 
 int32_t sys_rectangle(int color, long long int width_pixels, long long int height_pixels);
+
+int32_t sys_exec(void (*fnPtr)(void));
+
+int32_t sys_register_key(uint8_t scancode, void (*fn)(void));
 
 #endif

@@ -31,6 +31,18 @@ void clearScreen(void) {
     sys_clear_screen();
 }
 
+void clearInputBuffer(void) {
+    sys_clear_input_buffer();
+}
+
 void drawRectangle(int color, long long int width_pixels, long long int height_pixels){
     sys_rectangle(color, width_pixels, height_pixels);
+}
+
+void exec(void (*fnPtr)(void)) {
+    sys_exec(fnPtr);
+}
+
+void registerKey(enum REGISTERABLE_KEYS scancode, void (*fn)(void)) {
+    sys_register_key(scancode, fn);
 }
