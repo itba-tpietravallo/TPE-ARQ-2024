@@ -150,7 +150,6 @@ void putChar(char ascii) {
     switch (ascii){
         case NEW_LINE_CHAR:
             hideCursor();
-            scrollBufferPositionIfNeeded();
             newLine();
             break;
         case TABULATOR_CHAR:
@@ -159,8 +158,6 @@ void putChar(char ascii) {
             } while(xBufferPosition % (TAB_SIZE * glyphSizeX * fontSize) != 0);
             break;
         default:
-            scrollBufferPositionIfNeeded();
-            
             if (xBufferPosition + glyphSizeX * fontSize > getWindowWidth()) {
                 newLine();
             }
@@ -212,6 +209,7 @@ void newLine(void) {
     yBufferPosition += maxGlyphSizeYOnLine;
     xBufferPosition = 0;
     maxGlyphSizeYOnLine = fontSize * glyphSizeY;
+    scrollBufferPositionIfNeeded();
 }
 
 void printDec(uint64_t value) {
@@ -251,14 +249,13 @@ void clearPreviousCharacter(void){
     retractPosition();
     showCursor();
 }
-void showCursor(void) {
 
+void showCursor(void) {
     putChar('|');
     retractPosition();
 }
 
 void hideCursor(void) {
-
     putChar(' ');
     retractPosition();
 }

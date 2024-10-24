@@ -78,6 +78,7 @@ uint16_t getWindowWidth() {
 
 void scrollVideoMemoryUp(uint16_t scroll, uint32_t fillColor) {
 	_cli();
+
 	uint8_t * framebuffer = (uint8_t * )(unsigned long long)(VBE_mode_info->framebuffer);
 	uint16_t width = getWindowWidth();
 	uint16_t height = getWindowHeight();

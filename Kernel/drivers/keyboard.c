@@ -32,7 +32,7 @@
 static uint8_t SHIFT_KEY_PRESSED, CAPS_LOCK_KEY_PRESSED, CONTROL_KEY_PRESSED;
 static uint8_t buffer[BUFFER_SIZE];
 static uint16_t to_write = 0, to_read = 0;
-static uint8_t write_output_while_typing = 0;
+static uint8_t options = 0;
 
 typedef struct {
     uint8_t registered_from_kernel;
@@ -190,10 +190,10 @@ uint16_t clearBuffer() {
 }
 
 // Halts until any key is pressed or \n is entered, depending on options (AWAIT_RETURN_KEY)
-int8_t getKeyboardCharacter(enum KEYBOARD_OPTIONS options) {
-    write_output_while_typing = options & SHOW_BUFFER_WHILE_TYPING;
+int8_t getKeyboardCharacter(enum KEYBOARD_OPTIONS ops) {
+    options = ops;
     while(to_write == to_read || ( (options & AWAIT_RETURN_KEY) && buffer[SUB_MOD(to_write, 1, BUFFER_SIZE)] != '\n')) _hlt();
-    write_output_while_typing = 0;
+    ops = 0;
     int8_t aux = buffer[to_read];
     INC_MOD(to_read, BUFFER_SIZE);
     return aux;
@@ -240,11 +240,14 @@ void keyboardHandler(){
             if (IS_PRINTABLE(scancode)) {
                 if(c == RETURN_KEY){
                     c = '\n';
+                    if ( (to_write != to_read) && buffer[SUB_MOD(to_write, 1, BUFFER_SIZE)] == '\n' ) {
+                        return ;
+                    }
                 } else if(c == TABULATOR_KEY){
                     c = '\t';
                 }
 
-                addCharToBuffer(c, write_output_while_typing);
+                addCharToBuffer(c, options & SHOW_BUFFER_WHILE_TYPING);
             } else {
                 if (c == BACKSPACE_KEY && to_write != to_read) {
                     DEC_MOD(to_write, BUFFER_SIZE);
