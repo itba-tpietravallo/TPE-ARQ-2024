@@ -149,6 +149,7 @@ static void scrollBufferPositionIfNeeded(void) {
 void putChar(char ascii) {
     switch (ascii){
         case NEW_LINE_CHAR:
+            hideCursor();
             scrollBufferPositionIfNeeded();
             newLine();
             break;
@@ -208,7 +209,6 @@ void print(const char * string) {
 
 // Jumps to the next line, does not print an empty line
 void newLine(void) {
-    hideCursor();
     yBufferPosition += maxGlyphSizeYOnLine;
     xBufferPosition = 0;
     maxGlyphSizeYOnLine = fontSize * glyphSizeY;
