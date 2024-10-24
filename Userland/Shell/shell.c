@@ -24,8 +24,8 @@ int help(void);
 int history(void);
 int rectangle(void);
 
-static void printPreviousCommand();
-static void printNextCommand();
+static void printPreviousCommand(enum REGISTERABLE_KEYS scancode);
+static void printNextCommand(enum REGISTERABLE_KEYS scancode);
 
 static uint8_t last_command_arrowed = 0;
 
@@ -54,12 +54,17 @@ uint8_t command_history_last = 0;
 
 static uint64_t last_command_output = 0;
 
+static void clearEntireBuffer(enum REGISTERABLE_KEYS scancode) {
+    clearInputBuffer();
+}
+
 int main() {
     clear();
 
 	while (1) {
         registerKey(KP_UP_KEY, printPreviousCommand);
         registerKey(KP_DOWN_KEY, printNextCommand);
+        registerKey(F12_KEY, clearEntireBuffer);
 
         printf("\e[0mshell \e[0;32m$\e[0m ");
 
@@ -69,6 +74,9 @@ int main() {
             command_history_buffer[buffer_dim] = c;
             buffer[buffer_dim++] = c;
         }
+
+        buffer[buffer_dim] = 0;
+        command_history_buffer[buffer_dim] = 0;
 
         if(buffer_dim == MAX_BUFFER_SIZE){
             printf("\n\e[0;31mShell buffer overflow\e[0m\n");
@@ -84,6 +92,7 @@ int main() {
             if (strcmp(commands[i].name, command) == 0) {
                 last_command_output = exec(commands[i].function);
                 strncpy(command_history[command_history_last], command_history_buffer, 255);
+                command_history[command_history_last][buffer_dim] = '\0';
                 INC_MOD(command_history_last, HISTORY_SIZE);
                 last_command_arrowed = command_history_last;
                 break;
