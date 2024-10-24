@@ -68,6 +68,8 @@ static char buffer[64] = { '0' };
 static inline void renderFromBitmap(char * bitmap, uint64_t xBase, uint64_t yBase);
 static inline void renderAscii(char ascii, uint64_t x, uint64_t y);
 
+void showCursor(void);
+void hideCursor(void);
 static void scrollBufferPositionIfNeeded(void);
 void clearPreviousCharacter(void);
 
@@ -147,7 +149,7 @@ static void scrollBufferPositionIfNeeded(void) {
 void putChar(char ascii) {
     switch (ascii){
         case NEW_LINE_CHAR:
-            scrollBufferPositionIfNeeded();
+            hideCursor();
             newLine();
             break;
         case TABULATOR_CHAR:
@@ -156,8 +158,6 @@ void putChar(char ascii) {
             } while(xBufferPosition % (TAB_SIZE * glyphSizeX * fontSize) != 0);
             break;
         default:
-            scrollBufferPositionIfNeeded();
-            
             if (xBufferPosition + glyphSizeX * fontSize > getWindowWidth()) {
                 newLine();
             }
@@ -209,6 +209,7 @@ void newLine(void) {
     yBufferPosition += maxGlyphSizeYOnLine;
     xBufferPosition = 0;
     maxGlyphSizeYOnLine = fontSize * glyphSizeY;
+    scrollBufferPositionIfNeeded();
 }
 
 void printDec(uint64_t value) {
@@ -233,22 +234,30 @@ void clear(void) {
     xBufferPosition = 0;
     yBufferPosition = 0;
 }
+void retractPosition() {
+    if(xBufferPosition == 0){
+        xBufferPosition = getWindowWidth();
+        yBufferPosition -= glyphSizeY * fontSize;
+    }
+
+    xBufferPosition -= glyphSizeX * fontSize;
+}
 
 void clearPreviousCharacter(void){
-    uint16_t prev_x, prev_y = yBufferPosition;
-    if(xBufferPosition == 0){
-        prev_x = getWindowWidth();
-        prev_y -= glyphSizeY * fontSize;
-    } else{
-        prev_x = xBufferPosition;
-    }
-    prev_x -= glyphSizeX * fontSize;
-
-    xBufferPosition = prev_x;
-    yBufferPosition = prev_y;
     putChar(' ');
-    xBufferPosition = prev_x;
-    yBufferPosition = prev_y;
+    retractPosition();
+    retractPosition();
+    showCursor();
+}
+
+void showCursor(void) {
+    putChar('|');
+    retractPosition();
+}
+
+void hideCursor(void) {
+    putChar(' ');
+    retractPosition();
 }
 
 void increaseFontSize(void) {

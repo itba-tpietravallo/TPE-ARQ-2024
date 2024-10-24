@@ -33,8 +33,14 @@ docker start "$CONTAINER_NAME" &> /dev/null
 echo "${GREEN}Container $CONTAINER_NAME started.${NC}"
 
 # Compiles
-docker exec -it "$CONTAINER_NAME" make clean -C /root/
-docker exec -it "$CONTAINER_NAME" make all -C /root/Toolchain
+docker exec -it "$CONTAINER_NAME" make clean -C /root/ && \
+docker exec -it "$CONTAINER_NAME" make all -C /root/Toolchain && \
 docker exec -it "$CONTAINER_NAME" make all -C /root/
+
+
+if [ $? -ne 0 ]; then
+    echo "${RED}Compilation failed.${NC}"
+    exit 1
+fi
 
 echo "${GREEN}Compilation finished.${NC}"
