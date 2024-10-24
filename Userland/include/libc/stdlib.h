@@ -3,6 +3,10 @@
 
 #include <stddef.h>
 
+int rand(void);
+
+void srand(unsigned int seed);
+
 int one(void);
 
 #endif

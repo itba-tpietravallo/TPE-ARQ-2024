@@ -37,7 +37,7 @@ void perror(const char * s1) {
 }
 
 int getchar(void) {
-    char c[1];
+    signed char c[1];
     while(sys_read(FD_STDIN, c, 1) == -1);
     return c[0];
 }

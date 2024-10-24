@@ -68,8 +68,7 @@ int main() {
 
         printf("\e[0mshell \e[0;32m$\e[0m ");
 
-        char c;
-        buffer_dim = 0;
+        signed char c;
 
         while(buffer_dim < MAX_BUFFER_SIZE && (c = getchar()) != '\n'){
             command_history_buffer[buffer_dim] = c;
