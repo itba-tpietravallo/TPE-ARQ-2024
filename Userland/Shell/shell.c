@@ -183,7 +183,7 @@ int clear(void) {
 }
 
 int rectangle(void){
-    drawRectangle(0xFF, 16, 16);
+    drawRectangle(0xFF, 40, 80, 10, 10);
     return 0;
 }
 

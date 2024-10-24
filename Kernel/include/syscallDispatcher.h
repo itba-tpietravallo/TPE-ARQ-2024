@@ -43,7 +43,7 @@ int32_t sys_minute(int * minute);
 int32_t sys_second(int * second);
 
 // Draw rectangle syscall prototype
-int32_t sys_rectangle(uint32_t color, uint64_t width_pixels, uint64_t height_pixels);
+int32_t sys_rectangle(uint32_t color, uint64_t width_pixels, uint64_t height_pixels, uint64_t initial_pos_x, uint64_t initial_pos_y);
 
 // Custom exec syscall prototype
 int32_t sys_exec(int32_t (*fnPtr)(void));

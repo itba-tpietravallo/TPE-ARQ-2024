@@ -32,7 +32,7 @@ int32_t sys_minute(int * minute);
 /* 0x80000012 */
 int32_t sys_second(int * second);
 
-int32_t sys_rectangle(int color, long long int width_pixels, long long int height_pixels);
+int32_t sys_rectangle(int color, long long int width_pixels, long long int height_pixels, long long int initial_pos_x, long long int initial_pos_y);
 
 int32_t sys_exec(int32_t (*fnPtr)(void));
 

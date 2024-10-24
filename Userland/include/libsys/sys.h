@@ -49,7 +49,7 @@ void increaseFontSize(void);
 void decreaseFontSize(void);
 void getDate(int * hour, int * minute, int * second);
 void clearScreen(void);
-void drawRectangle(int color, long long int width_pixels, long long int height_pixels);
+void drawRectangle(int color, long long int width_pixels, long long int height_pixels, long long int initial_pos_x, long long int initial_pos_y);
 int32_t exec(int32_t (*fnPtr)(void));
 void registerKey(enum REGISTERABLE_KEYS scancode, void (*fn)(enum REGISTERABLE_KEYS scancode));
 void clearInputBuffer(void);

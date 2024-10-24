@@ -35,8 +35,8 @@ void clearInputBuffer(void) {
     sys_clear_input_buffer();
 }
 
-void drawRectangle(int color, long long int width_pixels, long long int height_pixels){
-    sys_rectangle(color, width_pixels, height_pixels);
+void drawRectangle(int color, long long int width_pixels, long long int height_pixels, long long int initial_pos_x, long long int initial_pos_y){
+    sys_rectangle(color, width_pixels, height_pixels, initial_pos_x, initial_pos_y);
 }
 
 int32_t exec(int32_t (*fnPtr)(void)) {

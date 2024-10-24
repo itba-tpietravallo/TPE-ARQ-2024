@@ -60,9 +60,9 @@ void putPixel(uint32_t hexColor, uint64_t x, uint64_t y) {
     framebuffer[offset+2]   =  r;
 }
 
-void drawRectangle(uint32_t hexColor, uint64_t width, uint64_t height){
-	for(uint64_t y = 0; y < height; y++){
-		for(uint64_t x = 0; x < width; x++){
+void drawRectangle(uint32_t hexColor, uint64_t width, uint64_t height, uint64_t initial_pos_x, uint64_t initial_pos_y){
+	for(uint64_t y = initial_pos_y; y - initial_pos_y < height; y++){
+		for(uint64_t x = initial_pos_x; x - initial_pos_x < width; x++){
 			putPixel(hexColor, x, y);
 		}
 	}
