@@ -20,6 +20,7 @@ typedef struct {
 	int64_t rcx;
 	int64_t rbx;
 	int64_t rax;
+	int64_t rip;
 } Registers;
 
 int32_t syscallDispatcher(Registers * registers);

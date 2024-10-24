@@ -48,21 +48,24 @@ static void invalid_opcode(Registers * registers, int errorCode) {
 void printExceptionData(Registers * registers, int errorCode) {
 	printDec(errorCode); print(" ocurred\n");
 	print("Current registers values are\n");
-	print("rax = ");	printDec(registers-> rax); print("\n");
-	print("rbx = ");	printDec(registers-> rbx); print("\n");
-	print("rcx = ");	printDec(registers-> rcx); print("\n");
-	print("rdx = ");	printDec(registers-> rdx); print("\n");
-	print("rbp = ");	printDec(registers-> rbp); print("\n");
-	print("rdi = ");	printDec(registers-> rdi); print("\n");
-	print("rsi = ");	printDec(registers-> rsi); print("\n");
-	print("r8 = ");		printDec(registers-> r8); print("\n");
-	print("r9 = ");		printDec(registers-> r9); print("\n");
-	print("r10 = ");	printDec(registers-> r10); print("\n");
-	print("r11 = ");	printDec(registers-> r11); print("\n");
-	print("r12 = ");	printDec(registers-> r12); print("\n");
-	print("r13 = ");	printDec(registers-> r13); print("\n");
-	print("r14 = ");	printDec(registers-> r14); print("\n");
-	print("r15 = ");	printDec(registers-> r15); print("\n");
+	print("rip = ");	printHex(registers-> rip); print("\n");
+	print("\n");
+
+	print("rax = ");	printHex(registers-> rax); print("\n");
+	print("rbx = ");	printHex(registers-> rbx); print("\n");
+	print("rcx = ");	printHex(registers-> rcx); print("\n");
+	print("rdx = ");	printHex(registers-> rdx); print("\n");
+	print("rbp = ");	printHex(registers-> rbp); print("\n");
+	print("rdi = ");	printHex(registers-> rdi); print("\n");
+	print("rsi = ");	printHex(registers-> rsi); print("\n");
+	print("r8 = ");		printHex(registers-> r8); print("\n");
+	print("r9 = ");		printHex(registers-> r9); print("\n");
+	print("r10 = ");	printHex(registers-> r10); print("\n");
+	print("r11 = ");	printHex(registers-> r11); print("\n");
+	print("r12 = ");	printHex(registers-> r12); print("\n");
+	print("r13 = ");	printHex(registers-> r13); print("\n");
+	print("r14 = ");	printHex(registers-> r14); print("\n");
+	print("r15 = ");	printHex(registers-> r15); print("\n");
 	setTextColor(0x00FFFFFF);
 
 	print("Press r to go back to Shell");

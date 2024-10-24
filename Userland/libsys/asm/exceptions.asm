@@ -9,6 +9,7 @@ _divzero:
 
     mov rax, 10
     xor rbx, rbx
+
     div rbx
 
     pop rbx
@@ -21,6 +22,7 @@ _invalidopcode:
     push rbp
     mov rbp, rsp
 
+    ; this instruction triggers the exception
     ud2  ;https://shorturl.at/Plmjv
 
     mov rsp, rbp

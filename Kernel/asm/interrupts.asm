@@ -74,14 +74,23 @@ SECTION .text
 %endmacro
 
 %macro exceptionHandler 1
-	mov rcx, 3
+	
+	; after the exception, the rip's value that points 
+	; to the faulting instruction is, among other things, pushed to the stack
+	; it is the last thing pushed in the stack
+	mov [rax_temp], rax
+	mov rax, [rsp]
+	push rax
+	mov rax, [rax_temp]
+
 	pushState
 
 	mov rdi, %1 ; pass argument to exceptionDispatcher
-	mov rsi, rbp ;pass current register values to exceptionDispatcher
+	mov rsi, rsp ;pass current register values to exceptionDispatcher
 	
 	call exceptionDispatcher
 
+	pop rax
 	popState
 	iretq
 %endmacro
@@ -156,3 +165,7 @@ _exceptionHandler00:
 ; Invalid Opcode Exception
 _exceptionHandler06:
 	exceptionHandler 6
+
+
+section .bss
+	rax_temp resb 8
