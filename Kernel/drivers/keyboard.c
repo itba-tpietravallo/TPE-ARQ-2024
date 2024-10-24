@@ -29,7 +29,7 @@
 #define DEC_MOD(x, m) ((x) = SUB_MOD(x, 1, m))
 
 static uint8_t SHIFT_KEY_PRESSED, CAPS_LOCK_KEY_PRESSED, CONTROL_KEY_PRESSED;
-static uint8_t buffer[BUFFER_SIZE];
+static int8_t buffer[BUFFER_SIZE];
 static uint16_t to_write = 0, to_read = 0;
 static uint8_t write_output_while_typing = 0;
 
@@ -171,10 +171,9 @@ static uint8_t isControl(uint8_t scancode){
     return (scancode & 0x7F) == CONTROL_KEY_L;
 }
 
-void addCharToBuffer(uint8_t ascii, uint8_t showOutput) {
+void addCharToBuffer(int8_t ascii, uint8_t showOutput) {
     buffer[to_write] = ascii;
     INC_MOD(to_write, BUFFER_SIZE);
-    buffer[to_write] = EOF;
     if (showOutput)
         putChar(ascii);
 }
@@ -183,7 +182,6 @@ uint16_t clearBuffer() {
     uint16_t aux = SUB_MOD(to_write, to_read, BUFFER_SIZE);
     if (aux == 0) return 0;
     DEC_MOD(to_write, BUFFER_SIZE);
-    buffer[to_write] = EOF;
     clearPreviousCharacter();
     return aux;
 }
@@ -191,7 +189,7 @@ uint16_t clearBuffer() {
 // Halts until any key is pressed or \n is entered, depending on options (AWAIT_RETURN_KEY)
 int8_t getKeyboardCharacter(enum KEYBOARD_OPTIONS options) {
     write_output_while_typing = options & SHOW_BUFFER_WHILE_TYPING;
-    while(to_write == to_read || ( (options & AWAIT_RETURN_KEY) && buffer[SUB_MOD(to_write, 1, BUFFER_SIZE)] != '\n')) _hlt();
+    while(to_write == to_read || ( (options & AWAIT_RETURN_KEY) && ((buffer[SUB_MOD(to_write, 1, BUFFER_SIZE)] != '\n') || (buffer[SUB_MOD(to_write, 1, BUFFER_SIZE)] == EOF)) )) _hlt();
     write_output_while_typing = 0;
     int8_t aux = buffer[to_read];
     INC_MOD(to_read, BUFFER_SIZE);
@@ -230,7 +228,7 @@ void keyboardHandler(){
         }
         
         if (is_pressed && IS_KEYCODE(scancode)) {
-            uint8_t c = scancodeMap[scancode][SHIFT_KEY_PRESSED];
+            int8_t c = scancodeMap[scancode][SHIFT_KEY_PRESSED];
 
             if (CAPS_LOCK_KEY_PRESSED == 1) {
                 c = TO_UPPER(c);
@@ -247,7 +245,6 @@ void keyboardHandler(){
             } else {
                 if (c == BACKSPACE_KEY && to_write != to_read) {
                     DEC_MOD(to_write, BUFFER_SIZE);
-                    buffer[to_write] = EOF;
                     clearPreviousCharacter();
                 }
 

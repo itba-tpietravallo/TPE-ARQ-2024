@@ -49,7 +49,7 @@ enum KEYBOARD_OPTIONS {
 };
 
 int8_t getKeyboardCharacter(enum KEYBOARD_OPTIONS options);
-void addCharToBuffer(uint8_t ascii, uint8_t showOutput);
+void addCharToBuffer(int8_t ascii, uint8_t showOutput);
 uint16_t clearBuffer();
 void keyboardHandler();
 
