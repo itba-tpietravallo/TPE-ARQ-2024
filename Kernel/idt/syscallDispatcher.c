@@ -4,7 +4,7 @@
 #include <keyboard.h>
 #include <fonts.h>
 #include <lib.h>
-#include <videoDriver.h>
+#include <video.h>
 
 // @todo Note: Technically.. registers on the stack are modifiable (since its a struct pointer, not struct). 
 int32_t syscallDispatcher(Registers * registers) {
@@ -106,19 +106,16 @@ int32_t sys_clear_input_buffer(void) {
 
 int32_t sys_hour(int * hour) {
 	*hour = getHour();
-	printHex(*hour);
 	return 0;
 }
 
 int32_t sys_minute(int * minute) {
 	*minute = getMinute();
-	printHex(*minute);
 	return 0;
 }
 
 int32_t sys_second(int * second) {
 	*second = getSecond();
-	printHex(*second);
 	return 0;
 }
 

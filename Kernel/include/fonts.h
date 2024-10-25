@@ -2,7 +2,7 @@
 #define FONTS_H
 
 #include <stdint.h>
-#include <videoDriver.h>
+#include <video.h>
 
 #define DEFAULT_TEXT_COLOR 0x00FFFFFF
 #define DEFAULT_ERROR_COLOR 0x00DE382B

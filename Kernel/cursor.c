@@ -5,9 +5,9 @@
 
 #define TOGGLE_TICKS 9
 
+static uint8_t IS_SHOWING = 0;
 
 void toggleCursor(void);
-static uint8_t IS_SHOWING = 0;
 
 int toggleSpeed(void) {
     return ticks_elapsed() / TOGGLE_TICKS;

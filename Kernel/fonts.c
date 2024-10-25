@@ -24,7 +24,7 @@
         objcopy -O elf64-x86-64 -B i386 -I binary ./font_assets/Solarize.12x29.psf font.o
  */
 
-#include "../font_assets/font_basic.c"
+#include "include/font_basic_8x8.h"
 
 #define FD_STDIN  0
 #define FD_STDOUT 1

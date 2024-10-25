@@ -146,7 +146,7 @@ int history(void) {
 int date(void){
 	int hour, minute, second;
     getDate(&hour, &minute, &second);
-    printf("Current time: %dh %dm %ds\n", hour, minute, second);
+    printf("Current time: %xh %xm %xs (UTC-0)\n", hour, minute, second);
     return 0;
 }
 

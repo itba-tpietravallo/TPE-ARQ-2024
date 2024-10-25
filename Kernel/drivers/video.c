@@ -5,7 +5,7 @@
  * This file is excluded from the main compilation rules, and is always compiled with -O3 (regardless of the main compilation rules).
  */
 
-#include <videoDriver.h>
+#include <video.h>
 #include <interrupts.h>
 
 struct vbe_mode_info_structure {
