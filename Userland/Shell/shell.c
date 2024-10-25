@@ -6,6 +6,8 @@
 #include <sys.h>
 #include <exceptions.h>
 
+#include <snake.h>
+
 #define MAX_BUFFER_SIZE 1024
 #define HISTORY_SIZE 5
 
@@ -50,6 +52,7 @@ Command commands[] = {
     { .name = "history",        .function = (int (*)(void))(unsigned long long)history,         .description = "Prints the command history" },
     { .name = "invop",          .function = (int (*)(void))(unsigned long long)_invalidopcode,  .description = "Generates an invalid Opcode exception" },
     { .name = "rect",           .function = (int (*)(void))(unsigned long long)rectangle,       .description = "Prints a blue rectangle" },
+    { .name = "snake",          .function = (int (*)(void))(unsigned long long)snake,           .description = "Launches the snake game" },
 };
 
 char command_history[HISTORY_SIZE][MAX_BUFFER_SIZE] = {0};
