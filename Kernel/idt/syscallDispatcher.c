@@ -37,6 +37,9 @@ int32_t syscallDispatcher(Registers * registers) {
 		case 0x800000A0: return sys_exec((int (*)(void)) registers->rdi);
 		case 0x800000B0: return sys_register_key((uint8_t) registers->rdi, (SpecialKeyHandler) registers->rsi);
 
+		case 0x800000C0: return sys_window_width();
+		case 0x800000C1: return sys_window_height();
+
 		default:
 			setBackgroundColor(0x00FF0000); setTextColor(0x00FFFFFF);
 			// @todo This should probably be an exception handler
@@ -99,6 +102,14 @@ int32_t sys_clear_screen(void) {
 int32_t sys_clear_input_buffer(void) {
 	while(clearBuffer() != 0);
 	return 0;
+}
+
+uint16_t sys_window_width(void) {
+	return getWindowWidth();
+}
+
+uint16_t sys_window_height(void) {
+	return getWindowHeight();
 }
 
 // ==================================================================

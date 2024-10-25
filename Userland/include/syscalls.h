@@ -40,4 +40,8 @@ int32_t sys_exec(int32_t (*fnPtr)(void));
 
 int32_t sys_register_key(uint8_t scancode, void (*fn)(enum REGISTERABLE_KEYS scancode));
 
+int32_t sys_window_width(void);
+
+int32_t sys_window_height(void);
+
 #endif

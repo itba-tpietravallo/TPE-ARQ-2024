@@ -37,6 +37,8 @@ int32_t sys_fonts_decrease_size(void);
 int32_t sys_fonts_increase_size(void);
 int32_t sys_clear_screen(void);
 int32_t sys_clear_input_buffer(void);
+uint16_t sys_window_width(void);
+uint16_t sys_window_height(void);
 
 // Date syscall prototypes
 int32_t sys_hour(int * hour);

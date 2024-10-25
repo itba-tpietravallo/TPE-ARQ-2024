@@ -106,5 +106,7 @@ void fillVideoMemory(uint32_t hexColor);
 int32_t exec(int32_t (*fnPtr)(void));
 void registerKey(enum REGISTERABLE_KEYS scancode, void (*fn)(enum REGISTERABLE_KEYS scancode));
 void clearInputBuffer(void);
+int getWindowWidth(void);
+int getWindowHeight(void);
 
 #endif

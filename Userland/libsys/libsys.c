@@ -50,3 +50,13 @@ int32_t exec(int32_t (*fnPtr)(void)) {
 void registerKey(enum REGISTERABLE_KEYS scancode, void (*fn)(enum REGISTERABLE_KEYS scancode)) {
     sys_register_key(scancode, fn);
 }
+
+
+int getWindowWidth(void) {
+    return sys_window_width();
+}
+
+
+int getWindowHeight(void) {
+    return sys_window_height();
+}
