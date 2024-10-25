@@ -5,6 +5,7 @@
 #include <fonts.h>
 #include <lib.h>
 #include <video.h>
+#include <time.h>
 
 // @todo Note: Technically.. registers on the stack are modifiable (since its a struct pointer, not struct). 
 int32_t syscallDispatcher(Registers * registers) {
@@ -35,10 +36,14 @@ int32_t syscallDispatcher(Registers * registers) {
 		case 0x80000021: return sys_fill_video_memory(registers->rdi);
 
 		case 0x800000A0: return sys_exec((int (*)(void)) registers->rdi);
+		case 0x800000A1: return sys_exec_program((int (*) (void))registers->rdi);
+
 		case 0x800000B0: return sys_register_key((uint8_t) registers->rdi, (SpecialKeyHandler) registers->rsi);
 
 		case 0x800000C0: return sys_window_width();
 		case 0x800000C1: return sys_window_height();
+
+		case 0x800000D0: return sys_sleep_milis(registers->rdi);
 
 		default:
 			setBackgroundColor(0x00FF0000); setTextColor(0x00FFFFFF);
@@ -157,11 +162,25 @@ int32_t sys_exec(int32_t (*fnPtr)(void)) {
 	return aux;
 }
 
+int32_t sys_exec_program(int32_t (*fnPtr)(void)) {
+	int32_t aux = sys_exec(fnPtr);
+	clear();
+	return aux;
+}
+
 // ==================================================================
 // Custom keyboard system calls
 // ==================================================================
 
 int32_t sys_register_key(uint8_t scancode, SpecialKeyHandler fn){
 	registerSpecialKey(scancode, fn, 0);
+	return 0;
+}
+
+// ==================================================================
+// Sleep system calls
+// ==================================================================
+int32_t sys_sleep_milis(uint32_t milis) {
+	sleepTicks( (milis) / ( SECONDS_TO_TICKS * 1000) );
 	return 0;
 }

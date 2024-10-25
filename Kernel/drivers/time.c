@@ -4,8 +4,6 @@
 #include <fonts.h>
 #include<cursor.h>
 
-#define SECONDS_TO_TICKS 18
-
 static unsigned long ticks = 0;
 
 void timer_handler() {

@@ -47,6 +47,10 @@ int32_t exec(int32_t (*fnPtr)(void)) {
     return sys_exec(fnPtr);
 }
 
+int32_t exec_program(int32_t (*fnPtr)(void)) {
+    return sys_exec_program(fnPtr);
+}
+
 void registerKey(enum REGISTERABLE_KEYS scancode, void (*fn)(enum REGISTERABLE_KEYS scancode)) {
     sys_register_key(scancode, fn);
 }
@@ -59,4 +63,8 @@ int getWindowWidth(void) {
 
 int getWindowHeight(void) {
     return sys_window_height();
+}
+
+void sleep(uint32_t miliseconds) {
+    sys_sleep_milis(miliseconds);
 }

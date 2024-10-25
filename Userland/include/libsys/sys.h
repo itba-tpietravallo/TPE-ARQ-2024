@@ -108,5 +108,6 @@ void registerKey(enum REGISTERABLE_KEYS scancode, void (*fn)(enum REGISTERABLE_K
 void clearInputBuffer(void);
 int getWindowWidth(void);
 int getWindowHeight(void);
+void sleep(uint32_t milliseconds);
 
 #endif

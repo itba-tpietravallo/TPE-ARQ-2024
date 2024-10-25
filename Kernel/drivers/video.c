@@ -68,6 +68,8 @@ void drawRectangle(uint32_t hexColor, uint64_t width, uint64_t height, uint64_t 
 	}
 }
 
+
+
 void fillVideoMemory(uint32_t hexColor) {
 	uint8_t * framebuffer = (uint8_t * )(unsigned long long)(VBE_mode_info->framebuffer);
 	uint16_t width = getWindowWidth();

@@ -10,11 +10,13 @@ GLOBAL sys_clear_input_buffer
 GLOBAL sys_hour
 GLOBAL sys_minute
 GLOBAL sys_second
+GLOBAL sys_sleep_milis
 
 GLOBAL sys_rectangle
 GLOBAL sys_fill_video_memory
 
 GLOBAL sys_exec
+GLOBAL sys_exec_program
 
 GLOBAL sys_register_key
 
@@ -55,7 +57,11 @@ sys_rectangle: sys_int80 0x80000020
 sys_fill_video_memory: sys_int80 0x80000021
 
 sys_exec: sys_int80 0x800000A0
+sys_exec_program: sys_int80 0x800000A1
+
 sys_register_key: sys_int80 0x800000B0
 
 sys_window_width: sys_int80 0x800000C0
 sys_window_height: sys_int80 0x800000C1
+
+sys_sleep_milis: sys_int80 0x800000D0
