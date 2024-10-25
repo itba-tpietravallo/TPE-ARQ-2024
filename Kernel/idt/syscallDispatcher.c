@@ -32,6 +32,7 @@ int32_t syscallDispatcher(Registers * registers) {
 		case 0x80000012: return sys_second((int *) registers->rdi);
 
 		case 0x80000020: return sys_rectangle(registers->rdi, registers->rsi, registers->rdx, registers->rcx, registers->r8);
+		case 0x80000021: return sys_fill_video_memory(registers->rdi);
 
 		case 0x800000A0: return sys_exec((int (*)(void)) registers->rdi);
 		case 0x800000B0: return sys_register_key((uint8_t) registers->rdi, (SpecialKeyHandler) registers->rsi);
@@ -125,6 +126,11 @@ int32_t sys_second(int * second) {
 
 int32_t sys_rectangle(uint32_t color, uint64_t width_pixels, uint64_t height_pixels, uint64_t initial_pos_x, uint64_t initial_pos_y){
 	drawRectangle(color, width_pixels, height_pixels, initial_pos_x, initial_pos_y);
+	return 0;
+}
+
+int32_t sys_fill_video_memory(uint32_t hexColor) {
+	fillVideoMemory(hexColor);
 	return 0;
 }
 

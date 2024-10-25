@@ -12,6 +12,7 @@ GLOBAL sys_minute
 GLOBAL sys_second
 
 GLOBAL sys_rectangle
+GLOBAL sys_fill_video_memory
 
 GLOBAL sys_exec
 
@@ -48,6 +49,7 @@ sys_minute: sys_int80 0x80000011
 sys_second: sys_int80 0x80000012
 
 sys_rectangle: sys_int80 0x80000020
+sys_fill_video_memory: sys_int80 0x80000021
 
 sys_exec: sys_int80 0x800000A0
 sys_register_key: sys_int80 0x800000B0

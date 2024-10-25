@@ -39,6 +39,10 @@ void drawRectangle(int color, long long int width_pixels, long long int height_p
     sys_rectangle(color, width_pixels, height_pixels, initial_pos_x, initial_pos_y);
 }
 
+void fillVideoMemory(uint32_t hexColor) {
+    sys_fill_video_memory(hexColor);
+}
+
 int32_t exec(int32_t (*fnPtr)(void)) {
     return sys_exec(fnPtr);
 }

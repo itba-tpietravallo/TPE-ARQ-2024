@@ -7,6 +7,7 @@
 
 #include <fonts.h>
 #include <keyboard.h>
+#include <video.h>
 
 /* 
     Note: An attempt was made to use the Linux kernel's Solarize.12x29.psf (https://wiki.osdev.org/PC_Screen_Font). Now only the pain remains.
@@ -225,15 +226,11 @@ void printBin(uint64_t value) {
 }
 
 void clear(void) {
-    uint64_t width = getWindowWidth(), height = getWindowHeight();
-    for (uint64_t x = 0; x < width; x++) {
-        for (uint64_t y = 0; y < height; y++) {
-            putPixel(0x0, x, y);
-        }
-    }
+    fillVideoMemory(DEFAULT_BACKGROUND_COLOR);
     xBufferPosition = 0;
     yBufferPosition = 0;
 }
+
 void retractPosition() {
     if(xBufferPosition == 0){
         xBufferPosition = getWindowWidth();

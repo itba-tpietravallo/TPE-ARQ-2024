@@ -5,6 +5,7 @@
 
 void putPixel(uint32_t hexColor, uint64_t x, uint64_t y);
 void drawRectangle(uint32_t hexColor, uint64_t width, uint64_t height, uint64_t initial_pos_x, uint64_t initial_pos_y);
+void fillVideoMemory(uint32_t hexColor);
 
 uint16_t getWindowWidth(void);
 uint16_t getWindowHeight(void);

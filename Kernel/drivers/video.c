@@ -52,7 +52,7 @@ VBEInfoPtr VBE_mode_info = (VBEInfoPtr) 0x0000000000005C00;
 
 void putPixel(uint32_t hexColor, uint64_t x, uint64_t y) {
     uint8_t * framebuffer = (uint8_t * )(unsigned long long)(VBE_mode_info->framebuffer);
-    uint64_t offset = (x * ((VBE_mode_info->bpp)/8)) + (y * VBE_mode_info->pitch);
+    uint64_t offset = (x * ((VBE_mode_info->bpp) >> 3)) + (y * VBE_mode_info->pitch);
 	uint8_t b = (hexColor) & 0xFF, g = (hexColor >> 8) & 0xFF, r = (hexColor >> 16) & 0xFF;
 
     framebuffer[offset]     =  b;
@@ -64,6 +64,24 @@ void drawRectangle(uint32_t hexColor, uint64_t width, uint64_t height, uint64_t 
 	for(uint64_t y = initial_pos_y; y - initial_pos_y < height; y++){
 		for(uint64_t x = initial_pos_x; x - initial_pos_x < width; x++){
 			putPixel(hexColor, x, y);
+		}
+	}
+}
+
+void fillVideoMemory(uint32_t hexColor) {
+	uint8_t * framebuffer = (uint8_t * )(unsigned long long)(VBE_mode_info->framebuffer);
+	uint16_t width = getWindowWidth();
+	uint16_t height = getWindowHeight();
+
+	uint8_t b = (hexColor) & 0xFF, g = (hexColor >> 8) & 0xFF, r = (hexColor >> 16) & 0xFF;
+	uint64_t yoffset;
+	for (uint16_t y = 0; y < height; y++) {
+		yoffset = (y * VBE_mode_info->pitch);
+		for (uint16_t x = 0; x < width; x++) {
+			uint64_t offset = (x * ((VBE_mode_info->bpp) >> 3)) + yoffset;
+			framebuffer[offset] = b;
+			framebuffer[offset + 1] = g;
+			framebuffer[offset + 2] = r;
 		}
 	}
 }
