@@ -136,8 +136,11 @@ int32_t sys_rectangle(uint32_t color, uint64_t width_pixels, uint64_t height_pix
 // ==================================================================
 
 int32_t sys_exec(int32_t (*fnPtr)(void)) {
-	clearKeyFnMap(); // avoid """processes/threads/apps""" registering keys across each other over time. reset the map every time
-	return fnPtr();
+	SpecialKeyHandler map[ F12_KEY - ESCAPE_KEY + 1 ] = {0};
+	clearKeyFnMapNonKernel(map); // avoid """processes/threads/apps""" registering keys across each other over time. reset the map every time
+	int32_t aux = fnPtr();
+	restoreKeyFnMapNonKernel(map);
+	return aux;
 }
 
 // ==================================================================

@@ -61,11 +61,11 @@ static void clearEntireBuffer(enum REGISTERABLE_KEYS scancode) {
 int main() {
     clear();
 
-	while (1) {
-        registerKey(KP_UP_KEY, printPreviousCommand);
-        registerKey(KP_DOWN_KEY, printNextCommand);
-        registerKey(F12_KEY, clearEntireBuffer);
+    registerKey(KP_UP_KEY, printPreviousCommand);
+    registerKey(KP_DOWN_KEY, printNextCommand);
+    registerKey(F12_KEY, clearEntireBuffer);
 
+	while (1) {
         printf("\e[0mshell \e[0;32m$\e[0m ");
 
         signed char c;

@@ -3,6 +3,7 @@
 #include <fonts.h>
 #include <interrupts.h>
 #include <cursor.h>
+#include <stddef.h>
 
 #define BUFFER_SIZE 1024
 
@@ -137,18 +138,30 @@ static const uint8_t scancodeMap[][2] = {
     /* 0x58 */ { F12_KEY, F12_KEY },
 };
 
-void clearKeyFnMap() {
+void restoreKeyFnMapNonKernel(SpecialKeyHandler * map) {
     for(uint8_t i = ESCAPE_KEY; i < F12_KEY; i++){
-        if (KeyFnMap[i].registered_from_kernel != 1) 
-            KeyFnMap[i].fn = 0;
+        if (KeyFnMap[i].registered_from_kernel != 1) {
+            KeyFnMap[i].fn = map[i];
+        }
     }
 }
 
-void registerSpecialKey(enum SPECIAL_KEYS scancode, SpecialKeyHandler fn, uint8_t registeredFromKernel) {
-    if (IS_SPECIAL_KEY(scancode) && scancode != TABULATOR_KEY && scancode != RETURN_KEY) {
+void clearKeyFnMapNonKernel(SpecialKeyHandler * map) {
+    for(uint8_t i = ESCAPE_KEY; i < F12_KEY; i++){
+        if (KeyFnMap[i].registered_from_kernel != 1) {
+            map[i] = KeyFnMap[i].fn;
+            KeyFnMap[i].fn = NULL;
+        }
+    }
+}
+
+uint8_t registerSpecialKey(enum KEYS scancode, SpecialKeyHandler fn, uint8_t registeredFromKernel) {
+    if (IS_KEYCODE(scancode) && fn != NULL && ((registeredFromKernel != 0 || (registeredFromKernel == 0 && KeyFnMap[scancode].fn == NULL)))) {
         KeyFnMap[scancode].fn = fn;
         KeyFnMap[scancode].registered_from_kernel = registeredFromKernel;
+        return 1;
     }
+    return 0;
 }
 
 static uint8_t isReleased(uint8_t scancode) {
