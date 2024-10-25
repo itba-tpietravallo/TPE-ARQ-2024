@@ -136,7 +136,7 @@ int history(void) {
     DEC_MOD(last, HISTORY_SIZE);
     uint8_t i = 0;
     while (i < HISTORY_SIZE && command_history[last][0] != 0) {
-        putchar('0' + i); printf(". "); printf(command_history[last]); printf("\n");
+        printf("%d. %s\n", i, command_history[last]);
         DEC_MOD(last, HISTORY_SIZE);
         i++;
     }
@@ -146,7 +146,7 @@ int history(void) {
 int date(void){
 	int hour, minute, second;
     getDate(&hour, &minute, &second);
-    printf("\n");
+    printf("Current time: %dh %dm %ds\n", hour, minute, second);
     return 0;
 }
 
@@ -164,7 +164,7 @@ int echo(void){
                 break;
             case '$':
                 if (buffer[i + 1] == '?'){
-                    putchar(last_command_output + '0');
+                    printf("%d", last_command_output);
                     i++;
                     break;
                 }
@@ -180,7 +180,7 @@ int echo(void){
 int help(void){
     printf("Available commands:\n");
     for (int i = 0; i < sizeof(commands) / sizeof(Command); i++) {
-        printf(commands[i].name); printf("\t - - -\t "); printf(commands[i].description); printf("\n");
+        printf("%s\t - - -\t %s\n", commands[i].name, commands[i].description);
     }
     printf("\n");
     return 0;
@@ -196,12 +196,9 @@ int rectangle(void){
     return 0;
 }
 
-// Only exit codes 0-9 are valid
 int exit(void) {
-    char * exit_code = strtok(NULL, " ");
-    if (exit_code == NULL || *exit_code == '\0') {
-        return 0;
-    } else {
-        return *exit_code - '0';
-    }
+    char * buffer = strtok(NULL, " ");
+    int aux = 0;
+    sscanf(buffer, "%d", &aux);
+    return aux;
 }
