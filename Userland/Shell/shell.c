@@ -20,6 +20,8 @@ int clear(void);
 int date(void);
 int echo(void);
 int exit(void);
+int fontdec(void);
+int fontinc(void);
 int help(void);
 int history(void);
 int rectangle(void);
@@ -41,11 +43,13 @@ Command commands[] = {
     { .name = "date",           .function = (int (*)(void))(unsigned long long)date,            .description = "Prints the current date" },
     { .name = "divzero",        .function = (int (*)(void))(unsigned long long)_divzero,        .description = "Generates a division by zero exception" },
     { .name = "echo",           .function = (int (*)(void))(unsigned long long)echo ,           .description = "Prints the input string" },
-    { .name = "exit",           .function = (int (*)(void))(unsigned long long)exit,            .description = "Exist with the provided exit code or zero (default)" },
+    { .name = "exit",           .function = (int (*)(void))(unsigned long long)exit,            .description = "Command exits w/ the provided exit code or 0" },
+    { .name = "fontdec",        .function = (int (*)(void))(unsigned long long)fontdec,         .description = "Decreases the font size" },
+    { .name = "fontinc",        .function = (int (*)(void))(unsigned long long)fontinc,         .description = "Increases the font size" },
     { .name = "help",           .function = (int (*)(void))(unsigned long long)help,            .description = "Prints the available commands" },
     { .name = "history",        .function = (int (*)(void))(unsigned long long)history,         .description = "Prints the command history" },
-    { .name = "invalidopcode",  .function = (int (*)(void))(unsigned long long)_invalidopcode,  .description = "Generates an invalid Opcode exception" },
-    { .name = "rectangle",      .function = (int (*)(void))(unsigned long long)rectangle,       .description = "Prints a blue rectangle" },
+    { .name = "invop",          .function = (int (*)(void))(unsigned long long)_invalidopcode,  .description = "Generates an invalid Opcode exception" },
+    { .name = "rect",           .function = (int (*)(void))(unsigned long long)rectangle,       .description = "Prints a blue rectangle" },
 };
 
 char command_history[HISTORY_SIZE][MAX_BUFFER_SIZE] = {0};
@@ -201,4 +205,14 @@ int exit(void) {
     int aux = 0;
     sscanf(buffer, "%d", &aux);
     return aux;
+}
+
+int fontinc(void) {
+    increaseFontSize();
+    return 0;
+}
+
+int fontdec(void) {
+    decreaseFontSize();
+    return 0;
 }
