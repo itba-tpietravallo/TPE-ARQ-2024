@@ -45,7 +45,7 @@ Command commands[] = {
     { .name = "date",           .function = (int (*)(void))(unsigned long long)date,            .description = "Prints the current date" },
     { .name = "divzero",        .function = (int (*)(void))(unsigned long long)_divzero,        .description = "Generates a division by zero exception" },
     { .name = "echo",           .function = (int (*)(void))(unsigned long long)echo ,           .description = "Prints the input string" },
-    { .name = "exit",           .function = (int (*)(void))(unsigned long long)exit,            .description = "Exits with the provided exit code or 0 (default)" },
+    { .name = "exit",           .function = (int (*)(void))(unsigned long long)exit,            .description = "Command exits w/ the provided exit code or 0" },
     { .name = "fontdec",        .function = (int (*)(void))(unsigned long long)fontdec,         .description = "Decreases the font size" },
     { .name = "fontinc",        .function = (int (*)(void))(unsigned long long)fontinc,         .description = "Increases the font size" },
     { .name = "help",           .function = (int (*)(void))(unsigned long long)help,            .description = "Prints the available commands" },
