@@ -201,8 +201,9 @@ uint16_t clearBuffer() {
 }
 
 // Halts until any key is pressed or \n is entered, depending on options (AWAIT_RETURN_KEY)
+// This function always sets the MODIFY_BUFFER option, so keys can be consumed
 int8_t getKeyboardCharacter(enum KEYBOARD_OPTIONS ops) {
-    options = ops;
+    options = ops | MODIFY_BUFFER;
     while(to_write == to_read || ( (options & AWAIT_RETURN_KEY) && (buffer[SUB_MOD(to_write, 1, BUFFER_SIZE)] != '\n' || buffer[SUB_MOD(to_write, 1, BUFFER_SIZE)] == EOF) )) _hlt();
     ops = 0;
     int8_t aux = buffer[to_read];
@@ -241,7 +242,7 @@ void keyboardHandler(){
             return ;
         }
         
-        if (is_pressed && IS_KEYCODE(scancode)) {
+        if ((options & MODIFY_BUFFER) && is_pressed && IS_KEYCODE(scancode)) {
             int8_t c = scancodeMap[scancode][SHIFT_KEY_PRESSED];
 
             if (CAPS_LOCK_KEY_PRESSED == 1) {
@@ -264,12 +265,12 @@ void keyboardHandler(){
                     DEC_MOD(to_write, BUFFER_SIZE);
                     clearPreviousCharacter();
                 }
-
-                // Special keys except for TAB & RETURN
-                if (KeyFnMap[scancode].fn != 0) {
-                    KeyFnMap[scancode].fn(scancode);
-                }
             }
+        }
+
+        // Call the registered function for the key, if any
+        if (KeyFnMap[scancode].fn != 0) {
+            KeyFnMap[scancode].fn(scancode);
         }
     }
 }

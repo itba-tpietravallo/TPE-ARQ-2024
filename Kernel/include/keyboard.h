@@ -97,7 +97,8 @@ typedef void (*SpecialKeyHandler)(enum KEYS scancode);
 
 enum KEYBOARD_OPTIONS {
     SHOW_BUFFER_WHILE_TYPING = 0b00000001,
-    AWAIT_RETURN_KEY = 0b00000010
+    AWAIT_RETURN_KEY = 0b00000010,
+    MODIFY_BUFFER = 0b00000100
 };
 
 int8_t getKeyboardCharacter(enum KEYBOARD_OPTIONS options);
