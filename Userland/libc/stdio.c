@@ -82,7 +82,7 @@ int vscanf(const char * format, va_list args) {
                         while ((c = getchar()) >= '0' && c <= '9') {
                             num = num * 10 + c - '0';
                         }
-                        *va_arg(args, int *) = num;
+                        *va_arg(args, int64_t *) = num;
                         args_read++;
                         break;
                     case 's':
@@ -111,12 +111,12 @@ int vsscanf(const char * buffer, const char * format, va_list args) {
                 form_i++;
                 switch (format[form_i]) {
                     case 'd' : {
-                        int num = 0;
+                        int64_t num = 0;
                         while (buffer[buf_i] >= '0' && buffer[buf_i] <= '9') {
                             num = num * 10 + buffer[buf_i] - '0';
                             buf_i++;
                         }
-                        *va_arg(args, int *) = num;
+                        *va_arg(args, int64_t *) = num;
                         args_read++;
                         break;
                     }
