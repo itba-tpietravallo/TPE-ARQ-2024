@@ -4,7 +4,6 @@
 #include <stdint.h>
 #include <keyboard.h>
 
-void takeRegisterSnapshot(void);
 uint64_t * getRegisterSnapshot(void);
 
 typedef struct {
@@ -64,7 +63,6 @@ int32_t sys_register_key(uint8_t scancode, SpecialKeyHandler fn);
 int32_t sys_sleep_milis(uint32_t milis);
 
 // Register snapshot
-int32_t sys_take_register_snapshot(void);
 int32_t sys_get_register_snapshot(uint64_t * registers);
 
 #endif

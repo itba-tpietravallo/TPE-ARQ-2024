@@ -72,10 +72,6 @@ void sleep(uint32_t miliseconds) {
     sys_sleep_milis(miliseconds);
 }
 
-void takeRegisterSnapshot(void) {
-    sys_take_register_snapshot();
-}
-
 int32_t getRegisterSnapshot(uint64_t * registers) {
     return sys_get_register_snapshot(registers);
 }

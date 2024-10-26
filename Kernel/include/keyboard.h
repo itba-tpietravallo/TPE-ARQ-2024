@@ -104,7 +104,7 @@ enum KEYBOARD_OPTIONS {
 int8_t getKeyboardCharacter(enum KEYBOARD_OPTIONS options);
 void addCharToBuffer(int8_t ascii, uint8_t showOutput);
 uint16_t clearBuffer();
-void keyboardHandler();
+uint8_t keyboardHandler();
 
 // All special keys *EXCEPT* for TAB and RETURN can be registered
 // Printable keys, including tab (`\t`) and return (`\n`) can be obtained via `getKeyboardCharacter` (`getchar`/`sys_read`)

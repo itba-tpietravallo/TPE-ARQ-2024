@@ -210,11 +210,11 @@ int8_t getKeyboardCharacter(enum KEYBOARD_OPTIONS ops) {
     return aux;
 }
 
-void keyboardHandler(){
+uint8_t keyboardHandler(){
     if(to_write != to_read && (to_write - to_read) % BUFFER_SIZE == 0){
         print("\n\nKernel buffer overflow\n\n");
         to_read = to_write = 0;
-        return ;
+        return 0;
     } else {
         uint8_t scancode = getKeyboardBuffer();
         uint8_t is_pressed = isPressed(scancode);
@@ -223,25 +223,25 @@ void keyboardHandler(){
         if(isShift(scancode)){
             if(is_pressed){
                 SHIFT_KEY_PRESSED = 1;
-            } else{
+            } else {
                 SHIFT_KEY_PRESSED = 0;
             }
-            return ;
+            return scancode;
         } else if(isCapsLock(scancode)){
             if(is_pressed){
                 CAPS_LOCK_KEY_PRESSED = !CAPS_LOCK_KEY_PRESSED;
             }
-            return ;
+            return scancode;
         } else if(isControl(scancode)){
             if(is_pressed){
                 CONTROL_KEY_PRESSED = 1;
             } else{
                 CONTROL_KEY_PRESSED = 0;
             }
-            return ;
+            return scancode;
         }
         
-        if (! (is_pressed && IS_KEYCODE(scancode)) ) return ;
+        if (! (is_pressed && IS_KEYCODE(scancode)) ) return scancode;
         
         if ((options & MODIFY_BUFFER) != 0) {
             int8_t c = scancodeMap[scancode][SHIFT_KEY_PRESSED];
@@ -254,7 +254,7 @@ void keyboardHandler(){
                 if(c == RETURN_KEY){
                     c = '\n';
                     if ( (to_write != to_read) && buffer[SUB_MOD(to_write, 1, BUFFER_SIZE)] == '\n' ) {
-                        return ;
+                        return scancode;
                     }
                 } else if(c == TABULATOR_KEY){
                     c = '\t';
@@ -273,5 +273,8 @@ void keyboardHandler(){
         if (KeyFnMap[scancode].fn != 0) {
             KeyFnMap[scancode].fn(scancode);
         }
+
+        return scancode;
     }
+
 }
