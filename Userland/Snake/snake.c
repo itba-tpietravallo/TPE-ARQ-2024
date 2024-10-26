@@ -1,4 +1,5 @@
 #include <sys.h>
+#include <stdio.h>
 
 #define INITIAL_BODY_SIZE 3
 #define MAX_BODY_SIZE 100     // to check if the player won
@@ -48,9 +49,7 @@ static int window_height, window_width;
 
 static int crashed;
 
-int snake(void){
-    clearScreen();
-
+int main(void) {
     window_height = getWindowHeight();
     window_width = getWindowWidth();
 
@@ -91,7 +90,7 @@ int snake(void){
             }
         }
 
-        sleep(2000);
+        if (!crashed) sleep(2000);
     }
 
     return 0;
@@ -152,6 +151,9 @@ static void setDefaultFeatures(void) {
 }
 
 // Hand transpiled from https://github.com/hughsk/glsl-hsv2rgb/blob/master/index.glsl
+#define clamp(x, min, max) ((x) < (min) ? (min) : ((x) > (max) ? (max) : (x)))
+#define abs(a) ((a) < 0.0 ? -(a) : (a))
+#define fract(x) ((x) - ((int) (x)))
 static void hsv2rgb(double h, double s, double v, uint8_t* r, uint8_t* g, uint8_t* b) {
 //   vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
 //   vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);

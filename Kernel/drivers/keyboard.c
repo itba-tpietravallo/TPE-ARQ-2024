@@ -204,7 +204,7 @@ uint16_t clearBuffer() {
 int8_t getKeyboardCharacter(enum KEYBOARD_OPTIONS ops) {
     options = ops | MODIFY_BUFFER;
     while(to_write == to_read || ( (options & AWAIT_RETURN_KEY) && (buffer[SUB_MOD(to_write, 1, BUFFER_SIZE)] != '\n' || buffer[SUB_MOD(to_write, 1, BUFFER_SIZE)] == EOF) )) _hlt();
-    ops = 0;
+    options = 0;
     int8_t aux = buffer[to_read];
     INC_MOD(to_read, BUFFER_SIZE);
     return aux;
@@ -241,7 +241,9 @@ void keyboardHandler(){
             return ;
         }
         
-        if ((options & MODIFY_BUFFER) && is_pressed && IS_KEYCODE(scancode)) {
+        if (! (is_pressed && IS_KEYCODE(scancode)) ) return ;
+        
+        if ((options & MODIFY_BUFFER) != 0) {
             int8_t c = scancodeMap[scancode][SHIFT_KEY_PRESSED];
 
             if (CAPS_LOCK_KEY_PRESSED == 1) {

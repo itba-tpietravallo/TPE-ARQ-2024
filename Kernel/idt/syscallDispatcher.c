@@ -163,6 +163,7 @@ int32_t sys_exec(int32_t (*fnPtr)(void)) {
 }
 
 int32_t sys_exec_program(int32_t (*fnPtr)(void)) {
+	clear();
 	int32_t aux = sys_exec(fnPtr);
 	clear();
 	return aux;
@@ -181,6 +182,6 @@ int32_t sys_register_key(uint8_t scancode, SpecialKeyHandler fn){
 // Sleep system calls
 // ==================================================================
 int32_t sys_sleep_milis(uint32_t milis) {
-	sleepTicks( (milis) / ( SECONDS_TO_TICKS * 1000) );
+	sleepTicks( (milis * SECONDS_TO_TICKS) / 1000 );
 	return 0;
 }

@@ -6,7 +6,7 @@
 #include <sys.h>
 #include <exceptions.h>
 
-#include <snake.h>
+static void * const snakeModuleAddress = (void*)0x500000;
 
 #define MAX_BUFFER_SIZE 1024
 #define HISTORY_SIZE 5
@@ -27,6 +27,7 @@ int fontinc(void);
 int help(void);
 int history(void);
 int rectangle(void);
+int snake(void);
 
 static void printPreviousCommand(enum REGISTERABLE_KEYS scancode);
 static void printNextCommand(enum REGISTERABLE_KEYS scancode);
@@ -109,7 +110,7 @@ int main() {
         // If the command is not found, ignore \n
         if ( i == sizeof(commands) / sizeof(Command) ) {
             if (command != NULL && *command != '\0') {
-                printf("\e[0;33mCommand not found\e[0m\n");
+                printf("\e[0;33mCommand not found:\e[0m %s\n", command);
             } else if (command == NULL) {
                 printf("\n");
             }
@@ -218,4 +219,8 @@ int fontinc(void) {
 int fontdec(void) {
     decreaseFontSize();
     return 0;
+}
+
+int snake(void) {
+    return execProgram(snakeModuleAddress);
 }
