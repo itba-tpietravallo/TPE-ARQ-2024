@@ -68,6 +68,19 @@ void drawRectangle(uint32_t hexColor, uint64_t width, uint64_t height, uint64_t 
 	}
 }
 
+void drawCircle(uint32_t hexColor, uint64_t topLeftX, uint64_t topLeftY, uint64_t diameter) {
+    int64_t radius = diameter / 2;
+    int64_t centerX = topLeftX + radius;
+    int64_t centerY = topLeftY + radius;
+    
+    for (int64_t y = -radius; y <= radius; y++) {
+        for (int64_t x = -radius; x <= radius; x++) {
+            if (x * x + y * y <= radius * radius) {
+                putPixel(hexColor, centerX + x, centerY + y);
+            }
+        }
+    }
+}
 
 
 void fillVideoMemory(uint32_t hexColor) {

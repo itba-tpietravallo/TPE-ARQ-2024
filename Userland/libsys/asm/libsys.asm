@@ -13,6 +13,7 @@ GLOBAL sys_minute
 GLOBAL sys_second
 GLOBAL sys_sleep_milis
 
+GLOBAL sys_circle
 GLOBAL sys_rectangle
 GLOBAL sys_fill_video_memory
 
@@ -57,6 +58,7 @@ sys_hour: sys_int80 0x80000010
 sys_minute: sys_int80 0x80000011
 sys_second: sys_int80 0x80000012
 
+sys_circle: sys_int80 0x80000019
 sys_rectangle: sys_int80 0x80000020
 sys_fill_video_memory: sys_int80 0x80000021
 
