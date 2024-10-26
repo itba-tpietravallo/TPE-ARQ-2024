@@ -39,6 +39,7 @@ static void movingTo(int dir_x, int dir_y);
 static void setDirection(enum REGISTERABLE_KEYS scancode);
 static void setSquareDimensions(void);
 static void setDefaultFeatures(void);
+static void drawBackground(void);
 static void endGame(void);
 static void checkCrash(void);
 
@@ -65,13 +66,7 @@ int main(void) {
     int rounds = 10;
 
     while(!crashed) {
-        //TODO use fillVideoMemory() instead of painting the background (and delete window_height and window_width)
-        // print backgruond
-        for(int y = 0; y < window_height; y += square.height){
-            for(int x = 0; x < window_width; x += square.width){
-                drawRectangle(0x4DB6AC, square.width - OFFSET, square.height - OFFSET, x + OFFSET, y + OFFSET);
-            }
-        }
+        drawBackground();
 
         // print snake
         for(int k = 0; k < head.size; k++){
@@ -152,6 +147,14 @@ static void setDefaultFeatures(void) {
     for(int i = 0; i < INITIAL_BODY_SIZE; i++){
         head.body[i].position.x = INITIAL_POS_X - i * head.direction.x * SQUARE_DIM;
         head.body[i].position.y = INITIAL_POS_Y - i * head.direction.y * SQUARE_DIM;
+    }
+}
+
+static void drawBackground(void) {
+    for(int y = 0; y < window_height; y += square.height){
+        for(int x = 0; x < window_width; x += square.width){
+            drawRectangle(0x4DB6AC, square.width - OFFSET, square.height - OFFSET, x + OFFSET, y + OFFSET);
+        }
     }
 }
 
