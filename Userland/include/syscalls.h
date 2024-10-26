@@ -54,4 +54,6 @@ int32_t sys_take_register_snapshot(void);
 
 int32_t sys_get_register_snapshot(uint64_t * registers);
 
+int32_t sys_get_character_without_display(void);
+
 #endif

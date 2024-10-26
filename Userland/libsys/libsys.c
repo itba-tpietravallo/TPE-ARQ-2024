@@ -79,3 +79,7 @@ void takeRegisterSnapshot(void) {
 int32_t getRegisterSnapshot(uint64_t * registers) {
     return sys_get_register_snapshot(registers);
 }
+
+int32_t getCharacterWithoutDisplay(void) {
+    return sys_get_character_without_display();
+}

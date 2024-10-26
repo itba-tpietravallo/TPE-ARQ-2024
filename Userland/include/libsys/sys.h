@@ -113,5 +113,6 @@ int getWindowHeight(void);
 void sleep(uint32_t milliseconds);
 void takeRegisterSnapshot(void);
 int32_t getRegisterSnapshot(uint64_t * registers);
+int32_t getCharacterWithoutDisplay(void);
 
 #endif
