@@ -19,15 +19,14 @@ static char buffer[MAX_BUFFER_SIZE];
 static int buffer_dim = 0;
 
 int clear(void);
-int date(void);
 int echo(void);
 int exit(void);
 int fontdec(void);
 int fontinc(void);
 int help(void);
 int history(void);
-int rectangle(void);
 int snake(void);
+int time(void);
 
 static void printPreviousCommand(enum REGISTERABLE_KEYS scancode);
 static void printNextCommand(enum REGISTERABLE_KEYS scancode);
@@ -43,7 +42,6 @@ typedef struct {
 /* All available commands. Sorted alphabetically by their name */
 Command commands[] = {
     { .name = "clear",          .function = (int (*)(void))(unsigned long long)clear,           .description = "Clears the screen" },
-    { .name = "date",           .function = (int (*)(void))(unsigned long long)date,            .description = "Prints the current date" },
     { .name = "divzero",        .function = (int (*)(void))(unsigned long long)_divzero,        .description = "Generates a division by zero exception" },
     { .name = "echo",           .function = (int (*)(void))(unsigned long long)echo ,           .description = "Prints the input string" },
     { .name = "exit",           .function = (int (*)(void))(unsigned long long)exit,            .description = "Command exits w/ the provided exit code or 0" },
@@ -52,8 +50,8 @@ Command commands[] = {
     { .name = "help",           .function = (int (*)(void))(unsigned long long)help,            .description = "Prints the available commands" },
     { .name = "history",        .function = (int (*)(void))(unsigned long long)history,         .description = "Prints the command history" },
     { .name = "invop",          .function = (int (*)(void))(unsigned long long)_invalidopcode,  .description = "Generates an invalid Opcode exception" },
-    { .name = "rect",           .function = (int (*)(void))(unsigned long long)rectangle,       .description = "Prints a blue rectangle" },
     { .name = "snake",          .function = (int (*)(void))(unsigned long long)snake,           .description = "Launches the snake game" },
+    { .name = "time",           .function = (int (*)(void))(unsigned long long)time,            .description = "Prints the current time" },
 };
 
 char command_history[HISTORY_SIZE][MAX_BUFFER_SIZE] = {0};
@@ -151,7 +149,7 @@ int history(void) {
     return 0;
 }
 
-int date(void){
+int time(void){
 	int hour, minute, second;
     getDate(&hour, &minute, &second);
     printf("Current time: %xh %xm %xs (UTC-0)\n", hour, minute, second);
@@ -196,11 +194,6 @@ int help(void){
 
 int clear(void) {
     clearScreen();
-    return 0;
-}
-
-int rectangle(void){
-    drawRectangle(0xFF, 40, 80, 10, 10);
     return 0;
 }
 
