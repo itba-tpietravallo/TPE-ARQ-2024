@@ -3,10 +3,10 @@
 
 #define INITIAL_BODY_SIZE 3
 #define MAX_BODY_SIZE 100     // to check if the player won
-#define INITIAL_POS_X 128
-#define INITIAL_POS_Y 64
-#define OFFSET 4
 #define SQUARE_DIM 32
+#define INITIAL_POS_X (SQUARE_DIM * INITIAL_BODY_SIZE)
+#define INITIAL_POS_Y (SQUARE_DIM * 2)
+#define OFFSET 4
 
 typedef struct {
     int width;
@@ -41,6 +41,8 @@ static void setSquareDimensions(void);
 static void setDefaultFeatures(void);
 static void endGame(void);
 
+static uint32_t hsv2rgb(uint8_t h, uint8_t s, uint8_t v);
+
 static SnakeHeadSquare head;
 static Square square;
 
@@ -72,7 +74,7 @@ int main(void) {
 
         // print snake
         for(int k = 0; k < head.size; k++){
-            drawRectangle(head.color, square.width - OFFSET, square.height - OFFSET, head.body[k].position.x + OFFSET, head.body[k].position.y + OFFSET);
+            drawRectangle(hsv2rgb(k * 10, 255, 255), square.width - OFFSET, square.height - OFFSET, head.body[k].position.x + OFFSET, head.body[k].position.y + OFFSET);
         }
 
         if (!crashed) sleep(2000);
@@ -157,18 +159,16 @@ static void setDefaultFeatures(void) {
     }
 }
 
-// Hand transpiled from https://github.com/hughsk/glsl-hsv2rgb/blob/master/index.glsl
 #define clamp(x, min, max) ((x) < (min) ? (min) : ((x) > (max) ? (max) : (x)))
-#define abs(a) ((a) < 0.0 ? -(a) : (a))
-#define fract(x) ((x) - ((int) (x)))
-static void hsv2rgb(double h, double s, double v, uint8_t* r, uint8_t* g, uint8_t* b) {
+#define abs(a) ((a) < 0 ? -(a) : (a))
+#define fract256(x) ((x) % 256)
+// Hand transpiled from https://github.com/hughsk/glsl-hsv2rgb/blob/master/index.glsl
+static uint32_t hsv2rgb(uint8_t h, uint8_t s, uint8_t v) {
 //   vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
 //   vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
 //   return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
-    double pr = abs(fract(h + 1) * 6.0 - 3.0);
-    double pg = abs(fract(h + (2.0/3.0)) * 6.0 - 3.0);
-    double pb = abs(fract(h + (1.0/3.0)) * 6.0 - 3.0);
-    *r = v * clamp(pr-1., 0., 1.) * 255;
-    *g = v * clamp(pg-1., 0., 1.) * 255;
-    *b = v * clamp(pb-1., 0., 1.) * 255;
+    uint16_t pr = abs(fract256( h ) * 6 - 255*3);
+    uint16_t pg = abs(fract256( h + (85*2) ) * 6 - 255*3);
+    uint16_t pb = abs(fract256( h + 85 ) * 6 - 255*3);
+    return (((v * clamp(pr-256, 0, 255)) / 255) << 16) | (((v * clamp(pg-256, 0, 255)) / 255) << 8) | (v * clamp(pb-256, 0, 255)) / 255;
 }
