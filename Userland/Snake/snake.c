@@ -59,6 +59,8 @@ int main(void) {
     
     crashed = 0;
 
+    int rounds = 10;
+
     while(!crashed) {
         //TODO use fillVideoMemory() instead of painting the background
         // print backgruond
@@ -72,6 +74,8 @@ int main(void) {
         for(int k = 0; k < head.size; k++){
             drawRectangle(head.color, square.width - OFFSET, square.height - OFFSET, head.body[k].position.x + OFFSET, head.body[k].position.y + OFFSET);
         }
+
+        if (!crashed) sleep(2000);
 
         // move each square, except head
         for(int i = head.size - 1; i > 0; i--){
@@ -90,7 +94,10 @@ int main(void) {
             }
         }
 
-        if (!crashed) sleep(2000);
+        rounds--;
+        if(rounds <= 0){
+            endGame();
+        }
     }
 
     return 0;
@@ -109,7 +116,7 @@ static void registerKeys(void) {
 }
 
 static void movingTo(int dir_x, int dir_y) {
-    if(dir_x != (head.direction.x * (-1)) && dir_y != (head.direction.y * (-1))){
+    if((dir_x != (head.direction.x * (-1)) && head.direction.y == 0) || (head.direction.x == 0 && dir_y != (head.direction.y * (-1)))){
         head.direction.x = dir_x;
         head.direction.y = dir_y;
     }
@@ -118,10 +125,10 @@ static void movingTo(int dir_x, int dir_y) {
 static void setDirection(enum REGISTERABLE_KEYS scancode) {
     switch (scancode) {
     case KP_UP_KEY:
-        movingTo(0, 1);
+        movingTo(0, -1);
         break;
     case KP_DOWN_KEY:
-        movingTo(0, -1);
+        movingTo(0, 1);
         break;
     case KP_LEFT_KEY:
         movingTo(-1, 0);
