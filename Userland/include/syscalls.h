@@ -19,6 +19,8 @@ int32_t sys_fonts_background_color(uint32_t color);
 int32_t sys_fonts_decrease_size(void);
 /* 0x80000008 */
 int32_t sys_fonts_increase_size(void);
+/* 0x80000009 */
+int32_t sys_fonts_set_size(uint8_t size);
 /* 0x8000000A */
 int32_t sys_clear_screen(void);
 /* 0x8000000B */

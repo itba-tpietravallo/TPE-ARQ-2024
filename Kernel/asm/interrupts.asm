@@ -16,6 +16,9 @@ GLOBAL _exceptionHandler06
 EXTERN irqDispatcher
 EXTERN syscallDispatcher
 EXTERN exceptionDispatcher
+EXTERN getStackBase
+
+EXTERN USERLAND
 
 SECTION .text
 
@@ -74,25 +77,48 @@ SECTION .text
 %endmacro
 
 %macro exceptionHandler 1
+	cli
 	
+	mov [exception_register_snapshot + 0x00], rax ; 
+	mov [exception_register_snapshot + 0x08], rbx
+	mov [exception_register_snapshot + 0x10], rcx
+	mov [exception_register_snapshot + 0x18], rdx
+	mov [exception_register_snapshot + 0x20], rbp
+	mov [exception_register_snapshot + 0x30], rdi
+	mov [exception_register_snapshot + 0x28], rsi
+	mov [exception_register_snapshot + 0x38], r8
+	mov [exception_register_snapshot + 0x40], r9
+	mov [exception_register_snapshot + 0x48], r10
+	mov [exception_register_snapshot + 0x50], r11
+	mov [exception_register_snapshot + 0x58], r12
+	mov [exception_register_snapshot + 0x60], r13
+	mov [exception_register_snapshot + 0x68], r14
+	mov [exception_register_snapshot + 0x70], r15
+
 	; after the exception, the rip's value that points 
 	; to the faulting instruction is, among other things, pushed to the stack
-	; it is the last thing pushed in the stack
-	mov [rax_temp], rax
-	mov rax, [rsp]
-	push rax
-	mov rax, [rax_temp]
+	; it is the last thing pushed in the stack frame
 
-	pushState
+	; https://os.phil-opp.com/cpu-exceptions/#the-interrupt-stack-frame
+
+	mov rax, [rsp + 0x00] ; RIP
+	mov [exception_register_snapshot + 0x78], rax
+
+	mov rax, [rsp + 0x10] ; RFLAGS
+	mov [exception_register_snapshot + 0x80], rax
 
 	mov rdi, %1 ; pass argument to exceptionDispatcher
-	mov rsi, rsp ;pass current register values to exceptionDispatcher
+	mov rsi, exception_register_snapshot ;pass current register values to exceptionDispatcher
 	
 	call exceptionDispatcher
 
-	pop rax
-	popState
-	iretq
+	call getStackBase ; reset the stack
+	mov [rsp + 0x18], rax
+
+	mov QWORD [rsp], 0x400000 ; set return address to userland
+
+	sti
+	iretq ; will pop USERLAND and jmp to it
 %endmacro
 
 _hlt:
@@ -168,4 +194,4 @@ _exceptionHandler06:
 
 
 section .bss
-	rax_temp resb 8
+	exception_register_snapshot resq 18

@@ -35,6 +35,7 @@ int32_t sys_fonts_text_color(uint32_t color);
 int32_t sys_fonts_background_color(uint32_t color);
 int32_t sys_fonts_decrease_size(void);
 int32_t sys_fonts_increase_size(void);
+int32_t sys_fonts_set_size(uint8_t size);
 int32_t sys_clear_screen(void);
 int32_t sys_clear_input_buffer(void);
 uint16_t sys_window_width(void);

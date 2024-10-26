@@ -24,7 +24,7 @@ int32_t syscallDispatcher(Registers * registers) {
 			return -1;
 		case 0x80000007: return sys_fonts_decrease_size();
 		case 0x80000008: return sys_fonts_increase_size();
-		case 0x80000009: /* Reserved for sys_fonts_set_size */
+		case 0x80000009: return sys_fonts_set_size((uint8_t) registers->rdi);
 		case 0x8000000A: return sys_clear_screen();
 		case 0x8000000B: return sys_clear_input_buffer();
 
@@ -90,13 +90,15 @@ int32_t sys_fonts_background_color(uint32_t color) {
 }
 
 int32_t sys_fonts_decrease_size(void) {
-	decreaseFontSize();
-	return 0;
+	return decreaseFontSize();
 }
 
 int32_t sys_fonts_increase_size(void) {
-	increaseFontSize();
-	return 0;
+	return increaseFontSize();
+}
+
+int32_t sys_fonts_set_size(uint8_t size) {
+	return setFontSize(size);
 }
 
 int32_t sys_clear_screen(void) {

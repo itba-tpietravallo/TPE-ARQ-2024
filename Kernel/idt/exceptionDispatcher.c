@@ -3,77 +3,68 @@
 #include <syscallDispatcher.h>
 #include <keyboard.h>
 
-static int (*const shellModuleAddress)(void) = (int(*)(void)) 0x400000;
+const static char * register_names[] = {
+	"rax", "rbx", "rcx", "rdx", "rbp", "rdi", "rsi", "r8", "r9", "r10", "r11", "r12", "r13", "r14", "r15", "rip", "rflags"
+};
+
+const static int registers_amount = sizeof(register_names) / sizeof(*register_names);
 
 #define ZERO_EXCEPTION_ID 0
 #define INVALID_OPCODE_ID 6
 
-static void zero_division(Registers * registers, int errorCode);
-static void invalid_opcode(Registers * registers, int errorCode);
+static void zero_division(uint64_t * registers, int errorCode);
+static void invalid_opcode(uint64_t * registers, int errorCode);
 
-void printExceptionData(Registers * registers, int errorCode);
+void printExceptionData(uint64_t * registers, int errorCode);
 
-void exceptionDispatcher(int exception, Registers * registers) {
+void exceptionDispatcher(int exception, uint64_t * registers) {
+	clear();
 	switch(exception) {
 		case ZERO_EXCEPTION_ID:
 			return zero_division(registers, exception);
-			break;
 		case INVALID_OPCODE_ID:
 			return invalid_opcode(registers, exception);
-			break;
 		default:
-			print("Triggered exception dispatcher, but no syscall found");
+			return ; // returns to the asm exceptionHandler which will return to the shell
 	}
 }
 
-// TODO beautify (and enchance) this
-
-
-
-static void zero_division(Registers * registers, int errorCode) {
-	clear();
+static void zero_division(uint64_t * registers, int errorCode) {
 	setTextColor(0x00FF0000);
-	print("Zero Dividing exception number "); 
+	setFontSize(3); print("Division exception\n"); setFontSize(2);
+	print("Arqui Screen of Death\n");
 	printExceptionData(registers, errorCode);
 }
 
-static void invalid_opcode(Registers * registers, int errorCode) {
-	clear();
+static void invalid_opcode(uint64_t * registers, int errorCode) {
 	setTextColor(0x00FF6600);
-	print("Invalid Opcode exception number "); 
+	setFontSize(3); print("Division exception\n"); setFontSize(2);
+	print("Invalid opcode exception\n");
 	printExceptionData(registers, errorCode);
 }
 
 
-void printExceptionData(Registers * registers, int errorCode) {
-	printDec(errorCode); print(" ocurred\n");
+void printExceptionData(uint64_t * registers, int errorCode) {
+	print("Exception (# "); printDec(errorCode); print(") triggered\n");
 	print("Current registers values are\n");
-	print("rip = ");	printHex(registers-> rip); print("\n");
-	print("\n");
+	
+	for (int i = 0; i < registers_amount; i++) {
+		print(register_names[i]); print(": "); printHex((uint64_t) registers[i]); newLine();
+	}
 
-	print("rax = ");	printHex(registers-> rax); print("\n");
-	print("rbx = ");	printHex(registers-> rbx); print("\n");
-	print("rcx = ");	printHex(registers-> rcx); print("\n");
-	print("rdx = ");	printHex(registers-> rdx); print("\n");
-	print("rbp = ");	printHex(registers-> rbp); print("\n");
-	print("rdi = ");	printHex(registers-> rdi); print("\n");
-	print("rsi = ");	printHex(registers-> rsi); print("\n");
-	print("r8 = ");		printHex(registers-> r8); print("\n");
-	print("r9 = ");		printHex(registers-> r9); print("\n");
-	print("r10 = ");	printHex(registers-> r10); print("\n");
-	print("r11 = ");	printHex(registers-> r11); print("\n");
-	print("r12 = ");	printHex(registers-> r12); print("\n");
-	print("r13 = ");	printHex(registers-> r13); print("\n");
-	print("r14 = ");	printHex(registers-> r14); print("\n");
-	print("r15 = ");	printHex(registers-> r15); print("\n");
 	setTextColor(0x00FFFFFF);
 
 	print("Press r to go back to Shell");
 
 	char a;
+	// getKeyboardCharacter calls _hlt which triggers _sti
+	// so non-keyboard interrupts are disabled until the user confirms
+
+	picMasterMask(KEYBOARD_PIC_MASTER);
+	picSlaveMask(NO_INTERRUPTS);
 	while ((a = getKeyboardCharacter(0)) != 'r') {}
+	picMasterMask(KEYBOARD_PIC_MASTER & TIMER_PIC_MASTER);
+	picSlaveMask(NO_INTERRUPTS);
 
-	sys_exec(shellModuleAddress);
-
-	__builtin_unreachable();	
+	return ;
 }

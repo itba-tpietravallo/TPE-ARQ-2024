@@ -13,12 +13,16 @@ void setBackgroundColor(uint32_t color) {
     sys_fonts_background_color(color);
 }
 
-void increaseFontSize(void) {
-    sys_fonts_increase_size();
+uint8_t increaseFontSize(void) {
+    return sys_fonts_increase_size();
 }
 
-void decreaseFontSize(void) {
-    sys_fonts_decrease_size();
+uint8_t decreaseFontSize(void) {
+    return sys_fonts_decrease_size();
+}
+
+uint8_t setFontSize(uint8_t size) {
+    return sys_fonts_set_size(size);
 }
 
 void getDate(int * hour, int * minute, int * second) {

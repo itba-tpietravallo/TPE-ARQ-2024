@@ -97,8 +97,9 @@ enum REGISTERABLE_KEYS {
 void beep(void);
 void setTextColor(uint32_t color);
 void setBackgroundColor(uint32_t color);
-void increaseFontSize(void);
-void decreaseFontSize(void);
+uint8_t increaseFontSize(void);
+uint8_t decreaseFontSize(void);
+uint8_t setFontSize(uint8_t size);
 void getDate(int * hour, int * minute, int * second);
 void clearScreen(void);
 void drawRectangle(uint32_t color, long long int width_pixels, long long int height_pixels, long long int initial_pos_x, long long int initial_pos_y);

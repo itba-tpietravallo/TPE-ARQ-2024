@@ -21,8 +21,9 @@ void showCursor(void);
 void hideCursor(void);
 void clearPreviousCharacter(void);
 
-void increaseFontSize(void);
-void decreaseFontSize(void);
+uint8_t increaseFontSize(void);
+uint8_t decreaseFontSize(void);
+uint8_t setFontSize(int8_t size);
 void setTextColor(uint32_t color);
 void setBackgroundColor(uint32_t color);
 

@@ -35,8 +35,8 @@ void load_idt() {
 	// Enable:
 	// IRQ0 -> TimerTick
 	// IRQ1 -> Keyboard
-	picMasterMask(0xFC);
-	picSlaveMask(0xFF);
+	picMasterMask(KEYBOARD_PIC_MASTER & TIMER_PIC_MASTER);
+	picSlaveMask(NO_INTERRUPTS);
 			
 	_sti();
 }

@@ -257,14 +257,22 @@ void hideCursor(void) {
     retractPosition();
 }
 
-void increaseFontSize(void) {
+uint8_t increaseFontSize(void) {
     fontSize++;
     maxGlyphSizeYOnLine = MAX(maxGlyphSizeYOnLine, glyphSizeY * fontSize);
+    return fontSize;
 }
 
-void decreaseFontSize(void) {
+uint8_t decreaseFontSize(void) {
     fontSize--;
     fontSize = fontSize < 1 ? 1 : fontSize;
+    return fontSize;
+}
+
+uint8_t setFontSize(int8_t size) {
+    fontSize = (size < 1 ? 1 : size);
+    maxGlyphSizeYOnLine = MAX(maxGlyphSizeYOnLine, glyphSizeY * fontSize);
+    return fontSize;
 }
 
 static void printBase(uint64_t value, uint32_t base) {

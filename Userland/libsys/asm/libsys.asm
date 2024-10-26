@@ -4,6 +4,7 @@ GLOBAL sys_fonts_text_color
 GLOBAL sys_fonts_background_color
 GLOBAL sys_fonts_decrease_size
 GLOBAL sys_fonts_increase_size
+GLOBAL sys_fonts_set_size
 GLOBAL sys_clear_screen
 GLOBAL sys_clear_input_buffer
 
@@ -44,7 +45,7 @@ sys_fonts_background_color: sys_int80 0x80000003
 
 sys_fonts_decrease_size: sys_int80 0x80000007
 sys_fonts_increase_size: sys_int80 0x80000008
-
+sys_fonts_set_size: sys_int80 0x80000009
 sys_clear_screen: sys_int80 0x8000000A
 sys_clear_input_buffer: sys_int80 0x8000000B
 
