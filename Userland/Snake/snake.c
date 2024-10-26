@@ -8,22 +8,23 @@
 #define MAX_BODY_SIZE 100     // to check if the player won
 #define SQUARE_DIM 32
 #define MAX_PLAYERS 2
-#define DEFAULT_SLEEPING_TIME 1000
+#define DEFAULT_GAME_SLEEPING_TIME 1000
+#define DEFAULT_WINNERS_SLEEPING_TIME 5000
 
 // hues
-#define HUE_1 0
-#define HUE_2 120
+#define HUE_1 120
+#define HUE_2 0
 
 // initial positions
-#define INITIAL_POS_1_X (SQUARE_DIM * 3)
-#define INITIAL_POS_1_Y (SQUARE_DIM * 2)
-#define INITIAL_POS_2_X (SQUARE_DIM * 28)
-#define INITIAL_POS_2_Y (SQUARE_DIM * 21)
+#define INITIAL_POS_1_X (SQUARE_DIM * 28)
+#define INITIAL_POS_1_Y (SQUARE_DIM * 21)
+#define INITIAL_POS_2_X (SQUARE_DIM * 3)
+#define INITIAL_POS_2_Y (SQUARE_DIM * 2)
 
 // initial directions
-#define INITIAL_DIR_1_X 1
+#define INITIAL_DIR_1_X -1
 #define INITIAL_DIR_1_Y 0
-#define INITIAL_DIR_2_X -1
+#define INITIAL_DIR_2_X 1
 #define INITIAL_DIR_2_Y 0
 
 // drawing
@@ -75,8 +76,10 @@ static void drawSnakes(void);
 
 static void moveSnakes(void);
 
-static void endGame(void);
 static void checkCrash(void);
+
+static void endGame(void);
+static void showWinners(void);
 
 static uint32_t hsv2rgb(uint8_t h, uint8_t s, uint8_t v);
 
@@ -116,23 +119,18 @@ int main(void) {
     setSquareDimensions();
     setDefaultFeatures();
 
-    int rounds = 20;
-
     while(!end_of_game) {
         drawBackground();
         drawSnakes();
         
-        sleep(DEFAULT_SLEEPING_TIME);
+        sleep(DEFAULT_GAME_SLEEPING_TIME);
 
         moveSnakes();
 
         checkCrash();
-
-        rounds--;
-        if(rounds <= 0){
-            endGame();
-        }
     }
+    
+    showWinners();
 
     return 0;
 }
@@ -262,6 +260,29 @@ static void checkCrash(void) {
             }
         }
     }
+}
+
+static void showWinners(void) {
+    clearScreen();
+
+    if(snakes_amount == 1){
+        if(!snakes[0].crashed){
+            printf("You won!\n");
+        } else{
+            printf("You lost.\n");
+        }
+    } else{
+        for(int i = 0; i < snakes_amount; i++){
+            if(!snakes[i].crashed){
+                printf("Player %d won!\n", i + 1);
+            } else{
+                printf("Player %d lost.\n", i + 1);
+            }
+            printf("\n");
+        }
+    }
+
+    sleep(DEFAULT_WINNERS_SLEEPING_TIME);
 }
 
 
