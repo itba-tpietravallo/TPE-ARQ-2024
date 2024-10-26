@@ -74,4 +74,5 @@ sys_window_height: sys_int80 0x800000C1
 sys_sleep_milis: sys_int80 0x800000D0
 
 sys_get_register_snapshot: sys_int80 0x800000E0
+
 sys_get_character_without_display: sys_int80 0x800000F0
