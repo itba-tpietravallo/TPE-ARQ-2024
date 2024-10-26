@@ -1,5 +1,5 @@
 #include <syscallDispatcher.h>
-
+#include <stddef.h>
 #include <sound.h>
 #include <keyboard.h>
 #include <fonts.h>
@@ -44,6 +44,9 @@ int32_t syscallDispatcher(Registers * registers) {
 		case 0x800000C1: return sys_window_height();
 
 		case 0x800000D0: return sys_sleep_milis(registers->rdi);
+
+		case 0x800000E0: return sys_take_register_snapshot();
+		case 0x800000E1: return sys_get_register_snapshot((uint64_t *) registers->rdi);
 
 		default:
 			setBackgroundColor(0x00FF0000); setTextColor(0x00FFFFFF);
@@ -186,4 +189,29 @@ int32_t sys_register_key(uint8_t scancode, SpecialKeyHandler fn){
 int32_t sys_sleep_milis(uint32_t milis) {
 	sleepTicks( (milis * SECONDS_TO_TICKS) / 1000 );
 	return 0;
+}
+
+// ==================================================================
+// Register snapshot system calls
+// ==================================================================
+int32_t sys_take_register_snapshot(void) {
+	takeRegisterSnapshot();
+	return 0;
+}
+
+int32_t sys_get_register_snapshot(uint64_t * registers) {
+	uint64_t * aux = getRegisterSnapshot();
+	uint8_t i = 0;
+
+	if (aux == NULL) {
+		return 0;
+	}
+
+	while (i++ < 17) {
+		(*registers) = *(aux);
+		(*registers)++;
+		aux++;
+	}
+
+	return 1;
 }

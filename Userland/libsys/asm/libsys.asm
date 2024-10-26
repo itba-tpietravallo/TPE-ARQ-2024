@@ -24,6 +24,9 @@ GLOBAL sys_register_key
 GLOBAL sys_window_width
 GLOBAL sys_window_height
 
+GLOBAL sys_take_register_snapshot
+GLOBAL sys_get_register_snapshot
+
 section .text
 
 %macro sys_int80 1
@@ -66,3 +69,6 @@ sys_window_width: sys_int80 0x800000C0
 sys_window_height: sys_int80 0x800000C1
 
 sys_sleep_milis: sys_int80 0x800000D0
+
+sys_take_register_snapshot: sys_int80 0x800000E0
+sys_get_register_snapshot: sys_int80 0x800000E1

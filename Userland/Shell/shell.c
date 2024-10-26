@@ -25,6 +25,7 @@ int fontdec(void);
 int fontinc(void);
 int help(void);
 int history(void);
+int regs(void);
 int snake(void);
 int time(void);
 
@@ -51,6 +52,7 @@ Command commands[] = {
     { .name = "history",        .function = (int (*)(void))(unsigned long long)history,         .description = "Prints the command history" },
     { .name = "invop",          .function = (int (*)(void))(unsigned long long)_invalidopcode,  .description = "Generates an invalid Opcode exception" },
     { .name = "snake",          .function = (int (*)(void))(unsigned long long)snake,           .description = "Launches the snake game" },
+    { .name = "regs",           .function = (int (*)(void))(unsigned long long)regs,            .description = "Prints the register snapshot, if any" },
     { .name = "time",           .function = (int (*)(void))(unsigned long long)time,            .description = "Prints the current time" },
 };
 
@@ -211,6 +213,29 @@ int fontinc(void) {
 
 int fontdec(void) {
     decreaseFontSize();
+    return 0;
+}
+
+int regs(void) {
+    const static char * register_names[] = {
+        "rax", "rbx", "rcx", "rdx", "rbp", "rdi", "rsi", "r8", "r9", "r10", "r11", "r12", "r13", "r14", "r15", "rip", "rflags"
+    };
+
+    uint64_t registers[17];
+
+    uint8_t aux = getRegisterSnapshot(registers);
+    
+    if (aux == 0) {
+        printf("No register snapshot available\n");
+        return 1;
+    }
+
+    printf("Latest register snapshot:\n");
+
+    for (int i = 0; i < 17; i++) {
+        printf("%s: %x\n", register_names[i], registers[i]);
+    }
+
     return 0;
 }
 

@@ -6,6 +6,8 @@
 #include <idtLoader.h>
 #include <fonts.h>
 #include <time.h>
+#include <keyboard.h>
+#include <syscallDispatcher.h>
 #include <sound.h>
 
 // extern uint8_t text;
@@ -50,8 +52,14 @@ void * initializeKernelBinary(){
 	return getStackBase();
 }
 
+void F12_take_snapshot(enum KEYS scancode) {
+	takeRegisterSnapshot();
+}
+
 int main(){	
 	load_idt();
+
+	registerSpecialKey(F12_KEY, F12_take_snapshot, 1);
 
 	setFontSize(2);
 	

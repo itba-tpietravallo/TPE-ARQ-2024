@@ -79,13 +79,13 @@ SECTION .text
 %macro exceptionHandler 1
 	cli
 	
-	mov [exception_register_snapshot + 0x00], rax ; 
+	mov [exception_register_snapshot + 0x00], rax
 	mov [exception_register_snapshot + 0x08], rbx
 	mov [exception_register_snapshot + 0x10], rcx
 	mov [exception_register_snapshot + 0x18], rdx
 	mov [exception_register_snapshot + 0x20], rbp
-	mov [exception_register_snapshot + 0x30], rdi
-	mov [exception_register_snapshot + 0x28], rsi
+	mov [exception_register_snapshot + 0x28], rdi
+	mov [exception_register_snapshot + 0x30], rsi
 	mov [exception_register_snapshot + 0x38], r8
 	mov [exception_register_snapshot + 0x40], r9
 	mov [exception_register_snapshot + 0x48], r10
@@ -192,6 +192,5 @@ _exceptionHandler00:
 _exceptionHandler06:
 	exceptionHandler 6
 
-
 section .bss
-	exception_register_snapshot resq 18
+	exception_register_snapshot resq 17
