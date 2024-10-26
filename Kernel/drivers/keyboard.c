@@ -32,7 +32,7 @@
 static uint8_t SHIFT_KEY_PRESSED, CAPS_LOCK_KEY_PRESSED, CONTROL_KEY_PRESSED;
 static int8_t buffer[BUFFER_SIZE];
 static uint16_t to_write = 0, to_read = 0;
-static uint8_t options = 0;
+uint8_t options = 0;
 
 typedef struct {
     uint8_t registered_from_kernel;
