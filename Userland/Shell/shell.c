@@ -62,16 +62,11 @@ uint8_t command_history_last = 0;
 
 static uint64_t last_command_output = 0;
 
-static void clearEntireBuffer(enum REGISTERABLE_KEYS scancode) {
-    clearInputBuffer();
-}
-
 int main() {
     clear();
 
     registerKey(KP_UP_KEY, printPreviousCommand);
     registerKey(KP_DOWN_KEY, printNextCommand);
-    registerKey(F12_KEY, clearEntireBuffer);
 
 	while (1) {
         printf("\e[0mshell \e[0;32m$\e[0m ");
@@ -87,7 +82,7 @@ int main() {
         command_history_buffer[buffer_dim] = 0;
 
         if(buffer_dim == MAX_BUFFER_SIZE){
-            printf("\n\e[0;31mShell buffer overflow\e[0m\n");
+            perror("\n\e[0;31mShell buffer overflow\e[0m\n");
             return 1;
         };
 
@@ -110,7 +105,7 @@ int main() {
         // If the command is not found, ignore \n
         if ( i == sizeof(commands) / sizeof(Command) ) {
             if (command != NULL && *command != '\0') {
-                printf("\e[0;33mCommand not found:\e[0m %s\n", command);
+                fprintf(FD_STDERR, "\e[0;33mCommand not found:\e[0m %s\n", command);
             } else if (command == NULL) {
                 printf("\n");
             }
@@ -226,14 +221,14 @@ int regs(void) {
     uint8_t aux = getRegisterSnapshot(registers);
     
     if (aux == 0) {
-        printf("No register snapshot available\n");
+        perror("No register snapshot available\n");
         return 1;
     }
 
     printf("Latest register snapshot:\n");
 
     for (int i = 0; i < 17; i++) {
-        printf("%s: %x\n", register_names[i], registers[i]);
+        printf("\e[0;34m%s\e[0m: %x\n", register_names[i], registers[i]);
     }
 
     return 0;

@@ -181,12 +181,12 @@ int32_t printToFd(int32_t fd, const char * string, int32_t count) {
             case FD_STDOUT:
                 text_color = DEFAULT_TEXT_COLOR;
                 background_color = DEFAULT_BACKGROUND_COLOR;
-                fd = file_descriptor;
+                file_descriptor = fd;
                 break;
             case FD_STDERR:
                 text_color = DEFAULT_ERROR_COLOR;
                 background_color = DEFAULT_BACKGROUND_COLOR;
-                fd = file_descriptor;
+                file_descriptor = fd;
                 break;
             default:
         }

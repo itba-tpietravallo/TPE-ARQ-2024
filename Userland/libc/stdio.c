@@ -23,6 +23,7 @@ void vfprintf(int fd, const char * format, va_list args) {
         switch (format[i]) {
         #ifdef ANSI_8_BIT_COLOR_SUPPORT
         case '\e':
+            sys_write(fd, &format[i], 0); // "writes" (ignored because of count=0) \e char to account for fd changes
             parseANSI(format, &i);
             break ;
         #endif
