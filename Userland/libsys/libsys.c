@@ -39,6 +39,10 @@ void clearInputBuffer(void) {
     sys_clear_input_buffer();
 }
 
+void drawCircle(uint32_t color, long long int topleftX, long long int topLefyY, long long int diameter) {
+    sys_circle(color, topleftX, topLefyY, diameter);
+}
+
 void drawRectangle(uint32_t color, long long int width_pixels, long long int height_pixels, long long int initial_pos_x, long long int initial_pos_y){
     sys_rectangle(color, width_pixels, height_pixels, initial_pos_x, initial_pos_y);
 }
@@ -70,10 +74,6 @@ int getWindowHeight(void) {
 
 void sleep(uint32_t miliseconds) {
     sys_sleep_milis(miliseconds);
-}
-
-void takeRegisterSnapshot(void) {
-    sys_take_register_snapshot();
 }
 
 int32_t getRegisterSnapshot(uint64_t * registers) {

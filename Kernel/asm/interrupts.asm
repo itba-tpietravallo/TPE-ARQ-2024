@@ -13,6 +13,9 @@ GLOBAL _irq80Handler
 GLOBAL _exceptionHandler00
 GLOBAL _exceptionHandler06
 
+GLOBAL register_snapshot
+GLOBAL register_snapshot_taken
+
 EXTERN irqDispatcher
 EXTERN syscallDispatcher
 EXTERN exceptionDispatcher
@@ -162,7 +165,47 @@ _irq00Handler:
 
 ; Keyboard
 _irq01Handler:
-	irqHandlerMaster 1
+	push rax
+	pushState
+
+	mov rdi, 1 ; pass argument to irqDispatcher
+	call irqDispatcher
+
+	cmp rax, REGISTER_SNAPSHOT_KEY_SCANCODE ; F12 KEY SCANCODE
+	jne .skip
+
+	popState
+
+	mov [register_snapshot + 0x00], rax
+	mov [register_snapshot + 0x08], rbx
+	mov [register_snapshot + 0x10], rcx
+	mov [register_snapshot + 0x18], rdx
+	mov [register_snapshot + 0x20], rbp
+	mov [register_snapshot + 0x28], rdi
+	mov [register_snapshot + 0x30], rsi
+	mov [register_snapshot + 0x38], r8
+	mov [register_snapshot + 0x40], r9
+	mov [register_snapshot + 0x48], r10
+	mov [register_snapshot + 0x50], r11
+	mov [register_snapshot + 0x58], r12
+	mov [register_snapshot + 0x60], r13
+	mov [register_snapshot + 0x68], r14
+	mov [register_snapshot + 0x70], r15
+
+	mov byte [register_snapshot_taken], 0x01
+
+	jmp .ret
+
+	.skip:
+	popState
+
+	.ret:
+	; signal pic EOI (End of Interrupt)
+	mov al, 20h
+	out 20h, al
+	pop rax
+
+	iretq
 
 ; System Call
 ; Not using the %irqHandlerMaster macro because it needs to pass the stack pointer to the syscall
@@ -194,3 +237,8 @@ _exceptionHandler06:
 
 section .bss
 	exception_register_snapshot resq 17
+	register_snapshot resq 15
+	register_snapshot_taken resb 1
+
+section .rodata
+	REGISTER_SNAPSHOT_KEY_SCANCODE equ 0x58 ; F12 KEY SCANCODE

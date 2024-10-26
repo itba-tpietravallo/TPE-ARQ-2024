@@ -102,6 +102,9 @@ uint8_t decreaseFontSize(void);
 uint8_t setFontSize(uint8_t size);
 void getDate(int * hour, int * minute, int * second);
 void clearScreen(void);
+
+
+void drawCircle(uint32_t color, long long int topleftX, long long int topLefyY, long long int diameter);
 void drawRectangle(uint32_t color, long long int width_pixels, long long int height_pixels, long long int initial_pos_x, long long int initial_pos_y);
 void fillVideoMemory(uint32_t hexColor);
 int32_t exec(int32_t (*fnPtr)(void));
@@ -111,7 +114,6 @@ void clearInputBuffer(void);
 int getWindowWidth(void);
 int getWindowHeight(void);
 void sleep(uint32_t milliseconds);
-void takeRegisterSnapshot(void);
 int32_t getRegisterSnapshot(uint64_t * registers);
 int32_t getCharacterWithoutDisplay(void);
 

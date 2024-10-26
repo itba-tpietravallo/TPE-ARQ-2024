@@ -13,6 +13,7 @@ GLOBAL sys_minute
 GLOBAL sys_second
 GLOBAL sys_sleep_milis
 
+GLOBAL sys_circle
 GLOBAL sys_rectangle
 GLOBAL sys_fill_video_memory
 
@@ -24,7 +25,6 @@ GLOBAL sys_register_key
 GLOBAL sys_window_width
 GLOBAL sys_window_height
 
-GLOBAL sys_take_register_snapshot
 GLOBAL sys_get_register_snapshot
 
 GLOBAL sys_get_character_without_display
@@ -59,6 +59,7 @@ sys_hour: sys_int80 0x80000010
 sys_minute: sys_int80 0x80000011
 sys_second: sys_int80 0x80000012
 
+sys_circle: sys_int80 0x80000019
 sys_rectangle: sys_int80 0x80000020
 sys_fill_video_memory: sys_int80 0x80000021
 
@@ -72,7 +73,5 @@ sys_window_height: sys_int80 0x800000C1
 
 sys_sleep_milis: sys_int80 0x800000D0
 
-sys_take_register_snapshot: sys_int80 0x800000E0
-sys_get_register_snapshot: sys_int80 0x800000E1
-
+sys_get_register_snapshot: sys_int80 0x800000E0
 sys_get_character_without_display: sys_int80 0x800000F0

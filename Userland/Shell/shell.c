@@ -6,6 +6,10 @@
 #include <sys.h>
 #include <exceptions.h>
 
+#ifdef ANSI_8_BIT_COLOR_SUPPORT
+    #include <ansiColors.h>
+#endif
+
 static void * const snakeModuleAddress = (void*)0x500000;
 
 #define MAX_BUFFER_SIZE 1024
@@ -158,11 +162,20 @@ int echo(void){
     for (int i = strlen("echo") + 1; i < buffer_dim; i++) {
         switch (buffer[i]) {
             case '\\':
-                if (buffer[i + 1] == 'n') {
-                    printf("\n");
-                    i++;
-                } else {
-                    putchar(buffer[i]);
+                switch (buffer[i + 1]) {
+                    case 'n':
+                        printf("\n");
+                        i++;
+                        break;
+                    #ifdef ANSI_8_BIT_COLOR_SUPPORT
+                    case 'e':
+                        i++;
+                        parseANSI(buffer, &i); 
+                    #endif
+                        
+                    default:
+                        putchar(buffer[i]);
+                        break;
                 }
                 break;
             case '$':
@@ -202,13 +215,11 @@ int exit(void) {
 }
 
 int fontinc(void) {
-    increaseFontSize();
-    return 0;
+    return increaseFontSize();
 }
 
 int fontdec(void) {
-    decreaseFontSize();
-    return 0;
+    return decreaseFontSize();
 }
 
 int regs(void) {
@@ -216,7 +227,7 @@ int regs(void) {
         "rax", "rbx", "rcx", "rdx", "rbp", "rdi", "rsi", "r8", "r9", "r10", "r11", "r12", "r13", "r14", "r15", "rip", "rflags"
     };
 
-    uint64_t registers[17];
+    uint64_t registers[15];
 
     uint8_t aux = getRegisterSnapshot(registers);
     
@@ -227,7 +238,7 @@ int regs(void) {
 
     printf("Latest register snapshot:\n");
 
-    for (int i = 0; i < 17; i++) {
+    for (int i = 0; i < 15; i++) {
         printf("\e[0;34m%s\e[0m: %x\n", register_names[i], registers[i]);
     }
 

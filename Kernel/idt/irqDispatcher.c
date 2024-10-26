@@ -2,25 +2,26 @@
 #include <stdint.h>
 #include <keyboard.h>
 
-static void int_20();
-static void int_21();
+static uint8_t int_20();
+static uint8_t int_21();
 
-static void (*interruptions[]) (void) = {
+static uint8_t (*interruptions[]) (void) = {
 	int_20,
 	int_21
 };
 
-void irqDispatcher(uint64_t irq) {
+uint8_t irqDispatcher(uint64_t irq) {
 	if (irq < 2) {
-		interruptions[irq]();
+		return interruptions[irq]();
 	}
-	return;
+	return 0;
 }
 
-static void int_20() {
+static uint8_t int_20() {
 	timer_handler();
+	return 0;
 }
 
-static void int_21() {
-	keyboardHandler();
+static uint8_t int_21() {
+	return keyboardHandler();
 }

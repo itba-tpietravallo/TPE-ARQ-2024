@@ -4,7 +4,6 @@
 #include <stdint.h>
 #include <keyboard.h>
 
-void takeRegisterSnapshot(void);
 uint64_t * getRegisterSnapshot(void);
 
 typedef struct {
@@ -49,6 +48,8 @@ int32_t sys_hour(int * hour);
 int32_t sys_minute(int * minute);
 int32_t sys_second(int * second);
 
+
+int32_t sys_circle(uint32_t hexColor, uint64_t topLeftX, uint64_t topLeftY, uint64_t diameter);
 // Draw rectangle syscall prototype
 int32_t sys_rectangle(uint32_t color, uint64_t width_pixels, uint64_t height_pixels, uint64_t initial_pos_x, uint64_t initial_pos_y);
 int32_t sys_fill_video_memory(uint32_t hexColor);
@@ -64,7 +65,6 @@ int32_t sys_register_key(uint8_t scancode, SpecialKeyHandler fn);
 int32_t sys_sleep_milis(uint32_t milis);
 
 // Register snapshot
-int32_t sys_take_register_snapshot(void);
 int32_t sys_get_register_snapshot(uint64_t * registers);
 
 // Get character without showing

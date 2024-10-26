@@ -34,6 +34,8 @@ int32_t sys_minute(int * minute);
 /* 0x80000012 */
 int32_t sys_second(int * second);
 
+int32_t sys_circle(int color, long long int topleftX, long long int topLefyY, long long int diameter);
+
 int32_t sys_rectangle(int color, long long int width_pixels, long long int height_pixels, long long int initial_pos_x, long long int initial_pos_y);
 
 int32_t sys_fill_video_memory(uint32_t hexColor);
@@ -49,8 +51,6 @@ int32_t sys_window_width(void);
 int32_t sys_window_height(void);
 
 int32_t sys_sleep_milis(uint32_t milis);
-
-int32_t sys_take_register_snapshot(void);
 
 int32_t sys_get_register_snapshot(uint64_t * registers);
 

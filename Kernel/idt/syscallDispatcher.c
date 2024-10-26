@@ -32,6 +32,7 @@ int32_t syscallDispatcher(Registers * registers) {
 		case 0x80000011: return sys_minute((int *) registers->rdi);
 		case 0x80000012: return sys_second((int *) registers->rdi);
 
+		case 0x80000019: return sys_circle(registers->rdi, registers->rsi, registers->rdx, registers->rcx);
 		case 0x80000020: return sys_rectangle(registers->rdi, registers->rsi, registers->rdx, registers->rcx, registers->r8);
 		case 0x80000021: return sys_fill_video_memory(registers->rdi);
 
@@ -45,8 +46,7 @@ int32_t syscallDispatcher(Registers * registers) {
 
 		case 0x800000D0: return sys_sleep_milis(registers->rdi);
 
-		case 0x800000E0: return sys_take_register_snapshot();
-		case 0x800000E1: return sys_get_register_snapshot((uint64_t *) registers->rdi);
+		case 0x800000E0: return sys_get_register_snapshot((uint64_t *) registers->rdi);
 
 		case 0x800000F0: return sys_get_character_without_display();
 
@@ -147,6 +147,12 @@ int32_t sys_second(int * second) {
 // Draw system calls
 // ==================================================================
 
+
+int32_t sys_circle(uint32_t hexColor, uint64_t topLeftX, uint64_t topLeftY, uint64_t diameter){
+	drawCircle(hexColor, topLeftX, topLeftY, diameter);
+	return 0;
+}
+
 int32_t sys_rectangle(uint32_t color, uint64_t width_pixels, uint64_t height_pixels, uint64_t initial_pos_x, uint64_t initial_pos_y){
 	drawRectangle(color, width_pixels, height_pixels, initial_pos_x, initial_pos_y);
 	return 0;
@@ -196,11 +202,6 @@ int32_t sys_sleep_milis(uint32_t milis) {
 // ==================================================================
 // Register snapshot system calls
 // ==================================================================
-int32_t sys_take_register_snapshot(void) {
-	takeRegisterSnapshot();
-	return 0;
-}
-
 int32_t sys_get_register_snapshot(uint64_t * registers) {
 	uint64_t * aux = getRegisterSnapshot();
 	uint8_t i = 0;
@@ -209,7 +210,7 @@ int32_t sys_get_register_snapshot(uint64_t * registers) {
 		return 0;
 	}
 
-	while (i++ < 17) {
+	while (i++ < 15) {
 		(*registers) = *(aux);
 		(*registers)++;
 		aux++;
