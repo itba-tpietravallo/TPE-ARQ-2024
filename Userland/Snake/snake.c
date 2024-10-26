@@ -40,6 +40,7 @@ static void setDirection(enum REGISTERABLE_KEYS scancode);
 static void setSquareDimensions(void);
 static void setDefaultFeatures(void);
 static void endGame(void);
+static void checkCrash(void);
 
 static uint32_t hsv2rgb(uint8_t h, uint8_t s, uint8_t v);
 
@@ -64,7 +65,7 @@ int main(void) {
     int rounds = 10;
 
     while(!crashed) {
-        //TODO use fillVideoMemory() instead of painting the background
+        //TODO use fillVideoMemory() instead of painting the background (and delete window_height and window_width)
         // print backgruond
         for(int y = 0; y < window_height; y += square.height){
             for(int x = 0; x < window_width; x += square.width){
@@ -77,7 +78,7 @@ int main(void) {
             drawRectangle(hsv2rgb(k * 10, 255, 255), square.width - OFFSET, square.height - OFFSET, head.body[k].position.x + OFFSET, head.body[k].position.y + OFFSET);
         }
 
-        if (!crashed) sleep(2000);
+        sleep(1000);
 
         // move each square, except head
         for(int i = head.size - 1; i > 0; i--){
@@ -89,12 +90,7 @@ int main(void) {
         head.body[0].position.x += head.direction.x * SQUARE_DIM;
         head.body[0].position.y += head.direction.y * SQUARE_DIM;
 
-        // check crash
-        for(int i = 1; i < head.size && !crashed; i++){
-            if(head.body[0].position.x == head.body[i].position.x && head.body[0].position.y == head.body[i].position.y){
-                crashed = 1;
-            }
-        }
+        checkCrash();
 
         rounds--;
         if(rounds <= 0){
@@ -159,6 +155,21 @@ static void setDefaultFeatures(void) {
     }
 }
 
+static void checkCrash(void) {
+    // checks whether the snake crashed with a border
+    if(head.body[0].position.x < 0 || head.body[0].position.x > window_width || head.body[0].position.y < 0 || head.body[0].position.y > window_height){
+        endGame();
+    }
+
+    // checks whether the snake crashed with itself
+    for(int i = 1; i < head.size && !crashed; i++){
+        if(head.body[0].position.x == head.body[i].position.x && head.body[0].position.y == head.body[i].position.y){
+            endGame();
+        }
+    }
+}
+
+// Hand transpiled from https://github.com/hughsk/glsl-hsv2rgb/blob/master/index.glsl
 #define clamp(x, min, max) ((x) < (min) ? (min) : ((x) > (max) ? (max) : (x)))
 #define abs(a) ((a) < 0 ? -(a) : (a))
 #define fract256(x) ((x) % 256)
