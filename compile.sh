@@ -37,6 +37,11 @@ docker exec -it "$CONTAINER_NAME" make clean -C /root/ && \
 docker exec -it "$CONTAINER_NAME" make all -C /root/Toolchain && \
 docker exec -it "$CONTAINER_NAME" make all -C /root/
 
+# If an argument "PERF_COMPARE" is supplied, then compare setting the performance flag
+if [ "$1" == "PERF_COMPARE" ]; then
+    docker exec -it "$CONTAINER_NAME" make clean -C /root/Kernel && \
+    docker exec -it "$CONTAINER_NAME" make all -C /root/ NO_OPTIMIZATIONS=1 OSIMGNAME="x64BareBonesImage_no_optimizations"
+fi
 
 if [ $? -ne 0 ]; then
     echo "${RED}Compilation failed.${NC}"

@@ -50,6 +50,7 @@ typedef struct vbe_mode_info_structure * VBEInfoPtr;
 
 VBEInfoPtr VBE_mode_info = (VBEInfoPtr) 0x0000000000005C00;
 
+__attribute__((hot))
 void putPixel(uint32_t hexColor, uint64_t x, uint64_t y) {
     uint8_t * framebuffer = (uint8_t * )(unsigned long long)(VBE_mode_info->framebuffer);
     uint64_t offset = (x * ((VBE_mode_info->bpp) >> 3)) + (y * VBE_mode_info->pitch);
@@ -58,7 +59,7 @@ void putPixel(uint32_t hexColor, uint64_t x, uint64_t y) {
     framebuffer[offset]     =  b;
     framebuffer[offset+1]   =  g;
     framebuffer[offset+2]   =  r;
-}
+};
 
 void drawRectangle(uint32_t hexColor, uint64_t width, uint64_t height, uint64_t initial_pos_x, uint64_t initial_pos_y){
 	for(uint64_t y = initial_pos_y; y - initial_pos_y < height; y++){
@@ -67,8 +68,6 @@ void drawRectangle(uint32_t hexColor, uint64_t width, uint64_t height, uint64_t 
 		}
 	}
 }
-
-
 
 void fillVideoMemory(uint32_t hexColor) {
 	uint8_t * framebuffer = (uint8_t * )(unsigned long long)(VBE_mode_info->framebuffer);
