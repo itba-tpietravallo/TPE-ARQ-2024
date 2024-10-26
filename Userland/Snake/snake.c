@@ -259,6 +259,20 @@ static void checkCrash(void) {
                 endGame();
             }
         }
+
+        // checks whether snakes crashed with each other
+        for(int k = i + 1; k < snakes_amount; k++){
+            for(int j = 0; j < snakes[k].size; j++){
+                if(snakes[i].body[0].position.x == snakes[k].body[j].position.x && snakes[i].body[0].position.y == snakes[k].body[j].position.y){
+                    snakes[i].crashed = 1;
+                    // if both heads crash, both players lose
+                    if(j == 0){
+                        snakes[k].crashed = 1;
+                    }
+                    endGame();
+                }
+            }
+        }
     }
 }
 
