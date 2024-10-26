@@ -259,6 +259,7 @@ void hideCursor(void) {
 
 uint8_t increaseFontSize(void) {
     fontSize++;
+    fontSize = fontSize > 10 ? 10 : fontSize;
     maxGlyphSizeYOnLine = MAX(maxGlyphSizeYOnLine, glyphSizeY * fontSize);
     return fontSize;
 }

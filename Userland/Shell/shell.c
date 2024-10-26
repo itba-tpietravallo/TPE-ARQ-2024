@@ -202,13 +202,11 @@ int exit(void) {
 }
 
 int fontinc(void) {
-    increaseFontSize();
-    return 0;
+    return increaseFontSize();
 }
 
 int fontdec(void) {
-    decreaseFontSize();
-    return 0;
+    return decreaseFontSize();
 }
 
 int regs(void) {
