@@ -1,5 +1,6 @@
 #include <sys.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 
 // <------------------------------ DEFINES ------------------------------>
@@ -8,7 +9,8 @@
 #define MAX_BODY_SIZE 100     // to check if the player won
 #define SQUARE_DIM 32
 #define MAX_PLAYERS 2
-#define DEFAULT_GAME_SLEEPING_TIME 1000
+#define HEAD 0
+#define DEFAULT_GAME_SLEEPING_TIME 333
 #define DEFAULT_WINNERS_SLEEPING_TIME 5000
 
 // hues
@@ -57,9 +59,14 @@ typedef struct {
     int hue;
     Direction direction;
     int size;
-    SnakeBodySquare body[INITIAL_BODY_SIZE];
+    SnakeBodySquare body[MAX_BODY_SIZE];
     int crashed;
 } SnakeHeadSquare;
+
+typedef struct {
+    int hue;
+    Position position;
+} Food;
 
 
 // <-------------------------- FUNCTION PROTOTYPES -------------------------->
@@ -75,6 +82,10 @@ static void drawBackground(void);
 static void drawSnakes(void);
 
 static void moveSnakes(void);
+static void drawFood(void);
+static void randomizeFoodPosition(void);
+static void checkFoodEaten(void);
+static int overSnakeBody(int x, int y);
 
 static void checkCrash(void);
 
@@ -88,6 +99,7 @@ static uint32_t hsv2rgb(uint8_t h, uint8_t s, uint8_t v);
 
 static SnakeHeadSquare snakes[MAX_PLAYERS] = {};
 static Square square;
+static Food food;
 
 // hues
 static int hues[] = {HUE_1, HUE_2};
@@ -103,6 +115,7 @@ static int window_height, window_width;
 
 static int end_of_game;
 static int snakes_amount;
+static int food_eaten;
 
 
 
@@ -110,24 +123,39 @@ static int snakes_amount;
 int main(void) {
     end_of_game = 0;
 
-    snakes_amount = 2; //TODO scanf should get this
+    snakes_amount = 1; //TODO scanf should get this
+
+    int hours, minutes, seconds;
+    getDate(&hours, &minutes, &seconds);
+    srand(seconds);
 
     window_height = getWindowHeight();
     window_width = getWindowWidth();
+    food_eaten = 0;
 
     registerKeys();
     setSquareDimensions();
     setDefaultFeatures();
 
+    
     while(!end_of_game) {
+
         drawBackground();
         drawSnakes();
+        drawFood();
+
         
+        
+        //=====================================================================================================
         sleep(DEFAULT_GAME_SLEEPING_TIME);
+        //=====================================================================================================
 
         moveSnakes();
 
+        checkFoodEaten();
+
         checkCrash();
+        
     }
     
     showWinners();
@@ -212,6 +240,9 @@ static void setDefaultFeatures(void) {
         }
         snakes[i].crashed = 0;
     }
+    food.hue = 0xA933DC;
+    randomizeFoodPosition();
+
 }
 
 static void drawBackground(void) {
@@ -239,8 +270,8 @@ static void moveSnakes(void) {
         }
 
         // move head
-        snakes[i].body[0].position.x += snakes[i].direction.x * SQUARE_DIM;
-        snakes[i].body[0].position.y += snakes[i].direction.y * SQUARE_DIM;
+        snakes[i].body[HEAD].position.x += snakes[i].direction.x * SQUARE_DIM;
+        snakes[i].body[HEAD].position.y += snakes[i].direction.y * SQUARE_DIM;
     }
 }
 
@@ -297,6 +328,61 @@ static void showWinners(void) {
     }
 
     sleep(DEFAULT_WINNERS_SLEEPING_TIME);
+}
+
+static int overSnakeBody(int x, int y) {
+
+    int overSnake = 0;
+
+    for (int i = 0 ; i < snakes_amount && !overSnake ; i++) {
+
+         for(int k = 0; k < snakes[i].size && !overSnake ; k++){
+
+           if (snakes[i].body[k].position.x == x && snakes[i].body[k].position.y == y) {
+                overSnake = 1;
+           }
+
+        }
+    }
+    return overSnake;
+}
+
+static void randomizeFoodPosition(void){
+    int x, y;
+
+    do {
+
+        x = (rand() % SQUARE_DIM) * SQUARE_DIM;
+        x = x % (getWindowWidth());
+
+        y = (rand() % SQUARE_DIM) * SQUARE_DIM;
+        y = y % (getWindowHeight());
+
+    } while (overSnakeBody(x, y));
+
+    food.position.x = x;
+    food.position.y = y;
+}
+
+static void drawFood() {
+
+    drawCircle(food.hue, food.position.x + OFFSET, food.position.y + OFFSET, SQUARE_DIM - OFFSET);
+}
+
+static void checkFoodEaten(void) {
+
+   for (int i = 0 ; i < snakes_amount; i++) {
+        if (snakes[i].body[HEAD].position.x == food.position.x && snakes[i].body[HEAD].position.y == food.position.y) {
+
+            snakes[i].size++;
+            food_eaten = 1;
+        }
+   }
+
+   if (food_eaten) {
+        randomizeFoodPosition();
+        food_eaten = 0;
+    }
 }
 
 
