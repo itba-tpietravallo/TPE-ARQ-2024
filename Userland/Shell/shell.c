@@ -6,6 +6,10 @@
 #include <sys.h>
 #include <exceptions.h>
 
+#ifdef ANSI_8_BIT_COLOR_SUPPORT
+    #include <ansiColors.h>
+#endif
+
 static void * const snakeModuleAddress = (void*)0x500000;
 
 #define MAX_BUFFER_SIZE 1024
@@ -158,11 +162,20 @@ int echo(void){
     for (int i = strlen("echo") + 1; i < buffer_dim; i++) {
         switch (buffer[i]) {
             case '\\':
-                if (buffer[i + 1] == 'n') {
-                    printf("\n");
-                    i++;
-                } else {
-                    putchar(buffer[i]);
+                switch (buffer[i + 1]) {
+                    case 'n':
+                        printf("\n");
+                        i++;
+                        break;
+                    #ifdef ANSI_8_BIT_COLOR_SUPPORT
+                    case 'e':
+                        i++;
+                        parseANSI(buffer, &i); 
+                    #endif
+                        
+                    default:
+                        putchar(buffer[i]);
+                        break;
                 }
                 break;
             case '$':

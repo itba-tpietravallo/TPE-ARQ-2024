@@ -17,6 +17,9 @@ static void setANSIProp(uint8_t prop) {
             sys_fonts_text_color(0x00FFFFFF);
             sys_fonts_background_color(0x00000000);
             break;
+        case 30:
+            set_fn(0x00000000);
+            break;
         case 31:
             set_fn(0x00DE382B);
             break;
@@ -80,6 +83,7 @@ void parseANSI(const char * string, int * i) {
     do {
         if (string[*i] == ';' || string[*i] == 'm') {
             setANSIProp(prop);
+            prop = 0;
         } else {
             prop = prop * 10 + (string[*i] - '0');
         }
