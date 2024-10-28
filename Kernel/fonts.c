@@ -52,6 +52,8 @@ static uint16_t yBufferPosition;
 
 static uint16_t maxGlyphSizeYOnLine = DEFAULT_GLYPH_SIZE_Y;
 
+static uint8_t dirty_line;
+
 static uint32_t text_color = DEFAULT_TEXT_COLOR;
 static uint32_t background_color = DEFAULT_BACKGROUND_COLOR;
 static uint8_t file_descriptor = FD_STDOUT;
@@ -148,6 +150,7 @@ static void scrollBufferPositionIfNeeded(void) {
 
 // `ascii` ASCII character to print (0-127)
 void putChar(char ascii) {
+    dirty_line = 1;
     switch (ascii){
         case NEW_LINE_CHAR:
             hideCursor();
@@ -207,6 +210,7 @@ void print(const char * string) {
 
 // Jumps to the next line, does not print an empty line
 void newLine(void) {
+    dirty_line = 0;
     yBufferPosition += maxGlyphSizeYOnLine;
     xBufferPosition = 0;
     maxGlyphSizeYOnLine = fontSize * glyphSizeY;
@@ -259,20 +263,19 @@ void hideCursor(void) {
 
 uint8_t increaseFontSize(void) {
     fontSize++;
-    fontSize = fontSize > 10 ? 10 : fontSize;
-    maxGlyphSizeYOnLine = MAX(maxGlyphSizeYOnLine, glyphSizeY * fontSize);
+    maxGlyphSizeYOnLine =  dirty_line == 1 ? MAX(maxGlyphSizeYOnLine, glyphSizeY * fontSize) : (glyphSizeY * fontSize);
     return fontSize;
 }
 
 uint8_t decreaseFontSize(void) {
     fontSize--;
-    fontSize = fontSize < 1 ? 1 : fontSize;
+    fontSize = (dirty_line == 1 || fontSize >= 1) ? fontSize : 1;
     return fontSize;
 }
 
 uint8_t setFontSize(int8_t size) {
     fontSize = (size < 1 ? 1 : size);
-    maxGlyphSizeYOnLine = MAX(maxGlyphSizeYOnLine, glyphSizeY * fontSize);
+    maxGlyphSizeYOnLine = dirty_line == 1 ? MAX(maxGlyphSizeYOnLine, glyphSizeY * fontSize) : (glyphSizeY * fontSize);
     return fontSize;
 }
 

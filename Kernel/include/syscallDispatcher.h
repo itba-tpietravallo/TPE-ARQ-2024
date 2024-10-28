@@ -67,4 +67,7 @@ int32_t sys_sleep_milis(uint32_t milis);
 // Register snapshot
 int32_t sys_get_register_snapshot(uint64_t * registers);
 
+// Get character without showing
+int32_t sys_get_character_without_display(void);
+
 #endif

@@ -75,15 +75,16 @@ int vscanf(const char * format, va_list args) {
         switch (format[i]) {
             case '%':
                 i++;
-                printf("%% %c", format[i]);
                 switch (format[i]) {
                     case 'd':
                         int64_t num = 0;
+                        uint8_t read_num = 0;
                         while ((c = getchar()) >= '0' && c <= '9') {
                             num = num * 10 + c - '0';
+                            read_num = 1;
                         }
-                        *va_arg(args, int64_t *) = num;
-                        args_read++;
+                        *va_arg(args, int *) = num;
+                        args_read += read_num;
                         break;
                     case 's':
                         char * str = va_arg(args, char *);
@@ -111,13 +112,15 @@ int vsscanf(const char * buffer, const char * format, va_list args) {
                 form_i++;
                 switch (format[form_i]) {
                     case 'd' : {
-                        int64_t num = 0;
+                        int num = 0;
+                        uint8_t read_num = 0;
                         while (buffer[buf_i] >= '0' && buffer[buf_i] <= '9') {
                             num = num * 10 + buffer[buf_i] - '0';
                             buf_i++;
+                            read_num = 1;
                         }
-                        *va_arg(args, int64_t *) = num;
-                        args_read++;
+                        *va_arg(args, int *) = num;
+                        args_read += read_num;
                         break;
                     }
                     case 's': {

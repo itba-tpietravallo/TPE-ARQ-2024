@@ -48,6 +48,8 @@ int32_t syscallDispatcher(Registers * registers) {
 
 		case 0x800000E0: return sys_get_register_snapshot((uint64_t *) registers->rdi);
 
+		case 0x800000F0: return sys_get_character_without_display();
+
 		default:
 			setBackgroundColor(0x00FF0000); setTextColor(0x00FFFFFF);
 			// @todo This should probably be an exception handler
@@ -215,4 +217,8 @@ int32_t sys_get_register_snapshot(uint64_t * registers) {
 	}
 
 	return 1;
+}
+
+int32_t sys_get_character_without_display(void) {
+	return getKeyboardCharacter(0);
 }

@@ -17,7 +17,7 @@ int toggleSpeed(void) {
 
 void toggleCursor(void) {
     int toggle = toggleSpeed() % 2;
-    if (options == 0){
+    if (options == 0 || options == MODIFY_BUFFER){
         IS_SHOWING = 0;
     } else{
         if ((toggle == 1) && !IS_SHOWING) {
