@@ -14,11 +14,11 @@
 #define QUIT_KEY_2 'x'
 
 // end_of_game values
-#define ENDED_BY_CRASH 1
+#define ENDED_BY_CRASH_OR_MAX_SIZE 1
 #define ENDED_BY_QUIT 2
 
 #define INITIAL_BODY_SIZE 3
-#define MAX_BODY_SIZE 100     //TODO to check if the player won
+#define MAX_BODY_SIZE 100
 #define SQUARE_DIM 32
 #define MAX_SNAKES 2
 #define HEAD 0
@@ -77,7 +77,7 @@ typedef struct {
     Direction direction;
     int size;
     SnakeBodySquare body[MAX_BODY_SIZE];
-    int crashed;
+    int lost;
 } SnakeHeadSquare;
 
 typedef struct {
@@ -92,6 +92,7 @@ static void setSquareDimensions(void);
 static void setDefaultFeatures(void);
 
 static void welcomePlayers(void);
+static void checkMaxBodySize(void);
 static void endGame(void);
 static void showWinners(void);
 
@@ -144,15 +145,13 @@ static int food_eaten;
 
 int main(void) {
     end_of_game = 0;
-
-    welcomePlayers();
-
-    setRandomSeed();
-
     window_height = getWindowHeight();
     window_width = getWindowWidth();
     food_eaten = 0;
 
+    welcomePlayers();
+
+    setRandomSeed();
     registerKeys();
     setSquareDimensions();
 
@@ -170,6 +169,7 @@ int main(void) {
             moveSnakes();
             checkFoodEaten();
             checkCrash();
+            checkMaxBodySize();
         }
 
         showWinners();
@@ -197,7 +197,7 @@ static void setDefaultFeatures(void) {
             snakes[i].body[k].position.x = initial_positions[i].x - k * snakes[i].direction.x * SQUARE_DIM;
             snakes[i].body[k].position.y = initial_positions[i].y - k * snakes[i].direction.y * SQUARE_DIM;
         }
-        snakes[i].crashed = 0;
+        snakes[i].lost = 0;
     }
     food.hue = DEFAULT_FOOD_COLOR;
     randomizeFoodPosition();
@@ -242,17 +242,33 @@ static void welcomePlayers(void) {
     clearScreen();
 }
 
+static void checkMaxBodySize(void) {
+    for(int i = 0; i < snakes_amount; i++){
+        if(snakes[i].size == MAX_BODY_SIZE){
+            end_of_game = ENDED_BY_CRASH_OR_MAX_SIZE;
+        }
+    }
+    if(end_of_game == ENDED_BY_CRASH_OR_MAX_SIZE){
+        for(int i = 0; i < snakes_amount; i++){
+            if(snakes[i].size != MAX_BODY_SIZE){
+                snakes[i].lost = 1;
+            }
+        }
+    }
+    
+}
+
 static void endGame(void) {
     end_of_game = ENDED_BY_QUIT;
     for(int i = 0; i < snakes_amount && end_of_game == ENDED_BY_QUIT; i++){
-        if(snakes[i].crashed == 1){
-            end_of_game = ENDED_BY_CRASH;
+        if(snakes[i].lost == 1){
+            end_of_game = ENDED_BY_CRASH_OR_MAX_SIZE;
         }
     }
 }
 
 static void showWinners(void) {
-    if(end_of_game == ENDED_BY_CRASH){
+    if(end_of_game == ENDED_BY_CRASH_OR_MAX_SIZE){
         clearScreen();
 
         int c;
@@ -261,7 +277,7 @@ static void showWinners(void) {
 
         if(snakes_amount == 1){
             printf("\t");
-            if(!snakes[0].crashed){
+            if(!snakes[0].lost){
                 printf("You won, congratulations!");
             } else{
                 printf("You lost.");
@@ -270,7 +286,7 @@ static void showWinners(void) {
         } else{
             for(int i = 0; i < snakes_amount; i++){
                 printf("\t");
-                if(!snakes[i].crashed){
+                if(!snakes[i].lost){
                     printf("Player %d won, congratulations!\n", i + 1);
                 } else{
                     printf("Player %d lost.\n", i + 1);
@@ -368,14 +384,14 @@ static void checkCrash(void) {
     for(int i = 0; i < snakes_amount; i++){
         // checks whether the snake crashed with a border
         if(snakes[i].body[0].position.x < 0 || snakes[i].body[0].position.x > (window_width - SQUARE_DIM) || snakes[i].body[0].position.y < 0 || snakes[i].body[0].position.y > (window_height - SQUARE_DIM)){
-            snakes[i].crashed = 1;
+            snakes[i].lost = 1;
             endGame();
         }
 
         // checks whether the snake crashed with itself
         for(int k = 1; k < snakes[i].size && !end_of_game; k++){
             if(snakes[i].body[0].position.x == snakes[i].body[k].position.x && snakes[i].body[0].position.y == snakes[i].body[k].position.y){
-                snakes[i].crashed = 1;
+                snakes[i].lost = 1;
                 endGame();
             }
         }
@@ -384,10 +400,10 @@ static void checkCrash(void) {
         for(int k = i + 1; k < snakes_amount; k++){
             for(int j = 0; j < snakes[k].size; j++){
                 if(snakes[i].body[0].position.x == snakes[k].body[j].position.x && snakes[i].body[0].position.y == snakes[k].body[j].position.y){
-                    snakes[i].crashed = 1;
+                    snakes[i].lost = 1;
                     // if both heads crash, both players lose
                     if(j == 0){
-                        snakes[k].crashed = 1;
+                        snakes[k].lost = 1;
                     }
                     endGame();
                 }
