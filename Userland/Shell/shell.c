@@ -172,7 +172,8 @@ int echo(void){
                         i++;
                         parseANSI(buffer, &i); 
                     #endif
-                        
+                    case '\\':
+                        i++;
                     default:
                         putchar(buffer[i]);
                         break;
