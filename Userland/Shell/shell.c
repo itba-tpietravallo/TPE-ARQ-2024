@@ -97,7 +97,7 @@ int main() {
 
         for (; i < sizeof(commands) / sizeof(Command); i++) {
             if (strcmp(commands[i].name, command) == 0) {
-                last_command_output = exec(commands[i].function);
+                last_command_output = commands[i].function();
                 strncpy(command_history[command_history_last], command_history_buffer, 255);
                 command_history[command_history_last][buffer_dim] = '\0';
                 INC_MOD(command_history_last, HISTORY_SIZE);
@@ -247,5 +247,5 @@ int regs(void) {
 }
 
 int snake(void) {
-    return execProgram(snakeModuleAddress);
+    return exec(snakeModuleAddress);
 }

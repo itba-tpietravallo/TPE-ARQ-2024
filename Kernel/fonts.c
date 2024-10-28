@@ -66,6 +66,14 @@ void setBackgroundColor(uint32_t color) {
     background_color = color;
 }
 
+uint32_t getTextColor(void) {
+    return text_color;
+}
+
+uint32_t getBackgroundColor(void) {
+    return background_color;
+}
+
 static char buffer[64] = { '0' };
 
 static inline void renderFromBitmap(char * bitmap, uint64_t xBase, uint64_t yBase);
@@ -276,6 +284,10 @@ uint8_t decreaseFontSize(void) {
 uint8_t setFontSize(int8_t size) {
     fontSize = (size < 1 ? 1 : size);
     maxGlyphSizeYOnLine = dirty_line == 1 ? MAX(maxGlyphSizeYOnLine, glyphSizeY * fontSize) : (glyphSizeY * fontSize);
+    return fontSize;
+}
+
+uint8_t getFontSize(void) {
     return fontSize;
 }
 
