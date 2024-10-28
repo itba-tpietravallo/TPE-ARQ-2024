@@ -364,10 +364,14 @@ static void registerKeys(void) {
 }
 
 static void movingTo(int snake, int dir_x, int dir_y) {
-    // changes direction only if the new isn't the opposite of the current
-    if((dir_x != (snakes[snake - 1].direction.x * (-1)) && snakes[snake - 1].direction.y == 0) || (snakes[snake - 1].direction.x == 0 && dir_y != (snakes[snake - 1].direction.y * (-1)))){
-        snakes[snake - 1].direction.x = dir_x;
-        snakes[snake - 1].direction.y = dir_y;
+    snake -= 1;
+    
+    int forbiddenX = -(snakes[snake].body[HEAD].position.x - snakes[snake].body[1].position.x) / SQUARE_DIM;
+    int forbiddenY = -(snakes[snake].body[HEAD].position.y - snakes[snake].body[1].position.y) / SQUARE_DIM;
+
+    if (!(dir_x == forbiddenX && dir_y == forbiddenY)) {
+        snakes[snake].direction.x = dir_x;
+        snakes[snake].direction.y = dir_y;
     }
 }
 
