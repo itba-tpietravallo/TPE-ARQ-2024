@@ -86,6 +86,12 @@ int vscanf(const char * format, va_list args) {
                         *va_arg(args, int *) = num;
                         args_read += read_num;
                         break;
+                    case 'c':
+
+                        *va_arg(args, char *) = getchar();
+                        args_read++;
+
+                        break;
                     case 's':
                         char * str = va_arg(args, char *);
                         while ((c = getchar()) != ' ' && c != '\n') {
@@ -121,6 +127,11 @@ int vsscanf(const char * buffer, const char * format, va_list args) {
                         }
                         *va_arg(args, int *) = num;
                         args_read += read_num;
+                        break;
+                    }
+                    case 'c': {
+                        *va_arg(args, char *) = buffer[buf_i++];
+                        args_read++;
                         break;
                     }
                     case 's': {
