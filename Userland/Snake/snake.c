@@ -174,9 +174,7 @@ int main(void) {
             checkCrash();
             checkMaxBodySize();
 
-            if(first_round){
-                first_round = 0;
-            }
+            first_round = 0;
         }
 
         showWinners();
