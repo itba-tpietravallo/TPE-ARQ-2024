@@ -139,6 +139,7 @@ static int window_height, window_width;
 static int end_of_game;   // 1 if the game finished because somebody crashed, 2 if it was because X was pressed
 static int snakes_amount;
 static int food_eaten;
+static int first_round;
 
 
 // ================================================================================ GAME ================================================================================
@@ -159,6 +160,8 @@ int main(void) {
         clearScreen();
         setDefaultFeatures();
 
+        first_round = 1;
+
         while(!end_of_game) {
             drawBackground();
             drawSnakes();
@@ -170,6 +173,10 @@ int main(void) {
             checkFoodEaten();
             checkCrash();
             checkMaxBodySize();
+
+            if(first_round){
+                first_round = 0;
+            }
         }
 
         showWinners();
@@ -418,7 +425,9 @@ static void checkCrash(void) {
 static void drawBackground(void) {
     for(int y = 0; y < window_height; y += square.height){
         for(int x = 0; x < window_width; x += square.width){
-            drawRectangle(DEFAULT_BACKGROUND_COLOR, square.width - OFFSET, square.height - OFFSET, x + OFFSET, y + OFFSET);
+            if(first_round || !(x == food.position.x && y == food.position.y)){
+                drawRectangle(DEFAULT_BACKGROUND_COLOR, square.width - OFFSET, square.height - OFFSET, x + OFFSET, y + OFFSET);
+            }
         }
     }
 }
