@@ -73,7 +73,7 @@ typedef struct {
 } SnakeBodySquare;
 
 typedef struct {
-    int hue;
+    int initial_hue;
     Direction direction;
     int size;
     SnakeBodySquare body[MAX_BODY_SIZE];
@@ -189,7 +189,7 @@ static void setSquareDimensions(void) {
 
 static void setDefaultFeatures(void) {
     for(int i = 0; i < snakes_amount; i++){
-        snakes[i].hue = hues[i];
+        snakes[i].initial_hue = hues[i];
         snakes[i].direction.x = initial_directions[i].x;
         snakes[i].direction.y = initial_directions[i].y;
         snakes[i].size = INITIAL_BODY_SIZE;
@@ -353,7 +353,7 @@ static void setDirection(enum REGISTERABLE_KEYS scancode) {
 static void moveSnakes(void) {
     for(int i = 0; i < snakes_amount; i++){
         // move each square, except head
-        for(int k = snakes[i].size - 1; k > 0; k--){
+        for(int k = snakes[i].size - 1; k > 0; k--) {
             snakes[i].body[k].position.x = snakes[i].body[k - 1].position.x;
             snakes[i].body[k].position.y = snakes[i].body[k - 1].position.y;
         }
@@ -410,7 +410,7 @@ static void drawBackground(void) {
 static void drawSnakes(void) {
     for(int i = 0; i < snakes_amount; i++){
         for(int k = 0; k < snakes[i].size; k++){
-            drawRectangle(hsv2rgb(k * 10 + snakes[i].hue, 255, 255), square.width - OFFSET, square.height - OFFSET, snakes[i].body[k].position.x + OFFSET, snakes[i].body[k].position.y + OFFSET);
+            drawRectangle(hsv2rgb(k * 10 + snakes[i].initial_hue, 255, 255), square.width - OFFSET, square.height - OFFSET, snakes[i].body[k].position.x + OFFSET, snakes[i].body[k].position.y + OFFSET);
         }
     }
 }
@@ -438,6 +438,7 @@ static int overSnakeBody(int x, int y) {
             }
         }
     }
+
     return over_snake;
 }
 
@@ -460,7 +461,9 @@ static void randomizeFoodPosition(void) {
 static void checkFoodEaten(void) {
     for(int i = 0 ; i < snakes_amount; i++){
         if(snakes[i].body[HEAD].position.x == food.position.x && snakes[i].body[HEAD].position.y == food.position.y){
-            snakes[i].size++;
+            int s = snakes[i].size++;
+            snakes[i].body[s].position.x = snakes[i].body[s - 1].position.x;
+            snakes[i].body[s].position.y = snakes[i].body[s - 1].position.y;
             food_eaten = 1;
         }
     }
