@@ -14,7 +14,3 @@ int rand(void) { // RAND_MAX assumed to be 32767
 void srand(unsigned int seed) {
     next = seed;
 }
-
-int one(void) {
-    return 1;
-}

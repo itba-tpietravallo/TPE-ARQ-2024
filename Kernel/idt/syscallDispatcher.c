@@ -37,7 +37,6 @@ int32_t syscallDispatcher(Registers * registers) {
 		case 0x80000021: return sys_fill_video_memory(registers->rdi);
 
 		case 0x800000A0: return sys_exec((int (*)(void)) registers->rdi);
-		case 0x800000A1: return sys_exec_program((int (*) (void))registers->rdi);
 
 		case 0x800000B0: return sys_register_key((uint8_t) registers->rdi, (SpecialKeyHandler) registers->rsi);
 
@@ -168,16 +167,22 @@ int32_t sys_fill_video_memory(uint32_t hexColor) {
 // ==================================================================
 
 int32_t sys_exec(int32_t (*fnPtr)(void)) {
+	clear();
+
+	uint8_t fontSize = getFontSize(); 					// preserve font size
+	uint32_t text_color = getTextColor();				// preserve text color
+	uint32_t background_color = getBackgroundColor();	// preserve background color
+	
 	SpecialKeyHandler map[ F12_KEY - ESCAPE_KEY + 1 ] = {0};
 	clearKeyFnMapNonKernel(map); // avoid """processes/threads/apps""" registering keys across each other over time. reset the map every time
+	
 	int32_t aux = fnPtr();
-	restoreKeyFnMapNonKernel(map);
-	return aux;
-}
 
-int32_t sys_exec_program(int32_t (*fnPtr)(void)) {
-	clear();
-	int32_t aux = sys_exec(fnPtr);
+	restoreKeyFnMapNonKernel(map);
+	setFontSize(fontSize);
+	setTextColor(text_color);
+	setBackgroundColor(background_color);
+
 	clear();
 	return aux;
 }

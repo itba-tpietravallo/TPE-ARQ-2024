@@ -56,7 +56,6 @@ int32_t sys_fill_video_memory(uint32_t hexColor);
 
 // Custom exec syscall prototype
 int32_t sys_exec(int32_t (*fnPtr)(void));
-int32_t sys_exec_program(int32_t (*fnPtr)(void));
 
 // Custom keyboard syscall prototypes
 int32_t sys_register_key(uint8_t scancode, SpecialKeyHandler fn);

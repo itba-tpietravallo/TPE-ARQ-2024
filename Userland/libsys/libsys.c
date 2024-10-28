@@ -55,10 +55,6 @@ int32_t exec(int32_t (*fnPtr)(void)) {
     return sys_exec(fnPtr);
 }
 
-int32_t execProgram(int32_t (*fnPtr)(void)) {
-    return sys_exec_program(fnPtr);
-}
-
 void registerKey(enum REGISTERABLE_KEYS scancode, void (*fn)(enum REGISTERABLE_KEYS scancode)) {
     sys_register_key(scancode, fn);
 }

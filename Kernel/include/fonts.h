@@ -24,8 +24,11 @@ void clearPreviousCharacter(void);
 uint8_t increaseFontSize(void);
 uint8_t decreaseFontSize(void);
 uint8_t setFontSize(int8_t size);
+uint8_t getFontSize(void);
 void setTextColor(uint32_t color);
 void setBackgroundColor(uint32_t color);
+uint32_t getTextColor(void);
+uint32_t getBackgroundColor(void);
 
 void __DEBUG__renderTicks(uint64_t ticks);
 
