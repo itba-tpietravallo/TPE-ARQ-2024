@@ -5,7 +5,8 @@
 
 // <----------------------------------------------------------------------- DEFINES ----------------------------------------------------------------------->
 
-// #define TO_UPPER(c) (((c) >= 'a' && (c) <= 'z') ? ((c) - 'a' + 'A') : (c)) //TODO doesn't work
+#define TO_UPPER(c) (((c) >= 'a' && (c) <= 'z') ? ((c) - 'a' + 'A') : (c)) //TODO doesn't work
+#define VALID_DIFFICULTY(c) (c == 'E' || c == 'e' || c == 'M' || c == 'm'|| c == 'H' || c == 'h' || c == 'D' || c == 'd')
 
 #define DIRECTIONS 4
 #define BEGIN_GAME_KEY '\n'
@@ -98,6 +99,7 @@ static void endGameByMaxSize(void);
 static void endGameByQuit(void);
 static void endGameByCrash(void);
 static void endGame(int code);
+static void  setDifficulty(char difficulty);
 static void showWinners(void);
 
 static void registerKeys(void);
@@ -106,7 +108,7 @@ static void setDirection(enum REGISTERABLE_KEYS scancode);
 static void moveSnakes(void);
 static void checkCrash(void);
 
-static void drawBackground(void);
+static void drawBackground(voicpd);
 static void drawSnakes(void);
 static void drawFood(void);
 
@@ -142,6 +144,7 @@ static int window_height, window_width;
 
 static int end_of_game;   // 1 if the game finished because somebody crashed, 2 if it was because X was pressed
 static int snakes_amount;
+static int difficulty_level;
 static int food_eaten;
 static int first_round;
 
@@ -171,7 +174,7 @@ int main(void) {
             drawSnakes();
             drawFood();
         
-            sleep(DEFAULT_GAME_SLEEPING_TIME);
+            sleep(difficulty_level);
 
             moveSnakes();
             checkFoodEaten();
@@ -226,11 +229,25 @@ static void welcomePlayers(void) {
 
     do{
         do{
-            printf("Enter the number of players (maximum %d): ", MAX_SNAKES);
+            printf("Enter the number of players (maximum %d):", MAX_SNAKES);
             result = scanf("%d", &snakes_amount);
         } while(result != 1);
 
     } while(snakes_amount > MAX_SNAKES || snakes_amount <= 0);
+
+
+    int dif_result = 0;
+    char * difficulty;
+    do{
+        do{
+            printf("\nEnter difficulty\n (E)asy, (M)edium, (H)ard, (D)emon: ");   
+            dif_result = scanf("%s", difficulty);
+            
+        } while(dif_result != 1);
+
+    } while(!VALID_DIFFICULTY(*difficulty));
+
+    setDifficulty(*difficulty);
 
     clearScreen();
 
@@ -294,19 +311,23 @@ static void showWinners(void) {
         if(snakes_amount == 1){
             printf("\t");
             if(!snakes[0].lost){
-                printf("You won, congratulations!");
+                printf("You won, congratulations!\n");
             } else{
-                printf("You lost.");
+                printf("You lost.\n");
             }
+            printf("\tScore: %d\n", snakes[0].size - INITIAL_BODY_SIZE);
             printf("\n\n");
         } else{
             for(int i = 0; i < snakes_amount; i++){
                 printf("\t");
                 if(!snakes[i].lost){
                     printf("Player %d won, congratulations!\n", i + 1);
+                    printf("\tScore: %d\n", snakes[i].size - INITIAL_BODY_SIZE);
                 } else{
                     printf("Player %d lost.\n", i + 1);
+                    printf("\tScore: %d\n", snakes[i].size - INITIAL_BODY_SIZE);
                 }
+                
                 printf("\n");
             }
         }
@@ -462,6 +483,27 @@ static void setRandomSeed(void) {
     int hours, minutes, seconds;
     getDate(&hours, &minutes, &seconds);
     srand(seconds);
+}
+
+static void  setDifficulty(char difficulty) {
+
+    switch (TO_UPPER(difficulty))
+    {
+    case 'E':
+        difficulty_level = 750;
+        break;
+    case 'M':
+        difficulty_level = 500;
+        break;
+    case 'H':
+        difficulty_level = 300;
+        break;
+    case 'D':
+        difficulty_level = 150;
+        break;
+    default:
+        break;
+    }
 }
 
 static int overSnakeBody(int x, int y) {
