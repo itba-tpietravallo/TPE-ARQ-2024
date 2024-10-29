@@ -6,7 +6,7 @@
 
 #define BUFFER_SIZE 1024
 
-#define BUFFER_IS_FULL (to_write != to_read && (to_write - to_read) % BUFFER_SIZE == 0)
+#define BUFFER_IS_FULL ((to_write - to_read) % BUFFER_SIZE == BUFFER_SIZE - 1)
 
 #define IS_ALPHA(c) ('a' <= (c) && (c) <= 'z') 
 #define TO_UPPER(c) (IS_ALPHA(c) ? ((c) - 'a' + 'A') : (c))
@@ -217,7 +217,13 @@ uint16_t clearBuffer() {
 // This function always sets the MODIFY_BUFFER option, so keys can be consumed
 int8_t getKeyboardCharacter(enum KEYBOARD_OPTIONS ops) {
     keyboard_options = ops | MODIFY_BUFFER;
-    while(to_write == to_read || ( (keyboard_options & AWAIT_RETURN_KEY) && (buffer[SUB_MOD(to_write, 1, BUFFER_SIZE)] != NEW_LINE_CHAR || buffer[SUB_MOD(to_write, 1, BUFFER_SIZE)] == EOF) )) _hlt();
+
+    while(
+        to_write == to_read || // always get at least one char from the buffer if empty
+        (   (keyboard_options & AWAIT_RETURN_KEY) && // wait for \n or EOF to be entered by the user
+            !(buffer[SUB_MOD(to_write, 1, BUFFER_SIZE)] == NEW_LINE_CHAR || buffer[SUB_MOD(to_write, 1, BUFFER_SIZE)] == EOF)
+        )) _hlt();
+
     keyboard_options = 0;
     int8_t aux = buffer[to_read];
     INC_MOD(to_read, BUFFER_SIZE);

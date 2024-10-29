@@ -86,8 +86,10 @@ int main() {
         command_history_buffer[buffer_dim] = 0;
 
         if(buffer_dim == MAX_BUFFER_SIZE){
-            perror("\n\e[0;31mShell buffer overflow\e[0m\n");
-            return 1;
+            perror("\e[0;31mShell buffer overflow\e[0m\n");
+            buffer[0] = buffer_dim = 0;
+            while (c != '\n') c = getchar();
+            continue ;
         };
 
         buffer[buffer_dim] = 0;
