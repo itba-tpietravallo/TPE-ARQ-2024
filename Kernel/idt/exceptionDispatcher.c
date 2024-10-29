@@ -38,8 +38,8 @@ static void zero_division(uint64_t * registers, int errorCode) {
 
 static void invalid_opcode(uint64_t * registers, int errorCode) {
 	setTextColor(0x00FF6600);
-	setFontSize(3); print("Division exception\n"); setFontSize(2);
-	print("Invalid opcode exception\n");
+	setFontSize(3); print("Invalid Opcode Exception\n"); setFontSize(2);
+	print("Arqui screen of death\n");
 	printExceptionData(registers, errorCode);
 }
 

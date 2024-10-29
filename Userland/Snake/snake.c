@@ -276,7 +276,7 @@ static void welcomePlayers(void) {
 
     sleep(DEFAULT_INSTRUCTIONS_SLEEPING_TIME);
 
-    printf("If any player eats %d foods, becomes the winner.\n\nAt any time, press X to quit.\n\nPress ENTER to begin", MAX_BODY_SIZE - INITIAL_BODY_SIZE);
+    printf("If any player eats %d foods, becomes the winner.\n\nAt any time, press X to quit.\n\nPress ENTER to begin", MAX_BODY_SIZE - INITIAL_BODY_SIZE - 1);
 
     while(getCharacterWithoutDisplay() != BEGIN_GAME_KEY);
 

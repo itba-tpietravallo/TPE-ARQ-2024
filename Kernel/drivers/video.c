@@ -73,8 +73,8 @@ void drawCircle(uint32_t hexColor, uint64_t topLeftX, uint64_t topLeftY, uint64_
     int64_t centerX = topLeftX + radius;
     int64_t centerY = topLeftY + radius;
     
-    for (int64_t y = -radius; y <= radius; y++) {
-        for (int64_t x = -radius; x <= radius; x++) {
+    for (int64_t y = -radius; y < radius; y++) {
+        for (int64_t x = -radius; x < radius; x++) {
             if (x * x + y * y <= radius * radius) {
                 putPixel(hexColor, centerX + x, centerY + y);
             }
