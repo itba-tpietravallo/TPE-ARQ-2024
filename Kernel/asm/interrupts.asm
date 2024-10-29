@@ -165,6 +165,7 @@ _irq00Handler:
 
 ; Keyboard
 _irq01Handler:
+	pushfq
 	pushState
 
 	mov rdi, 1 ; pass argument to irqDispatcher
@@ -173,7 +174,8 @@ _irq01Handler:
 	cmp rax, REGISTER_SNAPSHOT_KEY_SCANCODE ; F12 KEY SCANCODE
 	jne .skip
 
-	popState
+	popState  ; restore register values
+	pushState ; preserve stack frame
 
 	mov [register_snapshot + 0x08 * 0x00], rax
 	mov [register_snapshot + 0x08 * 0x01], rbx
@@ -185,26 +187,27 @@ _irq01Handler:
 	mov [register_snapshot + 0x08 * 0x07], r8
 	mov [register_snapshot + 0x08 * 0x08], r9
 	mov [register_snapshot + 0x08 * 0x09], r10
-	mov [register_snapshot + 0x08 * 0x10], r11
-	mov [register_snapshot + 0x08 * 0x11], r12
-	mov [register_snapshot + 0x08 * 0x12], r13
-	mov [register_snapshot + 0x08 * 0x13], r14
-	mov [register_snapshot + 0x08 * 0x14], r15
+	mov [register_snapshot + 0x08 * 0x0A], r11
+	mov [register_snapshot + 0x08 * 0x0B], r12
+	mov [register_snapshot + 0x08 * 0x0C], r13
+	mov [register_snapshot + 0x08 * 0x0D], r14
+	mov [register_snapshot + 0x08 * 0x0E], r15
 
-	mov rax, [rsp] ; get the return address
-	mov [register_snapshot + 0x08 * 0x15], rax ; rip
+	mov rax, [ rsp + 0x08 * 16 ] ; get the return address
+	mov [register_snapshot + 0x08 * 0x0F], rax ; rip
+
+	mov rax, [ rsp + 0x08 * 15 ] ; get the rflags
+	mov [register_snapshot + 0x08 * 0x10], rax ; rflags
 
 	mov byte [register_snapshot_taken], 0x01
 
-	jmp .ret
-
 	.skip:
-	popState
-
-	.ret:
 	; signal pic EOI (End of Interrupt)
 	mov al, 20h
 	out 20h, al
+
+	popState
+	add rsp, 0x08 ; remove rflags from the stack
 
 	iretq
 

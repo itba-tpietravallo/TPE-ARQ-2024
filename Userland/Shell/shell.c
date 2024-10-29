@@ -225,7 +225,7 @@ int fontdec(void) {
 
 int regs(void) {
     const static char * register_names[] = {
-        "rax", "rbx", "rcx", "rdx", "rbp", "rdi", "rsi", "r8", "r9", "r10", "r11", "r12", "r13", "r14", "r15", "rip", "rflags"
+        "rax", "rbx", "rcx", "rdx", "rbp", "rdi", "rsi", "r8 ", "r9 ", "r10", "r11", "r12", "r13", "r14", "r15", "rip", "rflags"
     };
 
     int64_t registers[17];
