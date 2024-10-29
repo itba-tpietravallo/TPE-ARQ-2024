@@ -20,7 +20,7 @@
 #define ENDED_BY_MAX_SIZE 3
 
 #define INITIAL_BODY_SIZE 3
-#define MAX_BODY_SIZE 103   // so that the snake eats 100 foods
+#define MAX_BODY_SIZE 100 + INITIAL_BODY_SIZE + 1   // so that the snake eats 100 foods
 #define SQUARE_DIM 32
 #define MAX_SNAKES 2
 #define HEAD 0
@@ -53,8 +53,10 @@
 #define INITIAL_DIR_2_Y 0
 
 // drawing
-#define DEFAULT_BACKGROUND_COLOR 0xE1F5FE
+#define DEFAULT_BACKGROUND_COLOR 0x2F2F2F
 #define DEFAULT_FOOD_COLOR 0xA933DC
+#define PLAYER1_ANSI "\e[0;96m"
+#define PLAYER2_ANSI "\e[0;31m"
 #define OFFSET 4
 
 
@@ -81,6 +83,7 @@ typedef struct {
 
 typedef struct {
     int initial_hue;
+    char * main_ansi;
     Direction direction;
     int size;
     SnakeBodySquare body[MAX_BODY_SIZE];
@@ -138,6 +141,9 @@ static Food food;
 // hues
 static int hues[] = {HUE_1, HUE_2};
 
+// main colors
+static char * main_colors[] = {PLAYER1_ANSI, PLAYER2_ANSI};
+
 // initial positions
 static Position initial_positions[MAX_SNAKES] = { { .x = INITIAL_POS_1_X, .y = INITIAL_POS_1_Y } , { .x = INITIAL_POS_2_X, .y = INITIAL_POS_2_Y } };
 
@@ -173,9 +179,9 @@ int main(void) {
         setDefaultFeatures();
 
         first_round = 1;
+        drawBackground();
 
         while(!end_of_game) {
-            drawBackground();
             drawSnakes();
             drawFood();
         
@@ -209,10 +215,11 @@ static void setSquareDimensions(void) {
 static void setDefaultFeatures(void) {
     for(int i = 0; i < snakes_amount; i++){
         snakes[i].initial_hue = hues[i];
+        snakes[i].main_ansi = main_colors[i];
         snakes[i].direction.x = initial_directions[i].x;
         snakes[i].direction.y = initial_directions[i].y;
-        snakes[i].size = INITIAL_BODY_SIZE;
-        for(int k = 0; k < INITIAL_BODY_SIZE; k++){
+        snakes[i].size = INITIAL_BODY_SIZE + 1;
+        for(int k = 0; k < INITIAL_BODY_SIZE + 1; k++){
             snakes[i].body[k].position.x = initial_positions[i].x - k * snakes[i].direction.x * SQUARE_DIM;
             snakes[i].body[k].position.y = initial_positions[i].y - k * snakes[i].direction.y * SQUARE_DIM;
         }
@@ -226,19 +233,19 @@ static void setDefaultFeatures(void) {
 // ================================================================================ GAME START/END ================================================================================
 
 static void welcomePlayers(void) {
-    int result = 0;
+    int players_result = 0;
 
     setFontSize(3);
-    printf("\e[0;36mWelcome to the snake game!\e[0m\n\n");
+    printf("\n\t\t\e[0;32mWelcome to the snake game!\e[0m\n\n");
     setFontSize(2);
 
     sleep(DEFAULT_WELCOME_SLEEPING_TIME);
 
     do{
         do{
-            printf("Enter the number of players (maximum %d):", MAX_SNAKES);
-            result = scanf("%d", &snakes_amount);
-        } while(result != 1);
+            printf("\tEnter the number of players (maximum %d):", MAX_SNAKES);
+            players_result = scanf("%d", &snakes_amount);
+        } while(players_result != 1);
 
     } while(snakes_amount > MAX_SNAKES || snakes_amount <= 0);
 
@@ -247,7 +254,8 @@ static void welcomePlayers(void) {
     char * difficulty = NULL;
     do{
         do{
-            printf("\nEnter difficulty\n (E)asy, (M)edium, (H)ard, (D)emon: ");   
+            printf("\n\tEnter difficulty\n");
+            printf("\t(E)asy, (M)edium, (H)ard, (D)emon: ");   
             dif_result = scanf("%s", difficulty);
             
         } while(dif_result != 1);
@@ -325,26 +333,26 @@ static void showWinners(void) {
             } else{
                 printf("You lost.\n");
             }
-            printf("\tScore: %d\n", snakes[0].size - INITIAL_BODY_SIZE);
+            printf("\tScore: %d\n", snakes[0].size - (INITIAL_BODY_SIZE + 1));
             printf("\n\n");
         } else{
             for(int i = 0; i < snakes_amount; i++){
                 printf("\t");
                 if(!snakes[i].lost){
-                    printf("Player %d won, congratulations!\n", i + 1);
-                    printf("\tScore: %d\n", snakes[i].size - INITIAL_BODY_SIZE);
+                    printf("%sPlayer %d won, congratulations!\e[0m\n",  snakes[i].main_ansi, i + 1);
+                    printf("\tScore: %d\n", snakes[i].size - (INITIAL_BODY_SIZE + 1));
                 } else{
-                    printf("Player %d lost.\n", i + 1);
-                    printf("\tScore: %d\n", snakes[i].size - INITIAL_BODY_SIZE);
+                    printf("%sPlayer %d lost :( \e[0m\n", snakes[i].main_ansi, i + 1);
+                    printf("\tScore: %d\n", snakes[i].size - (INITIAL_BODY_SIZE + 1));
                 }
-                
                 printf("\n");
             }
         }
 
         sleep(DEFAULT_GOODBYE_SLEEPING_TIME);
 
-        printf("\n\e[0;36m---------------------------------------\e[0m\n\nPress ENTER to play again, X to finish");
+        printf("\n\e[0;32m----------------------------------------------------------------\e[0m \
+        \n\n\t\t\tPress ENTER to play again, X to finish");
 
         while((c = getCharacterWithoutDisplay()) != PLAY_AGAIN_KEY && c != QUIT_KEY_1 && c != QUIT_KEY_2);
 
@@ -440,7 +448,7 @@ static void checkCrash(void) {
         }
 
         // checks whether the snake crashed with itself
-        for(int k = 1; k < snakes[i].size && !end_of_game; k++){
+        for(int k = 1; k < snakes[i].size - 1 && !end_of_game; k++){
             if(snakes[i].body[0].position.x == snakes[i].body[k].position.x && snakes[i].body[0].position.y == snakes[i].body[k].position.y){
                 snakes[i].lost = 1;
                 endGameByCrash();
@@ -450,7 +458,7 @@ static void checkCrash(void) {
         // checks whether snakes crashed with each other
         for(int k = 0; k < snakes_amount; k++){
             if(i != k){
-                for(int j = 0; j < snakes[k].size; j++){
+                for(int j = 0; j < snakes[k].size - 1; j++){
                     if(snakes[i].body[0].position.x == snakes[k].body[j].position.x && snakes[i].body[0].position.y == snakes[k].body[j].position.y){
                         snakes[i].lost = 1;
                         // if both heads crash, both players lose
@@ -480,7 +488,10 @@ static void drawBackground(void) {
 
 static void drawSnakes(void) {
     for(int i = 0; i < snakes_amount; i++){
-        for(int k = 0; k < snakes[i].size; k++){
+        //set last (phantom) snake body's rectangle to black
+        drawRectangle(DEFAULT_BACKGROUND_COLOR, square.width - OFFSET, square.height - OFFSET, snakes[i].body[snakes[i].size - 1].position.x + OFFSET, snakes[i].body[snakes[i].size - 1].position.y + OFFSET);
+
+        for(int k = 0; k < snakes[i].size - 1; k++){
             drawRectangle(hsv2rgb(k * 10 + snakes[i].initial_hue, 255, 255), square.width - OFFSET, square.height - OFFSET, snakes[i].body[k].position.x + OFFSET, snakes[i].body[k].position.y + OFFSET);
         }
     }
@@ -524,7 +535,7 @@ static int overSnakeBody(int x, int y) {
     int over_snake = 0;
 
     for(int i = 0; i < snakes_amount && !over_snake; i++){
-        for(int k = 0; k < snakes[i].size && !over_snake; k++){
+        for(int k = 0; k < snakes[i].size - 1 && !over_snake; k++){
             if(snakes[i].body[k].position.x == x && snakes[i].body[k].position.y == y) {
                 over_snake = 1;
             }
