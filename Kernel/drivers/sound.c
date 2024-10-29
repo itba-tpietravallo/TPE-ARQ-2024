@@ -28,8 +28,8 @@ static void play_sound(uint32_t nFrequence) {
     setSpeaker(SPEAKER_ON);
 }
 
-void beep() {
-    play_sound(700);
-    sleepTicks(3);
+void beep(uint32_t nFrequence, uint64_t sleep_t) {
+    play_sound(nFrequence);
+    sleepTicks(sleep_t);
     setSpeaker(SPEAKER_OFF);
 }

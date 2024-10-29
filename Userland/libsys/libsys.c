@@ -1,8 +1,8 @@
 #include <sys.h>
 #include <syscalls.h>
 
-void beep(void) {
-    sys_beep();
+void beep(uint32_t nFrequence, uint64_t sleep_t) {
+    sys_beep(nFrequence, sleep_t);
 }
 
 void setTextColor(uint32_t color) {

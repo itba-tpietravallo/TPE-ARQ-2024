@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-void beep();
+void beep(uint32_t nFrequence, uint64_t sleep_t);
 
 enum SPEAKER {
     SPEAKER_ON = 0xFF,
