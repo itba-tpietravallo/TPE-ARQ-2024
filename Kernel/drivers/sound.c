@@ -19,17 +19,11 @@ For the "lobyte/hibyte" mode, 16 bits are always transferred as a pair, with the
 
 */
 
-static void play_sound(uint32_t nFrequence) {
+void play_sound(uint32_t nFrequence) {
     uint32_t div = 1193180 / nFrequence;
 
     setPITMode(0xb6);
     setPITFrequency(div);
 
     setSpeaker(SPEAKER_ON);
-}
-
-void beep(uint32_t nFrequence, uint64_t sleep_t) {
-    play_sound(nFrequence);
-    sleepTicks(sleep_t);
-    setSpeaker(SPEAKER_OFF);
 }

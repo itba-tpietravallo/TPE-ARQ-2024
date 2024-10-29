@@ -1,4 +1,5 @@
-GLOBAL sys_beep
+GLOBAL sys_start_beep
+GLOBAL sys_stop_beep
 
 GLOBAL sys_fonts_text_color
 GLOBAL sys_fonts_background_color
@@ -40,7 +41,8 @@ section .text
     ret
 %endmacro
 
-sys_beep: sys_int80 0x80000000
+sys_start_beep: sys_int80 0x80000000
+sys_stop_beep: sys_int80 0x80000001
 
 sys_fonts_text_color: sys_int80 0x80000002
 sys_fonts_background_color: sys_int80 0x80000003
