@@ -32,7 +32,7 @@
 static uint8_t SHIFT_KEY_PRESSED, CAPS_LOCK_KEY_PRESSED, CONTROL_KEY_PRESSED;
 static int8_t buffer[BUFFER_SIZE];
 static uint16_t to_write = 0, to_read = 0;
-uint8_t options = 0;
+uint8_t keyboard_options = 0;
 
 typedef struct {
     uint8_t registered_from_kernel;
@@ -155,11 +155,12 @@ void clearKeyFnMapNonKernel(SpecialKeyHandler * map) {
 }
 
 uint8_t registerSpecialKey(enum KEYS scancode, SpecialKeyHandler fn, uint8_t registeredFromKernel) {
-    if (IS_KEYCODE(scancode) && fn != NULL && ((registeredFromKernel != 0 || (registeredFromKernel == 0 && KeyFnMap[scancode].fn == NULL)))) {
+    if (IS_KEYCODE(scancode) && ((registeredFromKernel != 0 || (registeredFromKernel == 0 && KeyFnMap[scancode].fn == NULL)))) {
         KeyFnMap[scancode].fn = fn;
         KeyFnMap[scancode].registered_from_kernel = registeredFromKernel;
         return 1;
     }
+
     return 0;
 }
 
@@ -171,17 +172,21 @@ static uint8_t isPressed(uint8_t scancode) {
     return !(isReleased(scancode));
 }
 
-static uint8_t isShift(uint8_t scancode){
-    uint8_t aux = scancode & 0x7F;
-    return aux == SHIFT_KEY_L || aux == SHIFT_KEY_R;
-}
+// static uint8_t isShift(uint8_t scancode){
+//     uint8_t aux = scancode & 0x7F;
+//     return aux == SHIFT_KEY_L || aux == SHIFT_KEY_R;
+// }
 
-static uint8_t isCapsLock(uint8_t scancode){
-    return (scancode & 0x7F) == CAPS_LOCK_KEY;
-}
+// static uint8_t isCapsLock(uint8_t scancode){
+//     return (scancode & 0x7F) == CAPS_LOCK_KEY;
+// }
 
-static uint8_t isControl(uint8_t scancode){
-    return (scancode & 0x7F) == CONTROL_KEY_L;
+// static uint8_t isControl(uint8_t scancode){
+//     return (scancode & 0x7F) == CONTROL_KEY_L;
+// }
+
+static uint8_t makeCode(uint8_t scancode) {
+    return scancode & 0x7F;
 }
 
 void addCharToBuffer(int8_t ascii, uint8_t showOutput) {
@@ -199,82 +204,74 @@ uint16_t clearBuffer() {
     return aux;
 }
 
-// Halts until any key is pressed or \n is entered, depending on options (AWAIT_RETURN_KEY)
+// Halts until any key is pressed or \n is entered, depending on keyboard_options (AWAIT_RETURN_KEY)
 // This function always sets the MODIFY_BUFFER option, so keys can be consumed
 int8_t getKeyboardCharacter(enum KEYBOARD_OPTIONS ops) {
-    options = ops | MODIFY_BUFFER;
-    while(to_write == to_read || ( (options & AWAIT_RETURN_KEY) && (buffer[SUB_MOD(to_write, 1, BUFFER_SIZE)] != '\n' || buffer[SUB_MOD(to_write, 1, BUFFER_SIZE)] == EOF) )) _hlt();
-    options = 0;
+    keyboard_options = ops | MODIFY_BUFFER;
+    while(to_write == to_read || ( (keyboard_options & AWAIT_RETURN_KEY) && (buffer[SUB_MOD(to_write, 1, BUFFER_SIZE)] != '\n' || buffer[SUB_MOD(to_write, 1, BUFFER_SIZE)] == EOF) )) _hlt();
+    keyboard_options = 0;
     int8_t aux = buffer[to_read];
     INC_MOD(to_read, BUFFER_SIZE);
     return aux;
 }
 
 uint8_t keyboardHandler(){
+    uint8_t scancode = getKeyboardBuffer();
+    uint8_t is_pressed = isPressed(scancode);
+
     if(to_write != to_read && (to_write - to_read) % BUFFER_SIZE == 0){
-        print("\n\nKernel buffer overflow\n\n");
         to_read = to_write = 0;
-        return 0;
-    } else {
-        uint8_t scancode = getKeyboardBuffer();
-        uint8_t is_pressed = isPressed(scancode);
-
-        // TODO: implement shift-capslock-control array
-        if(isShift(scancode)){
-            if(is_pressed){
-                SHIFT_KEY_PRESSED = 1;
-            } else {
-                SHIFT_KEY_PRESSED = 0;
-            }
-            return scancode;
-        } else if(isCapsLock(scancode)){
-            if(is_pressed){
+        return scancode; // do not write to buffer anymore, subsequent keys are not processed into the buffer
+    }
+    
+    switch (makeCode(scancode)) {
+        case SHIFT_KEY_L:
+        case SHIFT_KEY_R:
+            SHIFT_KEY_PRESSED = is_pressed;
+            break;
+        case CONTROL_KEY_L:
+            CONTROL_KEY_PRESSED = is_pressed;
+            break;
+        case CAPS_LOCK_KEY:
+            if (is_pressed)
                 CAPS_LOCK_KEY_PRESSED = !CAPS_LOCK_KEY_PRESSED;
-            }
-            return scancode;
-        } else if(isControl(scancode)){
-            if(is_pressed){
-                CONTROL_KEY_PRESSED = 1;
-            } else{
-                CONTROL_KEY_PRESSED = 0;
-            }
-            return scancode;
-        }
-        
-        if (! (is_pressed && IS_KEYCODE(scancode)) ) return scancode;
-        
-        if ((options & MODIFY_BUFFER) != 0) {
-            int8_t c = scancodeMap[scancode][SHIFT_KEY_PRESSED];
-
-            if (CAPS_LOCK_KEY_PRESSED == 1) {
-                c = TO_UPPER(c);
-            }
-
-            if (IS_PRINTABLE(scancode)) {
-                if(c == RETURN_KEY){
-                    c = '\n';
-                    if ( (to_write != to_read) && buffer[SUB_MOD(to_write, 1, BUFFER_SIZE)] == '\n' ) {
-                        return scancode;
-                    }
-                } else if(c == TABULATOR_KEY){
-                    c = '\t';
-                }
-
-                addCharToBuffer(c, options & SHOW_BUFFER_WHILE_TYPING);
-            } else {
-                if (c == BACKSPACE_KEY && to_write != to_read) {
-                    DEC_MOD(to_write, BUFFER_SIZE);
-                    clearPreviousCharacter();
-                }
-            }
-        }
-
-        // Call the registered function for the key, if any
-        if (KeyFnMap[scancode].fn != 0) {
-            KeyFnMap[scancode].fn(scancode);
-        }
+            break;
 
         return scancode;
     }
+    
+    if (! (is_pressed && IS_KEYCODE(scancode)) ) return scancode; // ignore break or unsupported scancodes
+    
+    if ((keyboard_options & MODIFY_BUFFER) != 0) {
+        int8_t c = scancodeMap[scancode][SHIFT_KEY_PRESSED];
+
+        if (CAPS_LOCK_KEY_PRESSED == 1) {
+            c = TO_UPPER(c);
+        }
+
+        if (IS_PRINTABLE(scancode)) {
+            if(c == RETURN_KEY){
+                c = '\n';
+                // Handle \n on the keyboard interrupt handler, to avoid the possibility of triggering multiple \n inputs continously on the same sys_read
+                if ( (to_write != to_read) && buffer[SUB_MOD(to_write, 1, BUFFER_SIZE)] == '\n' ) {
+                    return scancode;
+                }
+            } else if(c == TABULATOR_KEY){
+                c = '\t';
+            }
+
+            addCharToBuffer(c, keyboard_options & SHOW_BUFFER_WHILE_TYPING);
+        } else if (c == BACKSPACE_KEY && to_write != to_read) {
+            DEC_MOD(to_write, BUFFER_SIZE);
+            clearPreviousCharacter();
+        }
+    }
+
+    // Call the registered function for the key, if any
+    if (KeyFnMap[scancode].fn != 0) {
+        KeyFnMap[scancode].fn(scancode);
+    }
+
+    return scancode;
 
 }

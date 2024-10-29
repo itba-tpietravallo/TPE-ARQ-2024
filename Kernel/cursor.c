@@ -7,7 +7,7 @@
 
 static uint8_t IS_SHOWING = 0;
 
-extern uint8_t options;
+extern uint8_t keyboard_options;
 
 void toggleCursor(void);
 
@@ -17,7 +17,7 @@ int toggleSpeed(void) {
 
 void toggleCursor(void) {
     int toggle = toggleSpeed() % 2;
-    if (options == 0 || options == MODIFY_BUFFER){
+    if (keyboard_options == 0 || keyboard_options == MODIFY_BUFFER){
         IS_SHOWING = 0;
     } else{
         if ((toggle == 1) && !IS_SHOWING) {

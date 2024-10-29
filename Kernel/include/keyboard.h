@@ -101,7 +101,7 @@ enum KEYBOARD_OPTIONS {
     MODIFY_BUFFER = 0b00000100
 };
 
-int8_t getKeyboardCharacter(enum KEYBOARD_OPTIONS options);
+int8_t getKeyboardCharacter(enum KEYBOARD_OPTIONS keyboard_options);
 void addCharToBuffer(int8_t ascii, uint8_t showOutput);
 uint16_t clearBuffer();
 uint8_t keyboardHandler();
