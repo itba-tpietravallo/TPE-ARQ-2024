@@ -5,7 +5,7 @@
 
 // <----------------------------------------------------------------------- DEFINES ----------------------------------------------------------------------->
 
-#define TO_UPPER(c) (((c) >= 'a' && (c) <= 'z') ? ((c) - 'a' + 'A') : (c)) //TODO doesn't work
+#define TO_UPPER(c) (((c) >= 'a' && (c) <= 'z') ? ((c) - 'a' + 'A') : (c)) //TODO doesn't work for quiting
 #define VALID_DIFFICULTY(c) (c == 'E' || c == 'e' || c == 'M' || c == 'm'|| c == 'H' || c == 'h' || c == 'D' || c == 'd')
 
 #define DIRECTIONS 4
@@ -30,6 +30,12 @@
 #define DEFAULT_WELCOME_SLEEPING_TIME 700
 #define DEFAULT_INSTRUCTIONS_SLEEPING_TIME 1000
 #define DEFAULT_GOODBYE_SLEEPING_TIME 1000
+
+// sounds
+#define EATING_SOUND_FREQUENCY 1400
+#define CRASHING_SOUND_FREQUENCY 300
+#define EATING_SOUND_DURATION 2
+#define CRASHING_SOUND_DURATION 6
 
 // hues
 #define HUE_1 120
@@ -293,6 +299,7 @@ static void endGameByQuit(void) {
 }
 
 static void endGameByCrash(void) {
+    beep(CRASHING_SOUND_FREQUENCY,  CRASHING_SOUND_DURATION);
     endGame(ENDED_BY_CRASH);
 }
 
@@ -551,6 +558,7 @@ static void checkFoodEaten(void) {
     }
 
     if(food_eaten){
+        beep(EATING_SOUND_FREQUENCY, EATING_SOUND_DURATION);
         randomizeFoodPosition();
         food_eaten = 0;
     }
