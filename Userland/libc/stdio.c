@@ -82,19 +82,28 @@ int vscanf(const char * format, va_list args) {
                 switch (format[i]) {
                     case 'd':
                         int64_t num = 0;
-                        uint8_t read_num = 0;
-                        while ((c = getchar()) >= '0' && c <= '9') {
-                            num = num * 10 + c - '0';
-                            read_num = 1;
-                        }
-                        *va_arg(args, int *) = num;
-                        args_read += read_num;
+                        uint8_t negative = 0;
+
+                        c = getchar();
+
+                        if (c != '-' && (c < '0' || c > '9')) {
+                            while ((c = getchar()) != '\n'); // empty input buffer
+                            break ;
+                        };
+
+                        do {
+                            if (c == '-')
+                                negative = 1;
+                            else
+                                num = num * 10 + c - '0';
+                        } while (((c = getchar()) >= '0' && c <= '9') || (num == 0 && c == '-'));
+
+                        *va_arg(args, int *) = num * (negative ? -1 : 1);
+                        args_read++;
                         break;
                     case 'c':
-
                         *va_arg(args, char *) = getchar();
                         args_read++;
-
                         break;
                     case 's':
                         char * str = va_arg(args, char *);
@@ -123,13 +132,19 @@ int vsscanf(const char * buffer, const char * format, va_list args) {
                 switch (format[form_i]) {
                     case 'd' : {
                         int num = 0;
-                        uint8_t read_num = 0;
+                        uint8_t read_num = 0, negative = 0;
+
+                        if (buffer[buf_i] != '-' && (buffer[buf_i] < '0' || buffer[buf_i] > '9')) break;
+
+                        if (buffer[buf_i] == '-') { negative = 1; buf_i++; };
+                        
                         while (buffer[buf_i] >= '0' && buffer[buf_i] <= '9') {
                             num = num * 10 + buffer[buf_i] - '0';
                             buf_i++;
                             read_num = 1;
                         }
-                        *va_arg(args, int *) = num;
+
+                        *va_arg(args, int *) = num * (negative ? -1 : 1);
                         args_read += read_num;
                         break;
                     }
@@ -222,14 +237,7 @@ static uint32_t uintToBase(uint64_t value, char * buffer, uint32_t base)
 }
 
 static void printBase(int fd, int num, int base) {
+    if (num < 0) fprintf(fd, "-");
     uintToBase(num, buffer, base);
     fprintf(fd, buffer);
 }
-
-// static void printFloat(int fd, float num) {
-//     int intPart = (int)num;
-//     float floatPart = num - intPart;
-//     printBase(fd, intPart, 10);
-//     sys_write(fd, ".", 1);
-//     printBase(fd, (int)(floatPart * 100), 10);
-// }
