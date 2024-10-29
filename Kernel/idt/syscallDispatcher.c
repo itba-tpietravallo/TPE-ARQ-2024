@@ -17,8 +17,8 @@ int32_t syscallDispatcher(Registers * registers) {
 		// Note: Register parameters are 64-bit
 		case 4: return sys_write(registers->rdi, (char *) registers->rsi, registers->rdx);
 		
-		case 0x80000000: return sys_beep(registers->rdi, registers->rsi);
-		case 0x80000001: /* Reserved for sys_beep_frequency_time */ return -1;
+		case 0x80000000: return sys_start_beep(registers->rdi);
+		case 0x80000001: return sys_stop_beep();
 		case 0x80000002: return sys_fonts_text_color(registers->rdi);
 		case 0x80000003: return sys_fonts_background_color(registers->rdi);
 		case 0x80000004: /* Reserved for sys_set_italics */
@@ -81,8 +81,13 @@ int32_t sys_read(int32_t fd, signed char * __user_buf, int32_t count) {
 // Custom system calls
 // ==================================================================
 
-int32_t sys_beep(uint32_t nFrequence, uint64_t sleep_t) {
-	beep(nFrequence, sleep_t);
+int32_t sys_start_beep(uint32_t nFrequence) {
+	play_sound(nFrequence);
+	return 0;
+}
+
+int32_t sys_stop_beep(void) {
+	setSpeaker(SPEAKER_OFF);
 	return 0;
 }
 

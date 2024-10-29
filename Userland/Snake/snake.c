@@ -34,8 +34,7 @@
 // sounds
 #define EATING_SOUND_FREQUENCY 1400
 #define CRASHING_SOUND_FREQUENCY 300
-#define EATING_SOUND_DURATION 2
-#define CRASHING_SOUND_DURATION 6
+#define CRASHING_SOUND_DURATION 550
 
 // hues
 #define HUE_1 120
@@ -182,6 +181,8 @@ int main(void) {
         
             sleep(difficulty_level);
 
+            stopBeep();
+
             moveSnakes();
             checkFoodEaten();
             checkCrash();
@@ -299,7 +300,9 @@ static void endGameByQuit(void) {
 }
 
 static void endGameByCrash(void) {
-    beep(CRASHING_SOUND_FREQUENCY,  CRASHING_SOUND_DURATION);
+    startBeep(CRASHING_SOUND_FREQUENCY);
+    sleep(CRASHING_SOUND_DURATION);
+    stopBeep();
     endGame(ENDED_BY_CRASH);
 }
 
@@ -558,7 +561,7 @@ static void checkFoodEaten(void) {
     }
 
     if(food_eaten){
-        beep(EATING_SOUND_FREQUENCY, EATING_SOUND_DURATION);
+        startBeep(EATING_SOUND_FREQUENCY);
         randomizeFoodPosition();
         food_eaten = 0;
     }

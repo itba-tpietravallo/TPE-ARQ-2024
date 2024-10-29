@@ -94,7 +94,8 @@ enum REGISTERABLE_KEYS {
     F12_KEY           = 0x58
 };
 
-void beep(uint32_t nFrequence, uint64_t sleep_t);
+void startBeep(uint32_t nFrequence);
+void stopBeep(void);
 void setTextColor(uint32_t color);
 void setBackgroundColor(uint32_t color);
 uint8_t increaseFontSize(void);
