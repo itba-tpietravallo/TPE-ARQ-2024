@@ -108,7 +108,7 @@ static void setDirection(enum REGISTERABLE_KEYS scancode);
 static void moveSnakes(void);
 static void checkCrash(void);
 
-static void drawBackground(voicpd);
+static void drawBackground(void);
 static void drawSnakes(void);
 static void drawFood(void);
 
@@ -237,7 +237,7 @@ static void welcomePlayers(void) {
 
 
     int dif_result = 0;
-    char * difficulty;
+    char * difficulty = NULL;
     do{
         do{
             printf("\nEnter difficulty\n (E)asy, (M)edium, (H)ard, (D)emon: ");   

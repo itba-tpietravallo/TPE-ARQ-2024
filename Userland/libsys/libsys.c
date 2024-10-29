@@ -72,7 +72,7 @@ void sleep(uint32_t miliseconds) {
     sys_sleep_milis(miliseconds);
 }
 
-int32_t getRegisterSnapshot(uint64_t * registers) {
+int32_t getRegisterSnapshot(int64_t * registers) {
     return sys_get_register_snapshot(registers);
 }
 

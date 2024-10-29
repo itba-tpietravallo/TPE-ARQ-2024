@@ -119,17 +119,3 @@ setSpeaker:
 	mov rsp, rbp
 	pop rbp
 	ret
-
-getRegisterSnapshot:
-	push rbp
-	mov rbp, rsp
-	cmp byte [register_snapshot_taken], 0x01
-	jne .no_snapshot
-	mov EAX, register_snapshot
-	jmp .end
-	.no_snapshot:
-	mov EAX, 0
-	.end:
-	mov rsp, rbp
-	pop rbp
-	ret

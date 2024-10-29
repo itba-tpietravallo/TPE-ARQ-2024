@@ -7,6 +7,9 @@
 #include <video.h>
 #include <time.h>
 
+extern int64_t register_snapshot[17];
+extern int64_t register_snapshot_taken;
+
 // @todo Note: Technically.. registers on the stack are modifiable (since its a struct pointer, not struct). 
 int32_t syscallDispatcher(Registers * registers) {
 	switch(registers->rax){
@@ -45,7 +48,7 @@ int32_t syscallDispatcher(Registers * registers) {
 
 		case 0x800000D0: return sys_sleep_milis(registers->rdi);
 
-		case 0x800000E0: return sys_get_register_snapshot((uint64_t *) registers->rdi);
+		case 0x800000E0: return sys_get_register_snapshot((int64_t *) registers->rdi);
 
 		case 0x800000F0: return sys_get_character_without_display();
 
@@ -207,18 +210,13 @@ int32_t sys_sleep_milis(uint32_t milis) {
 // ==================================================================
 // Register snapshot system calls
 // ==================================================================
-int32_t sys_get_register_snapshot(uint64_t * registers) {
-	uint64_t * aux = getRegisterSnapshot();
+int32_t sys_get_register_snapshot(int64_t * registers) {
+	if (register_snapshot_taken == 0) return 0;  
+
 	uint8_t i = 0;
-
-	if (aux == NULL) {
-		return 0;
-	}
-
-	while (i++ < 15) {
-		(*registers) = *(aux);
-		(*registers)++;
-		aux++;
+	
+	while (i < 17) {
+		*(registers++) = register_snapshot[i++];
 	}
 
 	return 1;
