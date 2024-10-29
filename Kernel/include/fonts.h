@@ -8,6 +8,14 @@
 #define DEFAULT_ERROR_COLOR 0x00DE382B
 #define DEFAULT_BACKGROUND_COLOR 0x00000000
 
+#define DEFAULT_GLYPH_SIZE_X 8
+#define DEFAULT_GLYPH_SIZE_Y 8
+
+#define NEW_LINE_CHAR '\n'
+#define TABULATOR_CHAR '\t'
+#define ESCAPE_CHAR '\e'
+#define TAB_SIZE 4
+
 void putChar(char ascii);
 void print(const char * string);
 int32_t printToFd(int32_t fd, const char * string, int32_t count);
@@ -20,6 +28,7 @@ void clear(void);
 void showCursor(void);
 void hideCursor(void);
 void clearPreviousCharacter(void);
+uint16_t getXBufferPosition(void);
 
 uint8_t increaseFontSize(void);
 uint8_t decreaseFontSize(void);

@@ -6,6 +6,8 @@
 
 #define BUFFER_SIZE 1024
 
+#define BUFFER_IS_FULL (to_write != to_read && (to_write - to_read) % BUFFER_SIZE == 0)
+
 #define IS_ALPHA(c) ('a' <= (c) && (c) <= 'z') 
 #define TO_UPPER(c) (IS_ALPHA(c) ? ((c) - 'a' + 'A') : (c))
 
@@ -190,10 +192,17 @@ static uint8_t makeCode(uint8_t scancode) {
 }
 
 void addCharToBuffer(int8_t ascii, uint8_t showOutput) {
-    buffer[to_write] = ascii;
-    INC_MOD(to_write, BUFFER_SIZE);
-    if (showOutput)
-        putChar(ascii);
+    if (ascii != TABULATOR_CHAR) {
+        buffer[to_write] = ascii;
+        INC_MOD(to_write, BUFFER_SIZE);
+        if (showOutput)
+            putChar(ascii);
+        return ;
+    }
+
+    do {
+        addCharToBuffer(' ', showOutput);
+    } while( !BUFFER_IS_FULL && getXBufferPosition() % (TAB_SIZE * DEFAULT_GLYPH_SIZE_X * getFontSize()) != 0);
 }
 
 uint16_t clearBuffer() {
@@ -208,7 +217,7 @@ uint16_t clearBuffer() {
 // This function always sets the MODIFY_BUFFER option, so keys can be consumed
 int8_t getKeyboardCharacter(enum KEYBOARD_OPTIONS ops) {
     keyboard_options = ops | MODIFY_BUFFER;
-    while(to_write == to_read || ( (keyboard_options & AWAIT_RETURN_KEY) && (buffer[SUB_MOD(to_write, 1, BUFFER_SIZE)] != '\n' || buffer[SUB_MOD(to_write, 1, BUFFER_SIZE)] == EOF) )) _hlt();
+    while(to_write == to_read || ( (keyboard_options & AWAIT_RETURN_KEY) && (buffer[SUB_MOD(to_write, 1, BUFFER_SIZE)] != NEW_LINE_CHAR || buffer[SUB_MOD(to_write, 1, BUFFER_SIZE)] == EOF) )) _hlt();
     keyboard_options = 0;
     int8_t aux = buffer[to_read];
     INC_MOD(to_read, BUFFER_SIZE);
@@ -219,7 +228,7 @@ uint8_t keyboardHandler(){
     uint8_t scancode = getKeyboardBuffer();
     uint8_t is_pressed = isPressed(scancode);
 
-    if(to_write != to_read && (to_write - to_read) % BUFFER_SIZE == 0){
+    if(BUFFER_IS_FULL){
         to_read = to_write = 0;
         return scancode; // do not write to buffer anymore, subsequent keys are not processed into the buffer
     }
@@ -251,13 +260,13 @@ uint8_t keyboardHandler(){
 
         if (IS_PRINTABLE(scancode)) {
             if(c == RETURN_KEY){
-                c = '\n';
+                c = NEW_LINE_CHAR;
                 // Handle \n on the keyboard interrupt handler, to avoid the possibility of triggering multiple \n inputs continously on the same sys_read
-                if ( (to_write != to_read) && buffer[SUB_MOD(to_write, 1, BUFFER_SIZE)] == '\n' ) {
+                if ( (to_write != to_read) && buffer[SUB_MOD(to_write, 1, BUFFER_SIZE)] == NEW_LINE_CHAR ) {
                     return scancode;
                 }
             } else if(c == TABULATOR_KEY){
-                c = '\t';
+                c = TABULATOR_CHAR;
             }
 
             addCharToBuffer(c, keyboard_options & SHOW_BUFFER_WHILE_TYPING);

@@ -31,14 +31,6 @@
 #define FD_STDOUT 1
 #define FD_STDERR 2
 
-#define DEFAULT_GLYPH_SIZE_X 8
-#define DEFAULT_GLYPH_SIZE_Y 8
-
-#define NEW_LINE_CHAR '\n'
-#define TABULATOR_CHAR '\t'
-#define ESCAPE_CHAR '\e'
-#define TAB_SIZE 4
-
 #define MAX(a,b) ((a) > (b) ? (a) : (b))
 
 static uint16_t glyphSizeX = DEFAULT_GLYPH_SIZE_X;
@@ -72,6 +64,10 @@ uint32_t getTextColor(void) {
 
 uint32_t getBackgroundColor(void) {
     return background_color;
+}
+
+uint16_t getXBufferPosition(void) {
+    return xBufferPosition;
 }
 
 static char buffer[64] = { '0' };
