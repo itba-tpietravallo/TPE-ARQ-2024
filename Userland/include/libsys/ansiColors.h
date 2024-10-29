@@ -1,7 +1,7 @@
 #ifndef _ANSI_COLORS_H_
 #define _ANSI_COLORS_H_
 
-#ifdef ANSI_8_BIT_COLOR_SUPPORT
+#ifdef ANSI_4_BIT_COLOR_SUPPORT
 
 #include <stdint.h>
 

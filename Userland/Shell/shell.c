@@ -6,7 +6,7 @@
 #include <sys.h>
 #include <exceptions.h>
 
-#ifdef ANSI_8_BIT_COLOR_SUPPORT
+#ifdef ANSI_4_BIT_COLOR_SUPPORT
     #include <ansiColors.h>
 #endif
 
@@ -169,10 +169,13 @@ int echo(void){
                         printf("\n");
                         i++;
                         break;
-                    #ifdef ANSI_8_BIT_COLOR_SUPPORT
                     case 'e':
+                    #ifdef ANSI_4_BIT_COLOR_SUPPORT
                         i++;
                         parseANSI(buffer, &i); 
+                    #else 
+                        while (buffer[i] != 'm') i++; // ignores escape code, assumes valid format
+                        i++;
                     #endif
                     case '\\':
                         i++;

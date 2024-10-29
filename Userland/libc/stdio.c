@@ -2,7 +2,7 @@
 #include <string.h>
 #include <syscalls.h>
 
-#ifdef ANSI_8_BIT_COLOR_SUPPORT
+#ifdef ANSI_4_BIT_COLOR_SUPPORT
     #include <ansiColors.h>
 #endif
 
@@ -21,10 +21,14 @@ void vfprintf(int fd, const char * format, va_list args) {
     int i = 0;
     while (format[i] != 0) {
         switch (format[i]) {
-        #ifdef ANSI_8_BIT_COLOR_SUPPORT
         case '\e':
+        #ifdef ANSI_4_BIT_COLOR_SUPPORT
             sys_write(fd, &format[i], 0); // "writes" (ignored because of count=0) \e char to account for fd changes
             parseANSI(format, &i);
+            break ;
+        #else
+            while(format[i] != 'm') i++; // ignore ANSI escape codes, assumes valid \e[X,Ym format
+            i++;
             break ;
         #endif
         case '%':
