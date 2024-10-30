@@ -20,7 +20,7 @@
 #define ENDED_BY_MAX_SIZE 3
 
 #define INITIAL_BODY_SIZE 3
-#define MAX_BODY_SIZE 100 + INITIAL_BODY_SIZE + 1   // so that the snake eats 100 foods
+#define MAX_BODY_SIZE 764 + INITIAL_BODY_SIZE + 1   // so that the snake eats 100 foods
 #define SQUARE_DIM 32
 #define MAX_SNAKES 2
 #define HEAD 0
@@ -30,6 +30,10 @@
 #define DEFAULT_WELCOME_SLEEPING_TIME 700
 #define DEFAULT_INSTRUCTIONS_SLEEPING_TIME 1000
 #define DEFAULT_GOODBYE_SLEEPING_TIME 1000
+#define DEMON 65
+#define HARD 120
+#define MEDIUM 170
+#define EASY 220
 
 // sounds
 #define EATING_SOUND_FREQUENCY 1400
@@ -515,16 +519,16 @@ static void  setDifficulty(char difficulty) {
     switch (TO_UPPER(difficulty))
     {
     case 'E':
-        difficulty_level = 750;
+        difficulty_level = EASY;
         break;
     case 'M':
-        difficulty_level = 500;
+        difficulty_level = MEDIUM;
         break;
     case 'H':
-        difficulty_level = 300;
+        difficulty_level = HARD;
         break;
     case 'D':
-        difficulty_level = 150;
+        difficulty_level = DEMON;
         break;
     default:
         break;
