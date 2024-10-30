@@ -155,7 +155,7 @@ int history(void) {
 int time(void){
 	int hour, minute, second;
     getDate(&hour, &minute, &second);
-    printf("Current time: %xh %xm %xs (UTC-0)\n", hour, minute, second);
+    printf("Current time: %xh %xm %xs\n", hour, minute, second);
     return 0;
 }
 
@@ -230,10 +230,10 @@ int fontdec(void) {
 
 int regs(void) {
     const static char * register_names[] = {
-        "rax", "rbx", "rcx", "rdx", "rbp", "rdi", "rsi", "r8 ", "r9 ", "r10", "r11", "r12", "r13", "r14", "r15", "rip", "rflags"
+        "rax", "rbx", "rcx", "rdx", "rbp", "rdi", "rsi", "r8 ", "r9 ", "r10", "r11", "r12", "r13", "r14", "r15", "rsp", "rip", "rflags"
     };
 
-    int64_t registers[17];
+    int64_t registers[18];
 
     uint8_t aux = getRegisterSnapshot(registers);
     
@@ -244,7 +244,7 @@ int regs(void) {
 
     printf("Latest register snapshot:\n");
 
-    for (int i = 0; i < 17; i++) {
+    for (int i = 0; i < 18; i++) {
         printf("\e[0;34m%s\e[0m: %x\n", register_names[i], registers[i]);
     }
 

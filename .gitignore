@@ -17,3 +17,6 @@
 
 # VSC
 .vscode
+
+# macos
+.DS_Store

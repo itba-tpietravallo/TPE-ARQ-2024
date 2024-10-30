@@ -4,7 +4,7 @@
 #include <keyboard.h>
 
 const static char * register_names[] = {
-	"rax", "rbx", "rcx", "rdx", "rbp", "rdi", "rsi", "r8 ", "r9 ", "r10", "r11", "r12", "r13", "r14", "r15", "rip", "rflags"
+	"rax", "rbx", "rcx", "rdx", "rbp", "rdi", "rsi", "r8 ", "r9 ", "r10", "r11", "r12", "r13", "r14", "r15", "rsp", "rip", "rflags"
 };
 
 const static int registers_amount = sizeof(register_names) / sizeof(*register_names);

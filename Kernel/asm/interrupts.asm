@@ -98,6 +98,8 @@ SECTION .text
 	mov [exception_register_snapshot + 0x68], r14
 	mov [exception_register_snapshot + 0x70], r15
 
+	mov [exception_register_snapshot + 0x78], rsp ; rsp
+
 	; after the exception, the rip's value that points 
 	; to the faulting instruction is, among other things, pushed to the stack
 	; it is the last thing pushed in the stack frame
@@ -105,10 +107,10 @@ SECTION .text
 	; https://os.phil-opp.com/cpu-exceptions/#the-interrupt-stack-frame
 
 	mov rax, [rsp + 0x00] ; RIP
-	mov [exception_register_snapshot + 0x78], rax
+	mov [exception_register_snapshot + 0x80], rax
 
 	mov rax, [rsp + 0x10] ; RFLAGS
-	mov [exception_register_snapshot + 0x80], rax
+	mov [exception_register_snapshot + 0x88], rax
 
 	mov rdi, %1 ; pass argument to exceptionDispatcher
 	mov rsi, exception_register_snapshot ;pass current register values to exceptionDispatcher
@@ -118,7 +120,7 @@ SECTION .text
 	call getStackBase ; reset the stack
 	mov [rsp + 0x18], rax
 
-	mov QWORD [rsp], 0x400000 ; set return address to userland
+	mov QWORD [rsp], USERLAND ; set return address to userland
 
 	sti
 	iretq ; will pop USERLAND and jmp to it
@@ -193,11 +195,13 @@ _irq01Handler:
 	mov [register_snapshot + 0x08 * 0x0D], r14
 	mov [register_snapshot + 0x08 * 0x0E], r15
 
+	mov [register_snapshot + 0x08 * 0x0F], rsp ; rsp
+
 	mov rax, [ rsp + 0x08 * 16 ] ; get the return address
-	mov [register_snapshot + 0x08 * 0x0F], rax ; rip
+	mov [register_snapshot + 0x08 * 0x10], rax ; rip
 
 	mov rax, [ rsp + 0x08 * 15 ] ; get the rflags
-	mov [register_snapshot + 0x08 * 0x10], rax ; rflags
+	mov [register_snapshot + 0x08 * 0x11], rax ; rflags
 
 	mov byte [register_snapshot_taken], 0x01
 
@@ -240,8 +244,8 @@ _exceptionHandler06:
 	exceptionHandler 6
 
 section .bss
-	exception_register_snapshot resq 17
-	register_snapshot resq 17
+	exception_register_snapshot resq 18
+	register_snapshot resq 18
 	register_snapshot_taken resb 1
 
 section .rodata

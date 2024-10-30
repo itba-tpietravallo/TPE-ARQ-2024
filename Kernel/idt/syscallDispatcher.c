@@ -7,7 +7,7 @@
 #include <video.h>
 #include <time.h>
 
-extern int64_t register_snapshot[17];
+extern int64_t register_snapshot[18];
 extern int64_t register_snapshot_taken;
 
 // @todo Note: Technically.. registers on the stack are modifiable (since its a struct pointer, not struct). 
@@ -217,7 +217,7 @@ int32_t sys_get_register_snapshot(int64_t * registers) {
 
 	uint8_t i = 0;
 	
-	while (i < 17) {
+	while (i < 18) {
 		*(registers++) = register_snapshot[i++];
 	}
 
