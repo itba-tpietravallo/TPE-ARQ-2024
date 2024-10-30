@@ -55,8 +55,8 @@
 // drawing
 #define DEFAULT_BACKGROUND_COLOR 0x2F2F2F
 #define DEFAULT_FOOD_COLOR 0xA933DC
-#define PLAYER1_ANSI "\e[0;96m"
-#define PLAYER2_ANSI "\e[0;31m"
+#define ANSI_1 "\e[0;96m"
+#define ANSI_2 "\e[0;31m"
 #define OFFSET 4
 
 
@@ -142,7 +142,7 @@ static Food food;
 static int hues[] = {HUE_1, HUE_2};
 
 // main colors
-static char * main_colors[] = {PLAYER1_ANSI, PLAYER2_ANSI};
+static char * main_colors[] = {ANSI_1, ANSI_2};
 
 // initial positions
 static Position initial_positions[MAX_SNAKES] = { { .x = INITIAL_POS_1_X, .y = INITIAL_POS_1_Y } , { .x = INITIAL_POS_2_X, .y = INITIAL_POS_2_Y } };
@@ -267,7 +267,7 @@ static void welcomePlayers(void) {
     clearScreen();
 
     for(int i = 0; i < snakes_amount; i++){
-        printf("Player %d keys:\n\n", i + 1);
+        printf("%sPlayer %d keys:\e[0m\n\n", main_colors[i], i + 1);
         for(int k = 0; k < DIRECTIONS; k++){
             printf("\t\t%s\t \e[0;35m->\e[0m %s\n", movement_directions[k], movement_keys[i][k]);
         }
@@ -339,7 +339,7 @@ static void showWinners(void) {
             for(int i = 0; i < snakes_amount; i++){
                 printf("\t");
                 if(!snakes[i].lost){
-                    printf("%sPlayer %d won, congratulations!\e[0m\n",  snakes[i].main_ansi, i + 1);
+                    printf("%sPlayer %d won, congratulations!\e[0m\n", snakes[i].main_ansi, i + 1);
                     printf("\tScore: %d\n", snakes[i].size - (INITIAL_BODY_SIZE + 1));
                 } else{
                     printf("%sPlayer %d lost :( \e[0m\n", snakes[i].main_ansi, i + 1);
