@@ -20,7 +20,7 @@
 #define ENDED_BY_MAX_SIZE 3
 
 #define INITIAL_BODY_SIZE 3
-#define MAX_BODY_SIZE 100 + INITIAL_BODY_SIZE + 1   // so that the snake eats 100 foods
+#define MAX_BODY_SIZE 764 + INITIAL_BODY_SIZE + 1   // so that the snake eats 100 foods
 #define SQUARE_DIM 32
 #define MAX_SNAKES 2
 #define HEAD 0
@@ -30,6 +30,10 @@
 #define DEFAULT_WELCOME_SLEEPING_TIME 700
 #define DEFAULT_INSTRUCTIONS_SLEEPING_TIME 1000
 #define DEFAULT_GOODBYE_SLEEPING_TIME 1000
+#define DEMON 65
+#define HARD 120
+#define MEDIUM 170
+#define EASY 220
 
 // sounds
 #define EATING_SOUND_FREQUENCY 1400
@@ -55,8 +59,8 @@
 // drawing
 #define DEFAULT_BACKGROUND_COLOR 0x2F2F2F
 #define DEFAULT_FOOD_COLOR 0xA933DC
-#define PLAYER1_ANSI "\e[0;96m"
-#define PLAYER2_ANSI "\e[0;31m"
+#define ANSI_1 "\e[0;96m"
+#define ANSI_2 "\e[0;31m"
 #define OFFSET 4
 
 
@@ -142,7 +146,7 @@ static Food food;
 static int hues[] = {HUE_1, HUE_2};
 
 // main colors
-static char * main_colors[] = {PLAYER1_ANSI, PLAYER2_ANSI};
+static char * main_colors[] = {ANSI_1, ANSI_2};
 
 // initial positions
 static Position initial_positions[MAX_SNAKES] = { { .x = INITIAL_POS_1_X, .y = INITIAL_POS_1_Y } , { .x = INITIAL_POS_2_X, .y = INITIAL_POS_2_Y } };
@@ -267,7 +271,7 @@ static void welcomePlayers(void) {
     clearScreen();
 
     for(int i = 0; i < snakes_amount; i++){
-        printf("Player %d keys:\n\n", i + 1);
+        printf("%sPlayer %d keys:\e[0m\n\n", main_colors[i], i + 1);
         for(int k = 0; k < DIRECTIONS; k++){
             printf("\t\t%s\t \e[0;35m->\e[0m %s\n", movement_directions[k], movement_keys[i][k]);
         }
@@ -339,7 +343,7 @@ static void showWinners(void) {
             for(int i = 0; i < snakes_amount; i++){
                 printf("\t");
                 if(!snakes[i].lost){
-                    printf("%sPlayer %d won, congratulations!\e[0m\n",  snakes[i].main_ansi, i + 1);
+                    printf("%sPlayer %d won, congratulations!\e[0m\n", snakes[i].main_ansi, i + 1);
                     printf("\tScore: %d\n", snakes[i].size - (INITIAL_BODY_SIZE + 1));
                 } else{
                     printf("%sPlayer %d lost :( \e[0m\n", snakes[i].main_ansi, i + 1);
@@ -515,16 +519,16 @@ static void  setDifficulty(char difficulty) {
     switch (TO_UPPER(difficulty))
     {
     case 'E':
-        difficulty_level = 750;
+        difficulty_level = EASY;
         break;
     case 'M':
-        difficulty_level = 500;
+        difficulty_level = MEDIUM;
         break;
     case 'H':
-        difficulty_level = 300;
+        difficulty_level = HARD;
         break;
     case 'D':
-        difficulty_level = 150;
+        difficulty_level = DEMON;
         break;
     default:
         break;
