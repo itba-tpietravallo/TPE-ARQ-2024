@@ -21,8 +21,6 @@ EXTERN syscallDispatcher
 EXTERN exceptionDispatcher
 EXTERN getStackBase
 
-EXTERN USERLAND
-
 SECTION .text
 
 %macro pushState 0
@@ -250,3 +248,4 @@ section .bss
 
 section .rodata
 	REGISTER_SNAPSHOT_KEY_SCANCODE equ 0x58 ; F12 KEY SCANCODE
+	USERLAND equ 0x400000 ; userland (shell module address)
