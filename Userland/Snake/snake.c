@@ -445,18 +445,19 @@ static void moveSnakes(void) {
 }
 
 static void checkCrash(void) {
+    int somebody_crashed = 0;
     for(int i = 0; i < snakes_amount; i++){
         // checks whether the snake crashed with a border
         if(snakes[i].body[0].position.x < 0 || snakes[i].body[0].position.x > (window_width - SQUARE_DIM) || snakes[i].body[0].position.y < 0 || snakes[i].body[0].position.y > (window_height - SQUARE_DIM)){
             snakes[i].lost = 1;
-            endGameByCrash();
+            somebody_crashed = 1;
         }
 
         // checks whether the snake crashed with itself
         for(int k = 1; k < snakes[i].size - 1 && !end_of_game; k++){
             if(snakes[i].body[0].position.x == snakes[i].body[k].position.x && snakes[i].body[0].position.y == snakes[i].body[k].position.y){
                 snakes[i].lost = 1;
-                endGameByCrash();
+                somebody_crashed = 1;
             }
         }
 
@@ -470,11 +471,14 @@ static void checkCrash(void) {
                         if(j == 0){
                             snakes[k].lost = 1;
                         }
-                        endGameByCrash();
+                        somebody_crashed = 1;
                     }
                 }
             }
         }
+    }
+    if(somebody_crashed){
+        endGameByCrash();
     }
 }
 
