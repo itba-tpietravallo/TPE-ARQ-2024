@@ -281,7 +281,7 @@ static void welcomePlayers(void) {
 
     sleep(DEFAULT_INSTRUCTIONS_SLEEPING_TIME);
 
-    printf("If any player eats %d foods, becomes the winner.\n\nAt any time, press X to quit.\n\nPress ENTER to begin", MAX_BODY_SIZE - INITIAL_BODY_SIZE - 1);
+    printf("If any player eats %d foods, becomes the winner.\n\nDon't crash against the walls!\n\nAt any time, press X to quit.\n\nPress ENTER to begin", MAX_BODY_SIZE - INITIAL_BODY_SIZE - 1);
 
     while(getCharacterWithoutDisplay() != BEGIN_GAME_KEY);
 
@@ -520,23 +520,21 @@ static void setRandomSeed(void) {
 }
 
 static void  setDifficulty(char difficulty) {
-
-    switch (TO_UPPER(difficulty))
-    {
-    case 'E':
-        difficulty_level = EASY;
-        break;
-    case 'M':
-        difficulty_level = MEDIUM;
-        break;
-    case 'H':
-        difficulty_level = HARD;
-        break;
-    case 'D':
-        difficulty_level = DEMON;
-        break;
-    default:
-        break;
+    switch (TO_UPPER(difficulty)) {
+        case 'E':
+            difficulty_level = EASY;
+            break;
+        case 'M':
+            difficulty_level = MEDIUM;
+            break;
+        case 'H':
+            difficulty_level = HARD;
+            break;
+        case 'D':
+            difficulty_level = DEMON;
+            break;
+        default:
+            break;
     }
 }
 
