@@ -5,7 +5,6 @@
 #include <video.h>
 #include <idtLoader.h>
 #include <fonts.h>
-#include <time.h>
 #include <syscallDispatcher.h>
 #include <sound.h>
 

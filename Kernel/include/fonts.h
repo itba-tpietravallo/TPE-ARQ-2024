@@ -39,6 +39,4 @@ void setBackgroundColor(uint32_t color);
 uint32_t getTextColor(void);
 uint32_t getBackgroundColor(void);
 
-void __DEBUG__renderTicks(uint64_t ticks);
-
 #endif

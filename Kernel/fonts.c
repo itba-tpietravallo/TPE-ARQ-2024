@@ -106,45 +106,6 @@ static inline void renderAscii(char ascii, uint64_t x, uint64_t y) {
     }
 }
 
-// Note: This function WRAPS after 10**8 ticks
-// This function is purpusefully NOT using the uintToBase/renderAscii/renderFromBitmap functions to avoid changes breaking the timer
-// __DEBUG__renderTicks() should keep on working even as everything else changes or potentially breaks... up until a kernel panic.
-void __DEBUG__renderTicks(uint64_t ticks) {
-    uint16_t start = getWindowWidth() - (8 + 2) * 8; 
-
-    static const char number_bitmap[][10] = {
-        { 0x3E, 0x63, 0x73, 0x7B, 0x6F, 0x67, 0x3E, 0x00},   // U+0030 (0)
-        { 0x0C, 0x0E, 0x0C, 0x0C, 0x0C, 0x0C, 0x3F, 0x00},   // U+0031 (1)
-        { 0x1E, 0x33, 0x30, 0x1C, 0x06, 0x33, 0x3F, 0x00},   // U+0032 (2)
-        { 0x1E, 0x33, 0x30, 0x1C, 0x30, 0x33, 0x1E, 0x00},   // U+0033 (3)
-        { 0x38, 0x3C, 0x36, 0x33, 0x7F, 0x30, 0x78, 0x00},   // U+0034 (4)
-        { 0x3F, 0x03, 0x1F, 0x30, 0x30, 0x33, 0x1E, 0x00},   // U+0035 (5)
-        { 0x1C, 0x06, 0x03, 0x1F, 0x33, 0x33, 0x1E, 0x00},   // U+0036 (6)
-        { 0x3F, 0x33, 0x30, 0x18, 0x0C, 0x0C, 0x0C, 0x00},   // U+0037 (7)
-        { 0x1E, 0x33, 0x33, 0x1E, 0x33, 0x33, 0x1E, 0x00},   // U+0038 (8)
-        { 0x1E, 0x33, 0x33, 0x3E, 0x30, 0x18, 0x0E, 0x00},   // U+0039 (9)
-    };
-
-    static char buffer[8] = {'0'};
-    int i = 0;
-
-    for (i = 0; i < 8; i++) {
-        buffer[i] = ticks % 10;
-        ticks /= 10;
-    }
-
-    int xPixelPos = start;
-    for (char c = 0; c < 8; c++) {
-        for (int x = 0; x < glyphSizeX; x++) {
-            xPixelPos += 1; // this increment persists across the row of glyphs drawn
-            for (int y = 0; y < glyphSizeY; y++) {
-                // (7 - c) --> buffer is read backwards. (not swapped for performance reasons)
-                putPixel(*(number_bitmap[(int) buffer[(int) 7 - c]] + y) & (1 << x) ? 0x00FFFFFF : 0x0, xPixelPos, y + 4);
-            }
-        }
-    }
-}
-
 static void scrollBufferPositionIfNeeded(void) {
     if (yBufferPosition + glyphSizeY * fontSize > getWindowHeight()) {
         scrollVideoMemoryUp(glyphSizeY * fontSize, DEFAULT_BACKGROUND_COLOR);

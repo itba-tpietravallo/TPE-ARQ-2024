@@ -10,9 +10,6 @@ void timer_handler() {
 	ticks++;
 
 	toggleCursor();
-	
-	// note: this should always be at the end of the timer handler
-	__DEBUG__renderTicks(ticks);
 }
 
 int ticks_elapsed() {
