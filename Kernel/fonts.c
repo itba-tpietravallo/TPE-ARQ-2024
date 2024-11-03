@@ -201,8 +201,9 @@ void clear(void) {
 }
 
 void retractPosition() {
+    uint16_t window_width = getWindowWidth();
     if(xBufferPosition == 0){
-        xBufferPosition = getWindowWidth();
+        xBufferPosition = window_width - (window_width % (fontSize * glyphSizeX));
         yBufferPosition -= glyphSizeY * fontSize;
     }
 
@@ -210,8 +211,7 @@ void retractPosition() {
 }
 
 void clearPreviousCharacter(void){
-    putChar(' ');
-    retractPosition();
+    hideCursor();
     retractPosition();
     showCursor();
 }
@@ -227,19 +227,20 @@ void hideCursor(void) {
 }
 
 uint8_t increaseFontSize(void) {
-    fontSize++;
+    fontSize = fontSize > 9 ? fontSize : fontSize + 1;
     maxGlyphSizeYOnLine =  dirty_line == 1 ? MAX(maxGlyphSizeYOnLine, glyphSizeY * fontSize) : (glyphSizeY * fontSize);
+    scrollBufferPositionIfNeeded();
     return fontSize;
 }
 
 uint8_t decreaseFontSize(void) {
-    fontSize--;
-    fontSize = (dirty_line == 1 || fontSize >= 1) ? fontSize : 1;
+    fontSize = fontSize < 1 ? fontSize : fontSize - 1;
+    maxGlyphSizeYOnLine = dirty_line == 1 ? MAX(maxGlyphSizeYOnLine, glyphSizeY * fontSize) : (glyphSizeY * fontSize);
     return fontSize;
 }
 
 uint8_t setFontSize(int8_t size) {
-    fontSize = (size < 1 ? 1 : size);
+    fontSize = (size < 1 ? 1 : size > 10 ? 10 : size);
     maxGlyphSizeYOnLine = dirty_line == 1 ? MAX(maxGlyphSizeYOnLine, glyphSizeY * fontSize) : (glyphSizeY * fontSize);
     return fontSize;
 }
