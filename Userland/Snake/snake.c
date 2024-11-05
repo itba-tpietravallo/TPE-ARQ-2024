@@ -119,6 +119,7 @@ static void movingTo(int snake, int dir_x, int dir_y);
 static void setDirection(enum REGISTERABLE_KEYS scancode);
 static void moveSnakes(void);
 static void checkCrash(void);
+static int outOfBounds(int x, int y);
 
 static void drawBackground(void);
 static void drawSnakes(void);
@@ -449,7 +450,7 @@ static void checkCrash(void) {
     int somebody_crashed = 0;
     for(int i = 0; i < snakes_amount; i++){
         // checks whether the snake crashed with a border
-        if(snakes[i].body[0].position.x < 0 || snakes[i].body[0].position.x > (window_width - SQUARE_DIM) || snakes[i].body[0].position.y < border_y || snakes[i].body[0].position.y > (window_height - SQUARE_DIM)){
+        if(outOfBounds(snakes[i].body[0].position.x, snakes[i].body[0].position.y)){
             snakes[i].lost = 1;
             somebody_crashed = 1;
         }
@@ -481,6 +482,10 @@ static void checkCrash(void) {
     if(somebody_crashed){
         endGameByCrash();
     }
+}
+
+static int outOfBounds(int x, int y) {
+    return (x < 0 || x > (window_width - SQUARE_DIM) || y < border_y || y > (window_height - SQUARE_DIM));
 }
 
 
@@ -563,7 +568,7 @@ static void randomizeFoodPosition(void) {
         y = (rand() % SQUARE_DIM) * SQUARE_DIM;
         y = y % (window_height);
 
-    } while(overSnakeBody(x, y));
+    } while(overSnakeBody(x, y) || outOfBounds(x, y));
 
     food.position.x = x;
     food.position.y = y;
