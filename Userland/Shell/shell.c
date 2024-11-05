@@ -13,7 +13,7 @@
 static void * const snakeModuleAddress = (void*)0x500000;
 
 #define MAX_BUFFER_SIZE 1024
-#define HISTORY_SIZE 5
+#define HISTORY_SIZE 10
 
 #define INC_MOD(x, m) x = (((x) + 1) % (m))
 #define SUB_MOD(a, b, m) ((a) - (b) < 0 ? (m) - (b) + (a) : (a) - (b))
