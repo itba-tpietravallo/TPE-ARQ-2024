@@ -363,7 +363,7 @@ static void showWinners(void) {
         printf("\n\e[0;32m----------------------------------------------------------------\e[0m \
         \n\n\t\t\tPress ENTER to play again, X to finish");
 
-        while((c = getCharacterWithoutDisplay()) != PLAY_AGAIN_KEY && TO_UPPER(c) != QUIT_KEY);
+        while((c = getCharacterWithoutDisplay()) != PLAY_AGAIN_KEY && toupper(c) != QUIT_KEY);
 
         if(c == PLAY_AGAIN_KEY){
             end_of_game = 0;
@@ -542,7 +542,7 @@ static void setRandomSeed(void) {
 }
 
 static void  setDifficulty(char difficulty) {
-    switch (TO_UPPER(difficulty)) {
+    switch (toupper(difficulty)) {
         case 'E':
             difficulty_level = EASY;
             break;
