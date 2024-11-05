@@ -20,3 +20,6 @@
 
 # macos
 .DS_Store
+
+# zip files
+*.zip
