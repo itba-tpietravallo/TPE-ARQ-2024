@@ -26,11 +26,12 @@ int clear(void);
 int echo(void);
 int exit(void);
 int fontdec(void);
-int fontinc(void);
+int font(void);
 int help(void);
 int history(void);
-int regs(void);
+int man(void);
 int snake(void);
+int regs(void);
 int time(void);
 
 static void printPreviousCommand(enum REGISTERABLE_KEYS scancode);
@@ -50,13 +51,13 @@ Command commands[] = {
     { .name = "divzero",        .function = (int (*)(void))(unsigned long long)_divzero,        .description = "Generates a division by zero exception" },
     { .name = "echo",           .function = (int (*)(void))(unsigned long long)echo ,           .description = "Prints the input string" },
     { .name = "exit",           .function = (int (*)(void))(unsigned long long)exit,            .description = "Command exits w/ the provided exit code or 0" },
-    { .name = "fontdec",        .function = (int (*)(void))(unsigned long long)fontdec,         .description = "Decreases the font size" },
-    { .name = "fontinc",        .function = (int (*)(void))(unsigned long long)fontinc,         .description = "Increases the font size" },
+    { .name = "font",           .function = (int (*)(void))(unsigned long long)font,            .description = "Increases or decreases the font size.\n\t\t\t\t Use:\n\t\t\t\t\t  + font increase\n\t\t\t\t\t  + font decrease" },
     { .name = "help",           .function = (int (*)(void))(unsigned long long)help,            .description = "Prints the available commands" },
     { .name = "history",        .function = (int (*)(void))(unsigned long long)history,         .description = "Prints the command history" },
     { .name = "invop",          .function = (int (*)(void))(unsigned long long)_invalidopcode,  .description = "Generates an invalid Opcode exception" },
-    { .name = "snake",          .function = (int (*)(void))(unsigned long long)snake,           .description = "Launches the snake game" },
     { .name = "regs",           .function = (int (*)(void))(unsigned long long)regs,            .description = "Prints the register snapshot, if any" },
+    { .name = "man",            .function = (int (*)(void))(unsigned long long)man,             .description = "Prints the description of the provided command" },
+    { .name = "snake",          .function = (int (*)(void))(unsigned long long)snake,           .description = "Launches the snake game" },
     { .name = "time",           .function = (int (*)(void))(unsigned long long)time,            .description = "Prints the current time" },
 };
 
@@ -202,7 +203,7 @@ int echo(void){
 int help(void){
     printf("Available commands:\n");
     for (int i = 0; i < sizeof(commands) / sizeof(Command); i++) {
-        printf("%s\t - - -\t %s\n", commands[i].name, commands[i].description);
+        printf("%s\t ---\t%s\n", commands[i].name, commands[i].description);
     }
     printf("\n");
     return 0;
@@ -220,12 +221,35 @@ int exit(void) {
     return aux;
 }
 
-int fontinc(void) {
-    return increaseFontSize();
+int font(void) {
+    char * arg = strtok(NULL, " ");
+    if (strcasecmp(arg, "increase") == 0) {
+        return increaseFontSize();
+    } else if (strcasecmp(arg, "decrease") == 0) {
+        return decreaseFontSize();
+    }
+    
+    perror("Invalid argument\n");
+    return 0;
 }
 
-int fontdec(void) {
-    return decreaseFontSize();
+int man(void) {
+    char * command = strtok(NULL, " ");
+
+    if (command == NULL) {
+        perror("No argument provided\n");
+        return 1;
+    }
+
+    for (int i = 0; i < sizeof(commands) / sizeof(Command); i++) {
+        if (strcasecmp(commands[i].name, command) == 0) {
+            printf("Command: %s\nInformation: %s\n", commands[i].name, commands[i].description);
+            return 0;
+        }
+    }
+
+    perror("Command not found\n");
+    return 1;
 }
 
 int regs(void) {

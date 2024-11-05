@@ -1,5 +1,6 @@
 #include <string.h>
 #include <stdlib.h>
+#include <ctype.h>
 
 int strlen(const char * str) {
     int i = 0;
@@ -13,6 +14,17 @@ int strcmp(char * str1, char * str2) {
     int i = 0;
     while (str1[i] != 0 && str2[i] != 0) {
         if (str1[i] != str2[i]) {
+            return str1[i] - str2[i];
+        }
+        i++;
+    }
+    return str1[i] - str2[i];
+}
+
+int strcasecmp(char * str1, char * str2) {
+    int i = 0;
+    while (str1[i] != 0 && str2[i] != 0) {
+        if (toupper(str1[i]) != toupper(str2[2])) {
             return str1[i] - str2[i];
         }
         i++;
