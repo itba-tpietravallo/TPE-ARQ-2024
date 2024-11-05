@@ -206,7 +206,6 @@ void retractPosition() {
         xBufferPosition = window_width - (window_width % (fontSize * glyphSizeX));
         yBufferPosition -= glyphSizeY * fontSize;
     }
-
     xBufferPosition -= glyphSizeX * fontSize;
 }
 
@@ -234,7 +233,7 @@ uint8_t increaseFontSize(void) {
 }
 
 uint8_t decreaseFontSize(void) {
-    fontSize = fontSize < 1 ? fontSize : fontSize - 1;
+    fontSize = fontSize <= 1 ? fontSize : fontSize - 1;
     maxGlyphSizeYOnLine = dirty_line == 1 ? MAX(maxGlyphSizeYOnLine, glyphSizeY * fontSize) : (glyphSizeY * fontSize);
     return fontSize;
 }
