@@ -111,7 +111,7 @@ static void endGameByMaxSize(void);
 static void endGameByQuit(void);
 static void endGameByCrash(void);
 static void endGame(int code);
-static void  setDifficulty(char difficulty);
+static void setDifficulty(char difficulty);
 static void showWinners(void);
 
 static void registerKeys(void);
@@ -124,11 +124,11 @@ static int outOfBounds(int x, int y);
 static void drawBackground(void);
 static void drawSnakes(void);
 static void drawFood(void);
+static void printScore(void);
 
 static void setRandomSeed(void);
 static int overSnakeBody(int x, int y);
 static void randomizeFoodPosition(void);
-static void printScore(void);
 static void checkFoodEaten(void);
 
 static uint32_t hsv2rgb(uint8_t h, uint8_t s, uint8_t v);
@@ -519,6 +519,20 @@ static void drawFood(void) {
     drawCircle(food.hue, food.position.x + OFFSET, food.position.y + OFFSET, SQUARE_DIM - OFFSET);
 }
 
+static void printScore(void) {
+    printf("\r");
+
+    if(snakes_amount == 1){
+        printf("\t\t\t\t\t\t");
+        printf("%sPlayer %d score: %d\e[0m", snakes[0].main_ansi, 1, snakes[0].size - (INITIAL_BODY_SIZE + 1));
+    } else{
+        for(int i = 0 ; i < snakes_amount; i++){
+            printf("\t\t  ");
+            printf("%sPlayer %d score: %d\e[0m", snakes[i].main_ansi, i + 1, snakes[i].size - (INITIAL_BODY_SIZE + 1));
+        }
+    }
+}
+
 
 // ================================================================================ FOOD LOGIC ================================================================================
 
@@ -592,15 +606,6 @@ static void checkFoodEaten(void) {
         randomizeFoodPosition();
         printScore();
         food_eaten = 0;
-    }
-}
-
-static void printScore() {
-    printf("\r");
-
-    for(int i = 0 ; i < snakes_amount; i++){
-        printf("\t\t   ");
-        printf("%sPlayer %d score: %d\e[0m", snakes[i].main_ansi, i + 1, snakes[i].size - (INITIAL_BODY_SIZE + 1));
     }
 }
 
