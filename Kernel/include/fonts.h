@@ -28,6 +28,7 @@ void clear(void);
 
 void showCursor(void);
 void hideCursor(void);
+void retractPosition();
 void clearPreviousCharacter(void);
 uint16_t getXBufferPosition(void);
 
