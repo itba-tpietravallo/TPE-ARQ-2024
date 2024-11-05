@@ -1,18 +1,17 @@
 #include <sys.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <ctype.h>
 
 
 // <----------------------------------------------------------------------- DEFINES ----------------------------------------------------------------------->
 
-#define TO_UPPER(c) (((c) >= 'a' && (c) <= 'z') ? ((c) - 'a' + 'A') : (c)) //TODO doesn't work for quiting
 #define VALID_DIFFICULTY(c) (c == 'E' || c == 'e' || c == 'M' || c == 'm'|| c == 'H' || c == 'h' || c == 'D' || c == 'd')
 
 #define DIRECTIONS 4
 #define BEGIN_GAME_KEY '\n'
 #define PLAY_AGAIN_KEY '\n'
-#define QUIT_KEY_1 'X'
-#define QUIT_KEY_2 'x'
+#define QUIT_KEY 'X'
 
 // end_of_game values
 #define ENDED_BY_CRASH 1
@@ -364,7 +363,7 @@ static void showWinners(void) {
         printf("\n\e[0;32m----------------------------------------------------------------\e[0m \
         \n\n\t\t\tPress ENTER to play again, X to finish");
 
-        while((c = getCharacterWithoutDisplay()) != PLAY_AGAIN_KEY && c != QUIT_KEY_1 && c != QUIT_KEY_2);
+        while((c = getCharacterWithoutDisplay()) != PLAY_AGAIN_KEY && TO_UPPER(c) != QUIT_KEY);
 
         if(c == PLAY_AGAIN_KEY){
             end_of_game = 0;
