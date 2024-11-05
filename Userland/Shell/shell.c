@@ -161,7 +161,6 @@ int time(void){
 }
 
 int echo(void){
-    // printf(buffer + strlen("echo") + 1);
     for (int i = strlen("echo") + 1; i < buffer_dim; i++) {
         switch (buffer[i]) {
             case '\\':
@@ -178,6 +177,10 @@ int echo(void){
                         while (buffer[i] != 'm') i++; // ignores escape code, assumes valid format
                         i++;
                     #endif
+                    case 'r': 
+                        printf("\r");
+                        i++;
+                        break;
                     case '\\':
                         i++;
                     default:

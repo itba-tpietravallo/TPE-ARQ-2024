@@ -121,6 +121,12 @@ void putChar(char ascii) {
             hideCursor();
             newLine();
             break;
+        case CARRIAGE_RETURN_CHAR:
+            hideCursor();
+            while (xBufferPosition > 0) {
+                retractPosition();
+            }
+            break;
         case TABULATOR_CHAR:
             do {
                 putChar(' ');

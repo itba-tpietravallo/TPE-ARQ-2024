@@ -13,6 +13,7 @@
 
 #define NEW_LINE_CHAR '\n'
 #define TABULATOR_CHAR '\t'
+#define CARRIAGE_RETURN_CHAR '\r'
 #define ESCAPE_CHAR '\e'
 #define TAB_SIZE 4
 
