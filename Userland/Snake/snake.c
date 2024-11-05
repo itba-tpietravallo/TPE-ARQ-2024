@@ -48,7 +48,7 @@
 #define INITIAL_POS_1_X (SQUARE_DIM * 28)
 #define INITIAL_POS_1_Y (SQUARE_DIM * 21)
 #define INITIAL_POS_2_X (SQUARE_DIM * 3)
-#define INITIAL_POS_2_Y (SQUARE_DIM * 2)
+#define INITIAL_POS_2_Y (SQUARE_DIM * 4)
 
 // initial directions
 #define INITIAL_DIR_1_X -1
@@ -156,6 +156,7 @@ static Direction initial_directions[MAX_SNAKES] = { { .x = INITIAL_DIR_1_X, .y =
 
 // screen dimensions
 static int window_height, window_width;
+static int border_y = SQUARE_DIM * 2;
 
 static int end_of_game;   // 1 if the game finished because somebody crashed, 2 if it was because X was pressed
 static int snakes_amount;
@@ -448,7 +449,7 @@ static void checkCrash(void) {
     int somebody_crashed = 0;
     for(int i = 0; i < snakes_amount; i++){
         // checks whether the snake crashed with a border
-        if(snakes[i].body[0].position.x < 0 || snakes[i].body[0].position.x > (window_width - SQUARE_DIM) || snakes[i].body[0].position.y < 0 || snakes[i].body[0].position.y > (window_height - SQUARE_DIM)){
+        if(snakes[i].body[0].position.x < 0 || snakes[i].body[0].position.x > (window_width - SQUARE_DIM) || snakes[i].body[0].position.y < border_y || snakes[i].body[0].position.y > (window_height - SQUARE_DIM)){
             snakes[i].lost = 1;
             somebody_crashed = 1;
         }
@@ -486,7 +487,7 @@ static void checkCrash(void) {
 // ================================================================================ DRAWING LOGIC ================================================================================
 
 static void drawBackground(void) {
-    for(int y = 0; y < window_height; y += square.height){
+    for(int y = border_y; y < window_height; y += square.height){
         for(int x = 0; x < window_width; x += square.width){
             if(first_round || !(x == food.position.x && y == food.position.y)){
                 drawRectangle(DEFAULT_BACKGROUND_COLOR, square.width - OFFSET, square.height - OFFSET, x + OFFSET, y + OFFSET);
