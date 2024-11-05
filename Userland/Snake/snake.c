@@ -566,9 +566,9 @@ static void randomizeFoodPosition(void) {
         x = x % (window_width);
 
         y = (rand() % SQUARE_DIM) * SQUARE_DIM;
-        y = y % (window_height);
+        y = y % (window_height - border_y) + border_y;
 
-    } while(overSnakeBody(x, y) || outOfBounds(x, y));
+    } while(overSnakeBody(x, y));
 
     food.position.x = x;
     food.position.y = y;
