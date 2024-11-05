@@ -39,8 +39,8 @@ static uint16_t fontSize = 1;
 
 static char * bitmap = (char *) font8x8_basic;
 
-static uint16_t xBufferPosition;
-static uint16_t yBufferPosition;
+static int32_t xBufferPosition;
+static int32_t yBufferPosition;
 
 static uint16_t maxGlyphSizeYOnLine = DEFAULT_GLYPH_SIZE_Y;
 
@@ -202,10 +202,16 @@ void clear(void) {
 
 void retractPosition() {
     uint16_t window_width = getWindowWidth();
+    
     if(xBufferPosition == 0){
-        xBufferPosition = window_width - (window_width % (fontSize * glyphSizeX));
         yBufferPosition -= glyphSizeY * fontSize;
+        if (yBufferPosition < 0) {
+            yBufferPosition = 0;
+            return;
+        }
+        xBufferPosition = window_width - (window_width % (fontSize * glyphSizeX));
     }
+
     xBufferPosition -= glyphSizeX * fontSize;
 }
 
