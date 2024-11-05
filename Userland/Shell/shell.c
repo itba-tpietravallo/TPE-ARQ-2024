@@ -51,7 +51,7 @@ Command commands[] = {
     { .name = "divzero",        .function = (int (*)(void))(unsigned long long)_divzero,        .description = "Generates a division by zero exception" },
     { .name = "echo",           .function = (int (*)(void))(unsigned long long)echo ,           .description = "Prints the input string" },
     { .name = "exit",           .function = (int (*)(void))(unsigned long long)exit,            .description = "Command exits w/ the provided exit code or 0" },
-    { .name = "font",           .function = (int (*)(void))(unsigned long long)font,            .description = "Increases or decreases the font size.\n\t\t\t\t Use:\n\t\t\t\t\t  + font increase\n\t\t\t\t\t  + font decrease" },
+    { .name = "font",           .function = (int (*)(void))(unsigned long long)font,            .description = "Increases or decreases the font size.\n\t\t\t\tUse:\n\t\t\t\t\t  + font increase\n\t\t\t\t\t  + font decrease" },
     { .name = "help",           .function = (int (*)(void))(unsigned long long)help,            .description = "Prints the available commands" },
     { .name = "history",        .function = (int (*)(void))(unsigned long long)history,         .description = "Prints the command history" },
     { .name = "invop",          .function = (int (*)(void))(unsigned long long)_invalidopcode,  .description = "Generates an invalid Opcode exception" },
@@ -206,7 +206,7 @@ int echo(void){
 int help(void){
     printf("Available commands:\n");
     for (int i = 0; i < sizeof(commands) / sizeof(Command); i++) {
-        printf("%s\t ---\t%s\n", commands[i].name, commands[i].description);
+        printf("%s%s\t ---\t%s\n", commands[i].name, strlen(commands[i].name) < 4 ? "\t" : "", commands[i].description);
     }
     printf("\n");
     return 0;
