@@ -128,6 +128,7 @@ static void drawFood(void);
 static void setRandomSeed(void);
 static int overSnakeBody(int x, int y);
 static void randomizeFoodPosition(void);
+static void printScore(void);
 static void checkFoodEaten(void);
 
 static uint32_t hsv2rgb(uint8_t h, uint8_t s, uint8_t v);
@@ -182,10 +183,12 @@ int main(void) {
 
     do{
         clearScreen();
+        printf("\n\n");
         setDefaultFeatures();
 
         first_round = 1;
         drawBackground();
+        printScore();
 
         while(!end_of_game) {
             drawSnakes();
@@ -587,7 +590,17 @@ static void checkFoodEaten(void) {
     if(food_eaten){
         startBeep(EATING_SOUND_FREQUENCY);
         randomizeFoodPosition();
+        printScore();
         food_eaten = 0;
+    }
+}
+
+static void printScore() {
+    printf("\r");
+
+    for(int i = 0 ; i < snakes_amount; i++){
+        printf("\t\t   ");
+        printf("%sPlayer %d score: %d\e[0m", snakes[i].main_ansi, i + 1, snakes[i].size - (INITIAL_BODY_SIZE + 1));
     }
 }
 
