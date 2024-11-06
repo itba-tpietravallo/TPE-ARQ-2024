@@ -1,4 +1,4 @@
-# TPE Arquitectura de las Computadoras (72.02)
+# TPE Arquitectura de las Computadoras (72.08)
 
 ## Members
 
