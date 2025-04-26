@@ -177,6 +177,7 @@ int echo(void){
                         while (buffer[i] != 'm') i++; // ignores escape code, assumes valid format
                         i++;
                     #endif
+                        break;
                     case 'r': 
                         printf("\r");
                         i++;
